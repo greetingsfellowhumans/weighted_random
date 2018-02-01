@@ -6,9 +6,10 @@ defmodule WeightedRandom.MixProject do
       app: :weighted_random,
       version: "0.1.0",
       elixir: "~> 1.6",
-      description: "Helper functions for working with weighted random values"
+      description: "Helper functions for working with weighted random values",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      source_url: "https://github.com/aaron-price/weighted_random"
     ]
   end
 
