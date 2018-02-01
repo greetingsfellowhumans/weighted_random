@@ -6,10 +6,25 @@ defmodule WeightedRandom.MixProject do
       app: :weighted_random,
       version: "0.1.0",
       elixir: "~> 1.6",
-      description: "Helper functions for working with weighted random values",
       start_permanent: Mix.env() == :prod,
+      description: description(),
+      package: package(),
       deps: deps(),
       source_url: "https://github.com/aaron-price/weighted_random"
+    ]
+  end
+
+  defp description() do
+    "Helper functions for working with weighted random values."
+  end
+
+  defp package() do
+    [
+      # These are the default files included in the package
+      files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+      maintainers: ["Aaron Price"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/aaron-price/weighted_random"}
     ]
   end
 
