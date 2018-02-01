@@ -21,7 +21,7 @@ defmodule WeightedRandom.MixProject do
   defp package() do
     [
       # These are the default files included in the package
-      files: ["lib", "priv", "mix.exs", "README*", "readme*", "LICENSE*", "license*"],
+      files: ["lib", "mix.exs", "README*"],
       maintainers: ["Aaron Price"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/aaron-price/weighted_random"}
