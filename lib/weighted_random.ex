@@ -32,7 +32,7 @@ defmodule WeightedRandom do
     If the weight is 1, then it's purely random.  
 
     If the weight is higher, then the number will *probably* be closer to the target.  
-    
+
     The higher the weight, the closer to the target.  
 
     Weights must be positive integers.
