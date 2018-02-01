@@ -12,4 +12,5 @@ def deps do
 end
 ```
 
-<h1>[Read the docs]("https://hexdocs.pm/weighted_random/")</h1>
+# Read the docs
+https://hexdocs.pm/weighted_random/
