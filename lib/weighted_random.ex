@@ -1,31 +1,46 @@
 defmodule WeightedRandom do
-  @doc """
-    ## Examples
+  @moduledoc """
+    Elixir functions for weighted random.
+    Not intended to be cryptographically secure.
+  """
 
-    iex> WeightedRandom.between(0, 100)
-    23
+  @doc """
+    Returns an integer between min and max.
+
+  ## Examples
+
+      iex> WeightedRandom.between(0, 100)
+      23
   """
   def between(min, max) do Enum.random(min..max) end
 
   @doc """
-    ## Examples
+    Returns a list of random integers, all between min and max.
 
-    iex> WeightedRandom.numList(0, 100, 10)
-    [87, 19, 8, 20, 11, 37, 85, 88, 69, 47, 39]
+  ## Examples
+
+      iex> WeightedRandom.numList(0, 100, 10)
+      [87, 19, 8, 20, 11, 37, 85, 88, 69, 47, 39]
   """
   def numList(min, max, length) do
     Enum.reduce(0..length, [], fn(_, acc) -> [between(min, max) | acc] end)
   end
 
   @doc """
-    Gets a random number between min and max.
-    If the weight is 1, then it's purely random.
-    If the weight is higher, then the number will be closer to the target
+    Gets a random number between min and max.  
 
-    ## Examples
+    If the weight is 1, then it's purely random.  
 
-    iex> WeightedRandom.weighted(0, 100, 75, 10)
-    83
+    If the weight is higher, then the number will *probably* be closer to the target.  
+    
+    The higher the weight, the closer to the target.  
+
+    Weights must be positive integers.
+
+  ## Examples
+
+      iex> WeightedRandom.weighted(0, 100, 75, 10)
+      83
   """
   def weighted(min, max, target, weight) do
     range = numList(min, max, weight)
@@ -41,14 +56,18 @@ defmodule WeightedRandom do
   end
 
   @doc """
-    Takes a different weight for each value, and randomly returns a value.
-    If each map has the same weight, they will all be equally likely to be returned.
-    A map with a relatively higher weight will be more likely to be returned.
-    ## Examples
+    Takes a list of maps, each with a value and weight. Returns the value of a randomly picked map.  
 
-    iex> maplist = [ %{:value => :red, :weight => 15}, %{:value => :blue, :weight => 1}, %{:value => :yellow, :weight => 5} ]
-    iex> WeightedRandom.complex(maplist)
-    :red
+    If each map has the same weight, they will all be equally likely to be returned.  
+    A map with a relatively higher weight will be more likely to have it's value returned.  
+
+    Weights must be positive integers.
+
+  ## Examples
+
+      iex> maplist = [ %{:value => :red, :weight => 15}, %{:value => :blue, :weight => 1}, %{:value => :yellow, :weight => 5} ]
+      iex> WeightedRandom.complex(maplist)
+      :red
   """
   def complex(maplist) do
       result = Enum.reduce(maplist, %{:roll => 0, :value => nil}, fn(%{:value => value, :weight => weight}, acc) ->
