@@ -38,7 +38,8 @@ defmodule WeightedRandom.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-        {:ex_doc, "~> 0.16", only: :dev, runtime: false}
+        {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+        {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
     ]
   end
 end
