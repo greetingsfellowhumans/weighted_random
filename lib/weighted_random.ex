@@ -8,19 +8,19 @@ defmodule WeightedRandom do
     Returns an integer between min and max.
 
   ## Examples
-
-      iex> WeightedRandom.between(0, 100)
-      23
+      iex> :rand.seed(:exsss, {100, 101, 102})
+      iex> WeightedRandom.between(1, 3)
+      2
   """
-  def between(min, max) do Enum.random(min..max) end
+  def between(min, max), do: Enum.random(min..max)
 
   @doc """
     Returns a list of random integers, all between min and max.
 
   ## Examples
-
+      iex> :rand.seed(:exsss, {100, 101, 102})
       iex> WeightedRandom.numList(0, 100, 10)
-      [87, 19, 8, 20, 11, 37, 85, 88, 69, 47, 39]
+      [90, 49, 56, 90, 4, 7, 35, 83, 65, 20, 41]
   """
   def numList(min, max, length) do
     Enum.reduce(0..length, [], fn(_, acc) -> [between(min, max) | acc] end)
@@ -38,7 +38,7 @@ defmodule WeightedRandom do
     Weights must be positive integers.
 
   ## Examples
-
+      iex> :rand.seed(:exsss, {100, 101, 102})
       iex> WeightedRandom.weighted(0, 100, 75, 10)
       83
   """
@@ -64,7 +64,6 @@ defmodule WeightedRandom do
     Weights must be positive integers.
 
   ## Examples
-
       iex> maplist = [ %{:value => :red, :weight => 15}, %{:value => :blue, :weight => 1}, %{:value => :yellow, :weight => 5} ]
       iex> WeightedRandom.complex(maplist)
       :red
