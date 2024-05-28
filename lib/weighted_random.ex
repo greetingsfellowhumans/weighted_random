@@ -4,6 +4,24 @@ defmodule WeightedRandom do
     Not intended to be cryptographically secure.
   """
 
+  @doc ~s"""
+  Takes a list or range of values, and another list of weights.
+  ## Examples
+      iex> :rand.seed(:exsss, {100, 101, 102})
+      iex> range = 1..100
+      iex> weights = [%{target: 25, weight: 10}]
+      iex> rand(range, weights)
+  """
+  def rand(li, weights, opts \\ []) do
+    base_weights =
+      li
+      |> Enum.map(&(WeightedRandom.Weight.new(%{target: &1}, opts)))
+      |> Enum.with_index()
+
+    custom_weights = Enum.map(weights, &(WeightedRandom.Weight.new(&1, opts)))
+  end
+
+  # {{{ Deprecated
   @doc """
     Returns an integer between min and max.
 
@@ -64,6 +82,7 @@ defmodule WeightedRandom do
     Weights must be positive integers.
 
   ## Examples
+      iex> :rand.seed(:exsss, {100, 101, 102})
       iex> maplist = [ %{:value => :red, :weight => 15}, %{:value => :blue, :weight => 1}, %{:value => :yellow, :weight => 5} ]
       iex> WeightedRandom.complex(maplist)
       :red
@@ -79,5 +98,6 @@ defmodule WeightedRandom do
       end)
       result.value
   end
+  # }}}
 
 end
