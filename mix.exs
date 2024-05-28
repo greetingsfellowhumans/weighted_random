@@ -10,7 +10,14 @@ defmodule WeightedRandom.MixProject do
       description: description(),
       package: package(),
       deps: deps(),
+      docs: docs(),
       source_url: "https://github.com/aaron-price/weighted_random"
+    ]
+  end
+
+  defp docs() do
+    [
+      main: "WeightedRandom"
     ]
   end
 

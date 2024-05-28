@@ -68,26 +68,56 @@ defmodule WeightedRandom do
   ## Examples
       iex> # You won't need this. It's only necessary for consistent test results.
       iex> :rand.seed(:exsss, {100, 101, 102})
-      iex> #
-      iex> # the result 2 is 10 times more likely to appear than any other number
+      iex>
+      iex>
       iex> range = 1..10
       iex> weights = [%{target: 2, weight: 10}]
-      iex> values = Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
-      [4, 2, 2, 4, 4, 2, 2, 9, 10, 2]
-      iex> #
-      iex> # Here, the radius of 5 means that extra weight is given to 20..24 and 26..30
+      iex> Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
+      [4, 3, 3, 4, 4, 3, 3, 9, 10, 3]
+      iex>
+      iex> # Notice that it was biasing toward the INDEX of 2, not the value of 2.
+      iex> # When the list only includes integers, we can actually target values instead.
+      iex> # Notice we are now passing in the `index: false` option.
+      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
+      [7, 2, 2, 7, 2, 2, 1, 7, 2, 8]
+      iex>
+      iex> # Let's play with radius!
+      iex> weights = [%{target: 25, weight: 20, radius: 5}]
       iex> range = 1..50
-      iex> weights = [%{target: 25, weight: 10, radius: 5}]
-      iex> values = Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
-      [26, 28, 23, 27, 28, 25, 21, 23, 25, 8]
-      iex> range = [true, false, nil, "Apples", :boat]
+      iex> # Here, the radius of 5 means that extra weight is given to 20..24 and 26..30
+      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
+      [29, 35, 27, 23, 25, 23, 24, 17, 23, 27]
+      iex>
       iex> # We are not limited to integers
-      iex> weights = [%{target: 3, weight: 995}]
-      iex> values = Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
-      [26, 28, 23, 27, 28, 25, 21, 23, 25, 8]
+      iex> range = [true, false, nil, "Apples", :boat]
+      iex> weights = [%{target: 0, weight: 100}]
+      iex> Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(3)
+      [true, true, true]
+      iex>
+      iex> ## Finally, there is no limit to how many weights you can use.
+      iex> range = 1..10
+      iex> weight1 = %{target: 7, weight: 15, radius: 4, curve: :ease_in_sine}
+      iex> weight2 = %{target: 1, weight: 35}
+      iex> weights = [weight1, weight2]
+      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
+      [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
   """
   #@spec rand(li :: list(), list(weights.t()))
   def rand(li, weights, opts \\ []) do
+    default_opts = [index: true]
+    use_indexes? = if !Enum.all?(li, &is_integer/1), do: true, else: Keyword.get(opts, :index, Keyword.get(default_opts, :index))
+    
+    unless use_indexes? do
+      rand_ints(li, weights, opts)
+    else
+      idx_li = Enum.with_index(li)
+      int_map = Enum.map(idx_li, fn {v, idx} -> {idx, v} end) |> Enum.into(%{})
+      int_li = Map.keys(int_map)
+      idx = rand_ints(int_li, weights, opts)
+      Map.get(int_map, idx)
+    end
+  end
+  defp rand_ints(li, weights, opts) do
     custom_weights = Enum.map(weights, &(Weight.new(&1, opts)))
     side_effects = Enum.map(custom_weights, &Weight.create_side_effect_weights/1)
 
@@ -99,6 +129,7 @@ defmodule WeightedRandom do
 
     Enum.random(li)
   end
+
 
   # {{{ Deprecated
   @doc false
