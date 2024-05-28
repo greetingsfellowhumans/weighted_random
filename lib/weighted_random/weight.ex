@@ -54,4 +54,15 @@ defmodule WeightedRandom.Weight do
     |> Enum.sort_by(&(&1.target))
   end
 
+  def convert_to_values(weights) when is_list(weights) do
+    weights
+    |> List.flatten()
+    |> Enum.map(&split/1)
+    |> List.flatten()
+  end
+
+  def split(%{target: t, total_weight: w} = _weight) do
+    Enum.map(1..w, fn _ -> t end)
+  end
+
 end

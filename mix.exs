@@ -4,7 +4,7 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "1.1.0",
+      version: "0.2.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -38,8 +38,8 @@ defmodule WeightedRandom.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-        {:ex_doc, "~> 0.16", only: :dev, runtime: false},
-        {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
     ]
   end
 end

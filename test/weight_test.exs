@@ -4,13 +4,20 @@ defmodule WeightedRandom.WeightTest do
   import Weight
 
   test "Weight struct gets list of affected neighbours" do
-    weight = new(%{target: 10, weight: 5, radius: 3})
+    weight = new(%{target: 10, weight: 10, radius: 3})
     [t8, t9, t11, t12] = create_side_effect_weights(weight)
 
-    assert match?(%{target: 8, total_weight: 2}, t8)
-    assert match?(%{target: 9, total_weight: 3}, t9)
-    assert match?(%{target: 11, total_weight: 3}, t11)
-    assert match?(%{target: 12, total_weight: 2}, t12)
+    assert match?(%{target: 8, total_weight: 3}, t8)
+    assert match?(%{target: 9, total_weight: 7}, t9)
+    assert match?(%{target: 11, total_weight: 7}, t11)
+    assert match?(%{target: 12, total_weight: 3}, t12)
+
+
+    weight = new(%{target: 10, weight: 10, radius: 2})
+    [t9, t11] = create_side_effect_weights(weight)
+
+    assert match?(%{target: 9, total_weight: 5}, t9)
+    assert match?(%{target: 11, total_weight: 5}, t11)
 
 
     weight = new(%{target: 10, weight: 5, radius: 3, curve: :ease_out})
@@ -78,5 +85,9 @@ defmodule WeightedRandom.WeightTest do
 
   end
 
+  test "split weight" do
+    weight = new(%{target: 10, weight: 5, radius: 2})
+    assert [10, 10, 10, 10, 10] == split(weight)
+  end
 
 end
