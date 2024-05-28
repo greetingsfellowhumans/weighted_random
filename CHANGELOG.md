@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [0.2.0] - 2024-05-27
+### Changed
+- Transferred ownership of the repo between two of my accounts.
+- Updated Readme and docs
+
+## [0.2.0] - 2024-05-27
 This is a complete rebuild, and several functions are now deprecated.
 
 ### Added

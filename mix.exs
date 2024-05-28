@@ -4,20 +4,21 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "0.2.0",
+      version: "0.3.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
       deps: deps(),
       docs: docs(),
-      source_url: "https://github.com/aaron-price/weighted_random"
+      source_url: "https://github.com/greetingsfellowhumans/weighted_random"
     ]
   end
 
   defp docs() do
     [
-      main: "WeightedRandom"
+      main: "WeightedRandom",
+      extras: ["CHANGELOG.md"],
     ]
   end
 
@@ -31,7 +32,7 @@ defmodule WeightedRandom.MixProject do
       files: ["lib", "mix.exs", "README*"],
       maintainers: ["Aaron Price"],
       licenses: ["MIT"],
-      links: %{"GitHub" => "https://github.com/aaron-price/weighted_random"}
+      links: %{"GitHub" => "https://github.com/greetingsfellowhumans/weighted_random"}
     ]
   end
 
