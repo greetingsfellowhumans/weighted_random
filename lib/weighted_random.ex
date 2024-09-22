@@ -71,14 +71,14 @@ defmodule WeightedRandom do
       iex>
       iex>
       iex> range = 1..10
-      iex> weights = [%{target: 2, weight: 10}]
-      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
-      [7, 2, 2, 7, 2, 2, 1, 7, 2, 8]
+      iex> weight = %{target: 2, weight: 10}
+      iex> Stream.repeatedly(fn -> rand(range, weight, index: false) end) |> Enum.take(10)
+      [4, 2, 2, 4, 4, 2, 2, 9, 10, 2]
       iex>
       iex> # As you can see, 2 is 10x more likely to appear than any other given number.
       iex> # But what if we take away the `index: false` option?
-      iex> Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
-      [4, 3, 3, 4, 4, 3, 3, 9, 10, 3]
+      iex> Stream.repeatedly(fn -> rand(range, weight) end) |> Enum.take(10)
+      [7, 3, 3, 7, 3, 3, 1, 7, 3, 8]
       iex>
       iex> # Notice that it was biasing toward the INDEX of 2, not the value of 2.
       iex> # This is useful later when we are not simply using integers.
@@ -110,6 +110,7 @@ defmodule WeightedRandom do
   """
   #@spec rand(li :: list(), list(weights.t()))
   def rand(li, weights, opts \\ []) do
+    weights = if is_list(weights), do: weights, else: [weights]
     default_opts = [index: true]
     use_indexes? = if !Enum.all?(li, &is_integer/1), do: true, else: Keyword.get(opts, :index, Keyword.get(default_opts, :index))
     
