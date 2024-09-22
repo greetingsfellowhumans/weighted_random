@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2024-09-22
+### Added
+The weights argument for rand/3 can now be a map, in case you only have one weight
+
+### Changed
+Improved Docs slightly
+
 ## [0.3.0] - 2024-05-27
 ### Changed
 - Transferred ownership of the repo between two of my accounts.
