@@ -5,7 +5,7 @@
 ```elixir
 def deps do
   [
-    {:weighted_random, "~> 0.3.0"}
+    {:weighted_random, "~> 0.3.1"}
   ]
 end
 ```
