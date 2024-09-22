@@ -18,12 +18,7 @@ Also supports such values impacting their neighbours
 Not intended to be cryptographically secure.
 Also not nearly as performant as a simple Enum.random/1, so consider whether you actually need this.
 
-## Quickstart
-```elixir
-iex> range = 1..10
-iex> weights = [%{target: 2, weight: 10}]
-iex> rand(range, weights, index: false)
-[7, 2, 2, 7, 2, 2, 1, 7, 2, 8]
-```
+![Simulate Gravity](https://upload.wikimedia.org/wikipedia/commons/f/f3/Schwarzchild-metric.jpg)
 
-See the [Hex Docs](https://hexdocs.pm/weighted_random/WeightedRandom.html) for more details.
+
+See the [Hex Docs](https://hexdocs.pm/weighted_random/WeightedRandom.html) for more details, so I don't have to keep the README up to date.
