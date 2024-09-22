@@ -34,6 +34,8 @@ iex> Stream.repeatedly(fn -> WeightedRandom.rand(range, weights, index: false) e
 [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
 ```
 
+As a visual aid, I think of it like simulating gravity in spacetime.
+
 ![Simulate Gravity](https://upload.wikimedia.org/wikipedia/commons/f/f3/Schwarzchild-metric.jpg)
 
 
