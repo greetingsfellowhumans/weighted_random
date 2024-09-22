@@ -72,23 +72,29 @@ defmodule WeightedRandom do
       iex>
       iex> range = 1..10
       iex> weights = [%{target: 2, weight: 10}]
+      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
+      [7, 2, 2, 7, 2, 2, 1, 7, 2, 8]
+      iex>
+      iex> # As you can see, 2 is 10x more likely to appear than any other given number.
+      iex> # But what if we take away the `index: false` option?
       iex> Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(10)
       [4, 3, 3, 4, 4, 3, 3, 9, 10, 3]
       iex>
       iex> # Notice that it was biasing toward the INDEX of 2, not the value of 2.
-      iex> # When the list only includes integers, we can actually target values instead.
-      iex> # Notice we are now passing in the `index: false` option.
-      iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
-      [7, 2, 2, 7, 2, 2, 1, 7, 2, 8]
+      iex> # This is useful later when we are not simply using integers.
       iex>
-      iex> # Let's play with radius!
-      iex> weights = [%{target: 25, weight: 20, radius: 5}]
+      iex> # Let's play with a radius!
       iex> range = 1..50
-      iex> # Here, the radius of 5 means that extra weight is given to 20..24 and 26..30
+      iex> weights = [%{target: 25, weight: 20, radius: 5}]
+      iex> # Here, the radius of 5 means that extra weight is ALSO given to the 5 values on either side of 25. I.e.: 20..24 and 26..30
       iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
       [29, 35, 27, 23, 25, 23, 24, 17, 23, 27]
       iex>
+      iex> # Wow, 8 out of 10 values fall within that radius!
+      iex> # And remember, you can pass the :curve option to adjust how the weight is spread out to neighbours.
+      iex>
       iex> # We are not limited to integers
+      iex> # (Remember it is based off index)
       iex> range = [true, false, nil, "Apples", :boat]
       iex> weights = [%{target: 0, weight: 100}]
       iex> Stream.repeatedly(fn -> rand(range, weights) end) |> Enum.take(3)
