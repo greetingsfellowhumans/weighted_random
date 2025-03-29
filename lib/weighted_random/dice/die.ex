@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Die do
+  @moduledoc false
   defstruct sides: 6,
             weights: [],
             result: nil

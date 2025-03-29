@@ -92,10 +92,14 @@ defmodule WeightedRandom.Dice do
       iex> d = ~d{10, 20} 
       iex> Enum.map(d.dice, &(&1.result))
       [17, 10, 1, 16, 17, 15, 11, 16, 12, 3]
+      iex> d.total
+      118
       iex> d = Dice.add_weight(d, [%{target: 2, weight: 25}])
       iex> d = Dice.roll(d)
       iex> Enum.map(d.dice, &(&1.result))
       [2, 2, 2, 2, 3, 2, 2, 2, 18, 6]
+      iex> d.total
+      41
   """
   def add_weight(dice, weight) do
     dices = Enum.map(dice.dice, fn die -> Die.add_weight(die, weight) end)
