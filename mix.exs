@@ -27,6 +27,7 @@ defmodule WeightedRandom.MixProject do
   defp extras do
     [
       "guides/weighted_random.md",
+      "guides/livebook.md",
       "guides/dice.md"
     ]
   end
@@ -56,6 +57,8 @@ defmodule WeightedRandom.MixProject do
   defp deps do
     [
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
+      {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false}
     ]
   end
