@@ -1,0 +1,99 @@
+# Weighted Random
+
+## Installation
+
+```elixir
+Mix.install(
+  [
+    {:weighted_random, "~> 0.4.0"},
+    {:vega_lite, "~> 0.1.6"},
+    {:kino_vega_lite, "~> 0.1.11"},
+  ]
+)
+```
+
+```elixir
+import WeightedRandom
+# This gives a random number from 1-100, in which 15 is 400x more likely than any other result.
+rand(1..100, [%{target: 15, weight: 400}], index: false)
+```
+
+Hopefully you spent a few minutes clicking Reevaluate, giggling with childlike glee!
+But what's the story with `index: false?`
+
+By default, WeightedRandom is using the index of a list, which frees us up to use non-numbers and non-ranges.
+
+```elixir
+rand(["Hello", :world, 6..12, %{food: "banana"}], [%{target: 3, weight: 400}])
+```
+
+So use `index: false` when you know there will only be integers, and you want to target them directly, instead of their index position in the range/list
+
+<!-- livebook:{"break_markdown":true} -->
+
+Another fun thing you can do is have a number affect the surrounding numbers. In this case we put a weight of 15 on the number 45. Then we add `radius: 10` which will put some weight on the surrounding numbers, based on a bezier curve as they get closer to 45. The default curve is :linear
+
+Note: curves are still a work in progress
+
+```elixir
+# Play with these variables and watch how it changes the graph
+target = 45
+weight = 15
+radius = 10
+curve = :linear # try :ease_in or :ease_out_cubic
+
+
+:rand.seed(:exsss, {100, 101, 102})
+results = Enum.map(1..10000, fn _ ->
+  rand(0..100, [%{target: target, weight: weight, radius: radius, curve: curve}], index: false)
+end)
+|> Enum.frequencies()|> Enum.map(fn {result, count} -> %{"result" => result, "count" => count} end)
+
+alias VegaLite, as: Vl
+Vl.new(width: 400, height: 200)
+|> Vl.data_from_values(results)
+|> Vl.mark(:line)
+|> Vl.encode_field(:x, "result", type: :nominal)
+|> Vl.encode_field(:y, "count", type: :quantitative)
+```
+
+### Dice
+
+Let's play with some dice.
+
+```elixir
+alias WeightedRandom.Dice
+import Dice
+
+
+# Let's start simple. Create a six-sided die.
+simple_d6 = ~d{6}
+```
+
+It is important to understand that the dice are separate from the *results* of the dice.
+We can reroll simple_d6 several times and the total will keep changing.
+
+```elixir
+Dice.roll(simple_d6)
+Dice.roll(simple_d6)
+Dice.roll(simple_d6)
+```
+
+But we can also get more complex. Here we have 4 dice, each with  8 sides, and a modifier that adds "1" to the total
+
+```elixir
+complex = ~d{4, 8, 1}
+```
+
+You could even combine them!
+
+```elixir
+all = Dice.merge_dice([simple_d6, complex])
+```
+
+Now let's add weights.
+
+```elixir
+Dice.add_weight(all, [%{target: 1, weight: 5}])
+|> Dice.roll() # If you do not reroll, it will not change.
+```
