@@ -140,15 +140,17 @@ defmodule WeightedRandom.WeightTest do
 
   test "non integers" do
     :rand.seed(:exsss, {100, 101, 102})
-    idx = 10
     alpha = "abcdefghijklmnopqrstuvwxyz"
+    target = "j"
+    weights = %{target: target, weight: 21, radius: 5}
+    opts = [index: false]
     range = String.split(alpha, "", trim: true)
-    top_result = Stream.repeatedly(fn -> WeightedRandom.rand(range, %{target: idx, weight: 10}) end) |> Enum.take(10)
+    top_result = Stream.repeatedly(fn -> WeightedRandom.rand(range, weights, opts) end) |> Enum.take(100)
       |> Enum.frequencies()
       |> Enum.sort_by(fn {_, c} ->  c end, :desc)
       |> List.first()
       |> elem(0)
-    assert top_result == String.at(alpha, idx)
+    assert top_result == target
   end
 
 end

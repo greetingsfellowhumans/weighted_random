@@ -1,27 +1,53 @@
 defmodule WeightedRandom do
   alias WeightedRandom.Weight
 
+  @default_opts [index: true]
+
   @doc ~s"""
-  Returns a random value based on the weights given
+  Returns a random value based on the weights given.
+
+  By default this operates on the index, not the value.
+
+  ## Examples
+      iex> :rand.seed(:exsss, {108, 101, 102})
+      iex> li = 1..10
+      iex> weights = [ %{target: 7, weight: 100} ]
+      iex>
+      iex> # By default this uses the index 7, not the *value* 7.
+      iex> WeightedRandom.rand(li, weights)
+      8
+      iex> # But we can use the value by passing the option index: false
+      iex> WeightedRandom.rand(li, weights, index: false)
+      7
+      iex> li = [:a, :b, :c, :d, :e, :f, :g, :h, :j, :k, :l]
+      iex> WeightedRandom.rand(li, weights)
+      :h
+      iex> weights = [ %{target: :d, weight: 100} ]
+      iex> WeightedRandom.rand(li, weights, index: false)
+      :d
   """
-  def rand(li, weights, opts \\ []) do
-    weights = if is_list(weights), do: weights, else: [weights]
-    default_opts = [index: true]
-
-    use_indexes? =
-      if !Enum.all?(li, &is_integer/1),
-        do: true,
-        else: Keyword.get(opts, :index, Keyword.get(default_opts, :index))
-
-    unless use_indexes? do
-      rand_ints(li, weights, opts)
+  def rand(li, weights), do: rand(li, weights, [])
+  def rand(li, weight, opts) when is_map(weight), do: rand(li, [weight], opts)
+  def rand(li, weights, opts) do
+    opts = Keyword.merge(@default_opts, opts)
+    weights = if Keyword.get(opts, :index) do
+      weights
     else
-      idx_li = Enum.with_index(li)
-      int_map = Enum.map(idx_li, fn {v, idx} -> {idx, v} end) |> Enum.into(%{})
-      int_li = Map.keys(int_map)
-      idx = rand_ints(int_li, weights, opts)
-      Map.get(int_map, idx)
+      convert_weights_to_indices(li, weights)
     end
+
+    idx_li = Enum.with_index(li)
+    int_map = Map.new(idx_li, fn {v, idx} -> {idx, v} end)
+    int_li = Map.keys(int_map)
+    idx = rand_ints(int_li, weights, opts)
+    Map.get(int_map, idx)
+  end
+
+  defp convert_weights_to_indices(li, weights) do
+    Enum.map(weights, fn w -> 
+      t = Enum.find_index(li, &(&1 == w.target))
+      Map.put(w, :target, t)
+    end)
   end
 
   defp rand_ints(li, weights, opts) do
