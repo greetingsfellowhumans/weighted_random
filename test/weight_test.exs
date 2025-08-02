@@ -117,7 +117,7 @@ defmodule WeightedRandom.WeightTest do
 
   end
 
-  def zip_curves(li1, li2, range) do
+  defp zip_curves(li1, li2, range) do
     Enum.map(range, fn n ->
       in_count = Enum.find_value(li1, fn %{n: ln, count: count} -> if n == ln, do: count end) || 0
       out_count = Enum.find_value(li2, fn %{n: ln, count: count} -> if n == ln, do: count end) || 0
@@ -129,14 +129,26 @@ defmodule WeightedRandom.WeightTest do
     end)
   end
 
-  def parse_curve(li) do
+  defp parse_curve(li) do
     li
       |> Enum.frequencies_by(&(&1))
       |> Enum.sort_by(fn {_n, count} -> count end)
       |> Enum.map(fn {n, count} ->
       %{n: n, count: count, prod: n * count}
     end)
+  end
 
+  test "non integers" do
+    :rand.seed(:exsss, {100, 101, 102})
+    idx = 10
+    alpha = "abcdefghijklmnopqrstuvwxyz"
+    range = String.split(alpha, "", trim: true)
+    top_result = Stream.repeatedly(fn -> WeightedRandom.rand(range, %{target: idx, weight: 10}) end) |> Enum.take(10)
+      |> Enum.frequencies()
+      |> Enum.sort_by(fn {_, c} ->  c end, :desc)
+      |> List.first()
+      |> elem(0)
+    assert top_result == String.at(alpha, idx)
   end
 
 end

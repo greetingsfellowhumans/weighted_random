@@ -29,40 +29,6 @@ And this is only using a linear curve. You could also pass in something like:
 
 Which will change how much of a boost goes to the surrounding values caught in the radius.
 
-## Allowed Curve Types
-
-```elixir
-:linear (default)
-:ease
-:ease_in
-:ease_out
-:ease_in_out
-:ease_in_quad
-:ease_in_cubic
-:ease_in_quart
-:ease_in_quint
-:ease_in_sine
-:ease_in_expo
-:ease_in_circ
-:ease_in_back
-:ease_out_quad
-:ease_out_cubic
-:ease_out_quart
-:ease_out_quint
-:ease_out_sine
-:ease_out_expo
-:ease_out_circ
-:ease_out_back
-:ease_in_out_quad
-:ease_in_out_cubic
-:ease_in_out_quart
-:ease_in_out_quint
-:ease_in_out_sine
-:ease_in_out_expo
-:ease_in_out_circ
-:ease_in_out_back
-```
-
 ## Examples
 
     iex> # You won't need this. It's only necessary for consistent test results.
@@ -90,7 +56,8 @@ Which will change how much of a boost goes to the surrounding values caught in t
     [29, 35, 27, 23, 25, 23, 24, 17, 23, 27]
     iex>
     iex> # Wow, 8 out of 10 values fall within that radius!
-    iex> # And remember, you can pass the :curve option to adjust how the weight is spread out to neighbours.
+    iex> # And remember, you can pass the :curve option to adjust how the weight
+    iex> # is spread out to neighbours.
     iex>
     iex> # We are not limited to integers
     iex> # (Remember it is based off index)
@@ -106,3 +73,5 @@ Which will change how much of a boost goes to the surrounding values caught in t
     iex> weights = [weight1, weight2]
     iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
     [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
+    iex> # Did you catch that ease_in_sine curve!?
+    iex> By default, radius uses a linear curve, but you can change it. See Weight typespec for details.
