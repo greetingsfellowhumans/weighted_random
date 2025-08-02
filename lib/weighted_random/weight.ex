@@ -49,7 +49,7 @@ defmodule WeightedRandom.Weight do
 
   def generate_empty_neighbours(%{target: t1, radius: r} = _weight) do
     right = Range.new(t1 + 1, t1 + r) |> Enum.map(&(new(%{target: &1})))
-    left = Range.new(t1 - 1, t1 - r) |> Enum.map(&(new(%{target: &1})))
+    left = Range.new(t1 - 1, t1 - r, -1) |> Enum.map(&(new(%{target: &1})))
     List.flatten(right ++ left)
     |> Enum.sort_by(&(&1.target))
   end
