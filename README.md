@@ -5,7 +5,7 @@
 ```elixir
 def deps do
   [
-    {:weighted_random, "~> 0.3.0"}
+    {:weighted_random, "~> 0.4.2"}
   ]
 end
 ```
@@ -41,9 +41,56 @@ iex> Enum.take(s, 10)
 [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
 ```
 
-As a visual aid, I think of it like simulating gravity in spacetime.
+## Visual example
 
-![Simulate Gravity](https://upload.wikimedia.org/wikipedia/commons/f/f3/Schwarzchild-metric.jpg)
+Here I demonstrate picking 10_000 random numbers, and count how many times each
+number came up.
 
-For more details:
-[Hex Docs](https://hexdocs.pm/weighted_random/WeightedRandom.html)
+```elixir
+range = 1..100
+target = 45
+weight = 15
+radius = 25
+```
+
+### Enum.random(1..100)
+
+<img width="441" height="259" alt="Image" src="https://github.com/user-attachments/assets/cd37e0ed-f327-4351-ab04-4bc574b25453" />
+
+### Ease In
+
+<img width="483" height="269" alt="Image" src="https://github.com/user-attachments/assets/d0f505a1-d742-41bc-8710-08d4fa96a253" />
+
+### Ease Out
+
+<img width="473" height="244" alt="Image" src="https://github.com/user-attachments/assets/e91e7161-0703-411a-a403-4b1389f23a9b" />
+
+## Dice
+
+WeightedRandom also includes a Dice rolling module.
+
+```elixir
+iex> :rand.seed(:exsss, {100, 231, 302})
+iex> import WeightedRandom.Dice
+iex> d6 = ~d{6}
+iex> d6.total
+6
+iex> d6 = Dice.roll(d6)
+iex> d6.total
+3
+iex> # You might know this as 4d8+1.
+iex> d8s =  ~d{4, 8, 1}
+iex> d8s.total
+27
+iex> d8s = Dice.roll(d8s)
+iex> d8s.total
+15
+iex> mixed_dice = Dice.merge_dice([d6, d8s])
+iex> mixed_dice.total == d6.total + d8s.total
+true
+iex> heavy_d4 = Dice.add_weight(~d{4}, %{weight: 400, target: 4})
+iex> heavy_d4.total == 4
+iex> mixed_dice = Dice.merge_dice(mixed_dice, heavy_d4)
+iex> mixed_dice.total
+3 + 15 + 4
+```

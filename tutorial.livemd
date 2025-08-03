@@ -5,7 +5,7 @@
 ```elixir
 Mix.install(
   [
-    {:weighted_random, "~> 0.4.0"},
+    {:weighted_random, "~> 0.4.2"},
     {:vega_lite, "~> 0.1.6"},
     {:kino_vega_lite, "~> 0.1.11"},
   ]
