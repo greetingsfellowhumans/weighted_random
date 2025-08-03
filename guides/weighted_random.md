@@ -1,15 +1,18 @@
-## Weighted Random Guide
+# Weighted Random Guide
 
-Sometimes random is *too* random. Use this to add a bias toward a certain value (or values)
+Sometimes random is *too* random. Use this to add a bias toward a
+certain value (or values)
 Also supports such values impacting their neighbours
 
 Not intended to be cryptographically secure.
-Also not nearly as performant as a simple Enum.random/1, so consider whether you actually need this.
+Also not nearly as performant as a simple Enum.random/1, so consider whether
+you actually need this.
 
 Takes a list or range of values, and another list of weights.
 
 Every value in the range automatically gets a weight of 1.
-When you pass in `%{target: 25, weight: 2}` this is actually ADDING 2 to the total number of 'votes' that 25 gets.
+When you pass in `%{target: 25, weight: 2}` this is actually ADDING 2 to the
+total number of 'votes' that 25 gets.
 
 And when you add a radius: Now the surrounding values also get a boost.
 
@@ -27,41 +30,8 @@ And this is only using a linear curve. You could also pass in something like:
 
 `%{target: 10, weight: 10, radius: 3, curve: :ease_out}`
 
-Which will change how much of a boost goes to the surrounding values caught in the radius.
-
-## Allowed Curve Types
-
-```elixir
-:linear (default)
-:ease
-:ease_in
-:ease_out
-:ease_in_out
-:ease_in_quad
-:ease_in_cubic
-:ease_in_quart
-:ease_in_quint
-:ease_in_sine
-:ease_in_expo
-:ease_in_circ
-:ease_in_back
-:ease_out_quad
-:ease_out_cubic
-:ease_out_quart
-:ease_out_quint
-:ease_out_sine
-:ease_out_expo
-:ease_out_circ
-:ease_out_back
-:ease_in_out_quad
-:ease_in_out_cubic
-:ease_in_out_quart
-:ease_in_out_quint
-:ease_in_out_sine
-:ease_in_out_expo
-:ease_in_out_circ
-:ease_in_out_back
-```
+Which will change how much of a boost goes to the surrounding values caught
+in the radius.
 
 ## Examples
 
@@ -85,12 +55,14 @@ Which will change how much of a boost goes to the surrounding values caught in t
     iex> # Let's play with a radius!
     iex> range = 1..50
     iex> weights = [%{target: 25, weight: 20, radius: 5}]
-    iex> # Here, the radius of 5 means that extra weight is ALSO given to the 5 values on either side of 25. I.e.: 20..24 and 26..30
+    iex> # Here, the radius of 5 means that extra weight is ALSO given to the 5
+    iex> # values on either side of 25. I.e.: 20..24 and 26..30
     iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
     [29, 35, 27, 23, 25, 23, 24, 17, 23, 27]
     iex>
     iex> # Wow, 8 out of 10 values fall within that radius!
-    iex> # And remember, you can pass the :curve option to adjust how the weight is spread out to neighbours.
+    iex> # And remember, you can pass the :curve option to adjust how the weight
+    iex> # is spread out to neighbours.
     iex>
     iex> # We are not limited to integers
     iex> # (Remember it is based off index)
@@ -106,3 +78,6 @@ Which will change how much of a boost goes to the surrounding values caught in t
     iex> weights = [weight1, weight2]
     iex> Stream.repeatedly(fn -> rand(range, weights, index: false) end) |> Enum.take(10)
     [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
+    iex> # Did you catch that ease_in_sine curve!?
+    iex> By default, radius uses a linear curve, but you can change it. 
+    iex> See Weight typespec for details.

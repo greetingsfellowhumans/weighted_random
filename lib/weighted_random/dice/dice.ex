@@ -2,10 +2,20 @@ defmodule WeightedRandom.Dice do
   alias WeightedRandom.Die
   alias WeightedRandom.Dice
 
+  @enforce_keys [
+    :dice, :modifier, :subtotal, :total
+  ]
   defstruct dice: [],
             modifier: 0,
             subtotal: 0,
             total: 0
+
+  @type t :: %__MODULE__{
+    dice: list(%WeightedRandom.Die{}),
+    modifier: integer(),
+    total: integer(),
+    subtotal: integer(),
+  }
 
   @doc """
   Directly create a Dice struct.

@@ -1,5 +1,9 @@
 defmodule WeightedRandom.Weight do
   @moduledoc false
+  @type curve :: :linear | :ease | :ease_in | :ease_out | :ease_in_out | :ease_in_quad | :ease_in_cubic | :ease_in_quart | :ease_in_quint | :ease_in_sine | :ease_in_expo | :ease_in_circ | :ease_in_back | :ease_out_quad | :ease_out_cubic | :ease_out_quart | :ease_out_quint | :ease_out_sine | :ease_out_expo | :ease_out_circ | :ease_out_back | :ease_in_out_quad | :ease_in_out_cubic | :ease_in_out_quart | :ease_in_out_quint | :ease_in_out_sine | :ease_in_out_expo | :ease_in_out_circ | :ease_in_out_back
+  @enforce_keys [
+    :target,
+  ]
   defstruct [
     :target,
     internal_weight: 1,
@@ -8,6 +12,16 @@ defmodule WeightedRandom.Weight do
     curve: :linear,
     data_type: :integer
   ]
+  @type t :: %__MODULE__{
+    target: any(),
+    internal_weight: integer(),
+    total_weight: integer(),
+    radius: integer(),
+    curve: curve(),
+    data_type: atom()
+  }
+
+
 
   def new(%{target: target} = opts, _global_opts \\ []) do
     weight = Map.get(opts, :weight, 1)
@@ -49,7 +63,7 @@ defmodule WeightedRandom.Weight do
 
   def generate_empty_neighbours(%{target: t1, radius: r} = _weight) do
     right = Range.new(t1 + 1, t1 + r) |> Enum.map(&(new(%{target: &1})))
-    left = Range.new(t1 - 1, t1 - r) |> Enum.map(&(new(%{target: &1})))
+    left = Range.new(t1 - 1, t1 - r, -1) |> Enum.map(&(new(%{target: &1})))
     List.flatten(right ++ left)
     |> Enum.sort_by(&(&1.target))
   end

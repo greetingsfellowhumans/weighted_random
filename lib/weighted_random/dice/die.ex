@@ -1,9 +1,15 @@
 defmodule WeightedRandom.Die do
   @moduledoc false
+  @enforce_keys [:sides, :weights, :result]
   defstruct sides: 6,
             weights: [],
             result: nil
 
+  @type t :: %__MODULE__{
+    sides: integer(),
+    weights: list(),
+    result: any()
+  }
   def new(body, _opts \\ []) do
     struct(__MODULE__, body)
     |> roll()
