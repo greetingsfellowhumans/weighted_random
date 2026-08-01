@@ -2,10 +2,21 @@
 
 ## Installation
 
+For older versions of elixir (before 15) and old OTP (before 25)
+
 ```elixir
 def deps do
   [
     {:weighted_random, "~> 0.4.2"}
+  ]
+end
+```
+
+For newer projects
+```elixir
+def deps do
+  [
+    {:weighted_random, "~> 0.5.0"}
   ]
 end
 ```
@@ -16,7 +27,6 @@ Sometimes random is *too* random. Use this to add a bias toward a
 certain value (or values)
 Also supports such values impacting their neighbours
 
-Not intended to be cryptographically secure.
 Also not nearly as performant as a simple Enum.random/1, so consider whether
 you actually need this.
 

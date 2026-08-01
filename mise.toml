@@ -1,0 +1,3 @@
+[tools]
+elixir = "1.17.0-otp-27"
+erlang = { version = "27.0", install_env = { KERL_CONFIGURE_OPTIONS = "--without-javac" } }

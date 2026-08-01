@@ -4,15 +4,20 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "0.4.2",
-      elixir: "~> 1.6",
+      version: "1.0.0",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       description: description(),
       package: package(),
+      cli: cli(),
       deps: deps(),
       docs: docs(),
       source_url: "https://github.com/greetingsfellowhumans/weighted_random"
     ]
+  end
+
+  defp cli() do
+    [preferred_cli_env: ["test.watch": :test]]
   end
 
   defp docs() do
@@ -59,7 +64,7 @@ defmodule WeightedRandom.MixProject do
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
-      {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false}
+      {:mix_test_interactive, "~> 5.1", only: [:dev, :test], runtime: false}
     ]
   end
 end
