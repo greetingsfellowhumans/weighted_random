@@ -28,7 +28,7 @@ defmodule WeightedRandom do
   """
   def rand(li, weights), do: rand(li, weights, [])
   def rand(li, weight, opts) when is_map(weight), do: rand(li, [weight], opts)
-  def rand(li, weights, opts) do
+  def rand(li, weights, opts) when is_list(li) or is_struct(li, Stream) or is_struct(li, Range) do
     opts = Keyword.merge(@default_opts, opts)
     weights = if Keyword.get(opts, :index) do
       weights
