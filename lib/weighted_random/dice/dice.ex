@@ -32,11 +32,11 @@ defmodule WeightedRandom.Dice do
       iex> d = ~d{4, 6, 1} # Equal to 4d6+1 in standard dice notation
       iex> [die1 | _] = d.dice
       iex> die1
-      %WeightedRandom.Die{sides: 6, weights: [], result: 2}
+      %WeightedRandom.Die{sides: 6, weights: [], result: 6}
       iex> d.subtotal
-      10
+      13
       iex> d.total
-      11
+      14
   """
   def sigil_d(str, _opts \\ []) do
     {quantity, sides, modifier} =
@@ -64,9 +64,9 @@ defmodule WeightedRandom.Dice do
       iex> :rand.seed(:exsss, {200, 301, 402})
       iex> dice = ~d{2, 12}
       iex> dice.total
-      8
+      18
       iex> Dice.roll(dice).total
-      16
+      13
 
   """
   def roll(d) do
@@ -101,15 +101,15 @@ defmodule WeightedRandom.Dice do
       iex> :rand.seed(:exsss, {205, 301, 402})
       iex> d = ~d{10, 20} 
       iex> Enum.map(d.dice, &(&1.result))
-      [17, 10, 1, 16, 17, 15, 11, 16, 12, 3]
+      [19, 4, 19, 15, 20, 18, 8, 17, 1, 2]
       iex> d.total
-      118
-      iex> d = Dice.add_weight(d, [%{target: 2, weight: 25}])
+      123
+      iex> d = Dice.add_weight(d, [%{target: 2, weight: 50}])
       iex> d = Dice.roll(d)
       iex> Enum.map(d.dice, &(&1.result))
-      [2, 2, 2, 2, 3, 2, 2, 2, 18, 6]
+      [8, 12, 2, 2, 2, 12, 2, 2, 2, 2]
       iex> d.total
-      41
+      46
   """
   def add_weight(dice, weight) do
     dices = Enum.map(dice.dice, fn die -> Die.add_weight(die, weight) end)

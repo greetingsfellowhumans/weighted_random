@@ -6,15 +6,21 @@ defmodule WeightedRandom.WeightTest do
   test "Weight struct gets list of affected neighbours" do
     weight = new(%{target: 10, weight: 10, radius: 3})
     [t8, t9, t11, t12] = create_side_effect_weights(weight)
+                         |> Enum.map(fn w -> Map.update!(w, :total_weight, &round/1) end)
 
     assert match?(%{target: 8, total_weight: 3}, t8)
     assert match?(%{target: 9, total_weight: 7}, t9)
     assert match?(%{target: 11, total_weight: 7}, t11)
     assert match?(%{target: 12, total_weight: 3}, t12)
 
+    weights = expand_weights([weight])
+              |> Enum.map(fn w -> Map.update!(w, :total_weight, &round/1) end)
+    assert Enum.count(weights) == 5
+
 
     weight = new(%{target: 10, weight: 10, radius: 2})
     [t9, t11] = create_side_effect_weights(weight)
+                |> Enum.map(fn w -> Map.update!(w, :total_weight, &round/1) end)
 
     assert match?(%{target: 9, total_weight: 5}, t9)
     assert match?(%{target: 11, total_weight: 5}, t11)
@@ -22,6 +28,7 @@ defmodule WeightedRandom.WeightTest do
 
     weight = new(%{target: 10, weight: 5, radius: 3, curve: :ease_out})
     [t8, t9, t11, t12] = create_side_effect_weights(weight)
+                         |> Enum.map(fn w -> Map.update!(w, :total_weight, &round/1) end)
 
     assert match?(%{target: 8, total_weight: 1}, t8)
     assert match?(%{target: 9, total_weight: 3}, t9)
@@ -31,6 +38,7 @@ defmodule WeightedRandom.WeightTest do
 
     weight = new(%{target: 10, weight: 5, radius: 3, curve: :ease_in})
     [t8, t9, t11, t12] = create_side_effect_weights(weight)
+                         |> Enum.map(fn w -> Map.update!(w, :total_weight, &round/1) end)
 
     assert match?(%{target: 8, total_weight: 2}, t8)
     assert match?(%{target: 9, total_weight: 4}, t9)
@@ -70,8 +78,8 @@ defmodule WeightedRandom.WeightTest do
     r = 10
     w1 = 10
 
-    assert 8 == weight_at_location(t1, t2, r, w1, :linear)
-    assert 7 == weight_at_location(t1, t2, r, w1, :ease_out)
+    assert 8 == weight_at_location(t1, t2, r, w1, :linear) |> round()
+    assert 7 == weight_at_location(t1, t2, r, w1, :ease_out) |> round()
 
   end    
 
@@ -98,12 +106,13 @@ defmodule WeightedRandom.WeightTest do
     weight_out = Map.put(weight, :curve, :ease_out)
 
     :rand.seed(:exsss, {100, 101, 102})
-    ease_in = Stream.repeatedly(fn -> WeightedRandom.rand(range, weight_in, index: false) end) |> Enum.take(take)
-      |> parse_curve()
+    opts = [index: false, take: take, tag: true]
+    ease_in = WeightedRandom.rand(range, weight_in, opts)
+              |> parse_curve()
 
     :rand.seed(:exsss, {100, 101, 102})
-    ease_out = Stream.repeatedly(fn -> WeightedRandom.rand(range, weight_out, index: false) end) |> Enum.take(take)
-      |> parse_curve()
+    ease_out = Stream.repeatedly(fn -> WeightedRandom.rand(range, weight_out, opts) end) 
+               |> parse_curve()
     
 
     zips = zip_curves(ease_in, ease_out, range)
@@ -143,13 +152,13 @@ defmodule WeightedRandom.WeightTest do
     alpha = "abcdefghijklmnopqrstuvwxyz"
     target = "j"
     weights = %{target: target, weight: 21, radius: 5}
-    opts = [index: false]
+    opts = [index: false, take: 100]
     range = String.split(alpha, "", trim: true)
-    top_result = Stream.repeatedly(fn -> WeightedRandom.rand(range, weights, opts) end) |> Enum.take(100)
-      |> Enum.frequencies()
-      |> Enum.sort_by(fn {_, c} ->  c end, :desc)
-      |> List.first()
-      |> elem(0)
+    top_result = WeightedRandom.rand(range, weights, opts)
+                 |> Enum.frequencies()
+                 |> Enum.sort_by(fn {_, c} ->  c end, :desc)
+                 |> List.first()
+                 |> elem(0)
     assert top_result == target
   end
 

@@ -1,2 +1,6 @@
 [env]
 CC = 'gcc'
+
+[tools]
+elixir = "1.20.2"
+erlang = { version = "29.0.4", install_env = { KERL_CONFIGURE_OPTIONS = "--without-javac" } }

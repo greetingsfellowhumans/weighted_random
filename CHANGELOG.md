@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Dropped support for older versions of erlang/elixir.
   Minimum supported OTP = 27.0.0
   Minimum supported elixir = 17.0.0
+- Dropped `:internal_weight` from `%WeightedRandom.Weighted{}` struct, as it
+  was never actually used and just caused confusion.
+- When calculating radius, stop rounding the floats. It made sense with a single
+  backend that was extremely resource intensive and needed to save bits. But it
+  does not make sense as a platform that needs to provide accurate data.
 
 ## [0.4.2] - 2025-08-04
 
