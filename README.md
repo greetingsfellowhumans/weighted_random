@@ -13,12 +13,20 @@ end
 ```
 
 For newer projects
+
 ```elixir
+# mix.exs
 def deps do
   [
-    {:weighted_random, "~> 0.5.0"}
+    {:weighted_random, "~> 1.0.0"}
   ]
 end
+
+# Optionally if you want to use your own algorithm:
+# config.exs
+config :weighted_random,
+  backend: MyApp.CustomBackEnd
+
 ```
 
 ## Introduction
