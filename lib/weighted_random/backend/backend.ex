@@ -5,6 +5,16 @@ defmodule WeightedRandom.Backend do
   2. The custom Backend module exposes the discrete probability distribution algorithm.
   """
 
+  @type fraction() :: {numerator :: integer(), denominator :: integer()}
+  @type fractions() :: list(fraction())
+  @type percentage() :: float()
+  @type index() :: integer()
+  @type indices() :: list(index())
+  @type probability() :: fraction() | percentage()
+  @type opts() :: keyword()
+  @type table() :: struct()
+
+
   @doc ~s"""
   `weights` is a list of floats which, if summed, would equal exactly 1.0. Each float represents the probability of being selected in the random sample.
 
@@ -12,7 +22,7 @@ defmodule WeightedRandom.Backend do
 
   This function must return some kind of struct that will later be passed into `take/2`.
   """
-  @callback preprocess(probabilities :: {list(float() | {integer(), integer()}), index :: integer()}, opts :: keyword()) :: table :: struct()
+  @callback preprocess(probabilities :: list({probability(), index()}), opts()) :: table()
 
   @doc ~s"""
   Given the struct returned by `preprocess/2`, return a list of random indices equal to `count`.

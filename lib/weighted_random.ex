@@ -1,13 +1,13 @@
 defmodule WeightedRandom do
-  #alias WeightedRandom.Weight
 
   @default_opts [
     take: nil,
     index: true,
+    with_index: true,
     precision: 3,
     probability_type: :float,
   ]
-  @default_backend WeightedRandom.Backend.RuntimeList
+  @default_backend WeightedRandom.Backend.WalkerAlias
 
   @doc ~s"""
   Given a list of items and a list of weights, map the list of items into a list of floats which sum to 1.0 (disregarding rounding errors)
@@ -40,10 +40,12 @@ defmodule WeightedRandom do
 
 
   ## Opts
-  * `:take` [integer | nil]: `nil`. If used, then instead of returning one random value, will return a list of random value with size equal to take.
   * `:backend` [module]: WeightedRandom.Backend.RuntimeList
+  * `:index` [boolean]: true. Whether the `:target` of a `%WeightedRandom.Weight{}` points at an index of the outcomes (if true), or at the actual value of one of the outcomes (if false).
+  * `:with_index` [boolean]: true. set by backend. Determines whether to call `Enum.with_index` on the list of probabilities before preprocessing.
   * `:probability_type` [:float | :fraction]: :float. To avoid floating point precision issues, you can use :fraction so that the probabilities are all tuples of `{numenator :: integer(), denominator :: integer()}` In which they all have the same denominator which equals the sum of all numinators.
   * `:precision` [integer]: 3. Only applies when the `probability_type` is `:float`. Probability floats will be rounded to this number of decimal places.
+  * `:take` [integer | nil]: `nil`. If used, then instead of returning one random value, will return a list of random value with size equal to take.
 
   """
   def rand(outcomes, weights), do: rand(outcomes, weights, [])
@@ -61,7 +63,12 @@ defmodule WeightedRandom do
     end
 
     p = get_probabilities(outcomes, weights, opts)
-        |> Enum.with_index()
+    p = if Keyword.get(opts, :with_index) do
+      Enum.with_index(p)
+    else
+      p
+    end
+
 
     table = WeightedRandom.Backend.preprocess(backend, p, opts)
     case Keyword.get(opts, :take) do
@@ -74,7 +81,7 @@ defmodule WeightedRandom do
     end
   end
 
-  defp convert_index_to_outcome(indices, outcomes) when is_list(indices) do
+  defp convert_index_to_outcome(indices, outcomes) when is_list(indices)  do
     Enum.map(indices, &convert_index_to_outcome(&1, outcomes))
   end
   defp convert_index_to_outcome(index, outcomes) when is_integer(index) do

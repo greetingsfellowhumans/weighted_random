@@ -14,7 +14,33 @@ defmodule WeightedRandom.DiceTest do
       Stream.repeatedly(fn -> Die.roll(die).result end)
       |> Enum.take(25)
 
-    assert rolls == [4, 2, 2, 5, 5, 4, 5, 6, 5, 5, 5, 5, 6, 4, 4, 3, 4, 6, 6, 5, 5, 4, 6, 5, 5]
+    assert rolls == [
+              1,
+              2,
+              4,
+              5,
+              1,
+              5,
+              4,
+              4,
+              5,
+              5,
+              1,
+              5,
+              3,
+              5,
+              5,
+              4,
+              6,
+              6,
+              5,
+              6,
+              5,
+              5,
+              5,
+              4,
+              6
+            ]
   end
 
   test "~d works" do

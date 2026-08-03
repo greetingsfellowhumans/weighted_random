@@ -45,7 +45,7 @@ defmodule WeightedRandom.MixProject do
     [
       # These are the default files included in the package
       files: ["lib", "mix.exs", "README*"],
-      maintainers: ["Aaron Price"],
+      maintainers: ["greetingsfellowhumans"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/greetingsfellowhumans/weighted_random"}
     ]
@@ -61,6 +61,8 @@ defmodule WeightedRandom.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:wam, "~> 0.1.0"},
+      {:benchee, "~> 1.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
