@@ -10,7 +10,7 @@ defmodule WeightedRandom do
   @default_backend WeightedRandom.Backend.WalkerAlias
 
   @doc ~s"""
-  Given a list of items and a list of weights, map the list of items into a list of floats which sum to 1.0 (disregarding rounding errors)
+  Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
   """
   defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
 
@@ -40,7 +40,7 @@ defmodule WeightedRandom do
 
 
   ## Opts
-  * `:backend` [module]: WeightedRandom.Backend.RuntimeList
+  * `:backend` [module]: WeightedRandom.Backend.WalkerAlias. We also provide WeightedRandom.Backend.Linear which can have slightly better performance if you are not taking that many samples. Worse performance in most other cases.
   * `:index` [boolean]: true. Whether the `:target` of a `%WeightedRandom.Weight{}` points at an index of the outcomes (if true), or at the actual value of one of the outcomes (if false).
   * `:with_index` [boolean]: true. set by backend. Determines whether to call `Enum.with_index` on the list of probabilities before preprocessing.
   * `:probability_type` [:float | :fraction]: :float. To avoid floating point precision issues, you can use :fraction so that the probabilities are all tuples of `{numenator :: integer(), denominator :: integer()}` In which they all have the same denominator which equals the sum of all numinators.

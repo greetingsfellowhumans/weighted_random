@@ -9,13 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Become backend-agnostic so that any any algorithm can be swapped in.
-  Whether Walker-Vose Alias method, or FLDR, or anything else, as long as it
-  can implement the WeightedRandom.Backend behaviour.
-
 - Moved cubic bezier module to a separate hex package.
 
 ## [1.0.0] - 2026-07-31
+
+This release is a massive overhaul, that improves performance and flexibility while *mostly* remaining backwards compatible. See section on breaking changes.
+
+The previous algorithm was incredibly slow at scale (it was just my naïve attempt while I learned programming).
+WeightedRandom is now algorithm-agnostic! Rather than one hard-coded algo, you can easily switch between backends. The new default one is the excellent Walker Alias Method, via the `wam` hex package. You can still use the original by passing `[backend: WeightedRandom.Backend.Linear]` as an option to `WeightedRandom.rand/3`.
+
+You can also use your own algorithm by passing in any module which `use`s `WeightedRandom.Backend` and implements the behaviour. This way, one can create a new hex package as a plugin, or just make a pull request here.
 
 ### BREAKING CHANGES
 
@@ -26,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   was never actually used and just caused confusion.
 - When calculating radius, stop rounding the floats. It made sense with a single
   backend that was extremely resource intensive and needed to save bits. But it
-  does not make sense as a platform that needs to provide accurate data.
+  does not make sense as a platform that needs to provide an accurate api.
 
 ## [0.4.2] - 2025-08-04
 

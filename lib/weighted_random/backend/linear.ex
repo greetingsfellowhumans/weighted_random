@@ -1,4 +1,4 @@
-defmodule WeightedRandom.Backend.RuntimeList do
+defmodule WeightedRandom.Backend.Linear do
   use WeightedRandom.Backend
 
   defstruct [
