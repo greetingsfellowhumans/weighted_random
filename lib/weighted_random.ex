@@ -1,4 +1,21 @@
 defmodule WeightedRandom do
+  @moduledoc ~s"""
+
+  ## Usage
+
+  ```elixir
+  table = WeightedRandom.preprocess(0..100, [%{target: 25, weight: 50, radius: 10}])
+  [n1, n2, n3, n4] = WeightedRandom.take(table, 4)
+  ```
+
+  Alternately, if you care less about performance, you can do it all at once:
+  ```elixir
+  [n1, n2, n3, n4] = WeightedRandom.rand(0..100, [%{target: 25, weight: 50, radius: 10}], [take: 4])
+  ```
+
+  But please note the algorithm is optimized to take a long time ( O(n) ) during preprocessing, in order to be very fast during the sampling step ( O(1) ).
+  So it will be far better to preprocess once, and take many times. `rand/3` preprocesses EVERY time it is called.
+  """
 
   @default_opts [
     take: nil,
@@ -13,6 +30,34 @@ defmodule WeightedRandom do
   Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
   """
   defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
+
+  @doc ~s"""
+  For maximum performance, especially at scale, do this:
+  """
+  def preprocess(outcomes, weights), do: preprocess(outcomes, weights, [])
+  def preprocess(outcomes, weight, opts) when is_map(weight), do: preprocess(outcomes, [weight], opts)
+  def preprocess(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
+    opts = Keyword.merge(@default_opts, opts)
+    backend = get_backend(opts)
+    backend_opts = backend.options()
+    opts = Keyword.merge(opts, backend_opts)
+
+    weights = if Keyword.get(opts, :index) do
+      weights
+    else
+      convert_weights_to_indices(outcomes, weights)
+    end
+
+    p = get_probabilities(outcomes, weights, opts)
+    p = if Keyword.get(opts, :with_index) do
+      Enum.with_index(p)
+    else
+      p
+    end
+
+
+    WeightedRandom.Backend.preprocess(backend, p, opts)
+  end
 
 
   @doc ~s"""
