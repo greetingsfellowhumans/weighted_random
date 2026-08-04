@@ -12,6 +12,9 @@ defmodule WeightedRandomTest do
       table = WeightedRandom.preprocess(0..100, [%{target: 25, weight: 50, radius: 10}], [backend: WeightedRandom.Backend.Linear])
       [n1, n2, n3, n4] = WeightedRandom.take(table, 4)
       assert [n1, n2, n3, n4] == [46, 20, 25, 22]
+
+      single = WeightedRandom.take(table)
+      assert is_integer(single)
     end
   end
 end

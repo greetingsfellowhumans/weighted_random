@@ -1,61 +1,32 @@
 # WeightedRandom
 
-## Installation
-
-For older versions of elixir (before 15) and old OTP (before 25)
-
-```elixir
-def deps do
-  [
-    {:weighted_random, "~> 0.4.2"}
-  ]
-end
-```
-
-For newer projects
-
-```elixir
-# mix.exs
-def deps do
-  [
-    {:weighted_random, "~> 1.0.0"}
-  ]
-end
-
-# Optionally if you want to use your own algorithm:
-# config.exs
-config :weighted_random,
-  backend: MyApp.CustomBackEnd
-
-```
-
 ## Introduction
 
-Sometimes random is *too* random. Use this to add a bias toward a
-certain value (or values)
-Also supports such values impacting their neighbours
+Sometimes random is *too* random. The WeightedRandom package is a framework for simulating bias in many different ways.
 
-Also not nearly as performant as a simple Enum.random/1, so consider whether
-you actually need this.
+It is high performance using the Walker-Alias Method by default, but with the ability to easily use plugins or your own algorithm instead. See [WeightedRandom.Backend](lib/weighted_random/backend/backend.ex)
+It is customizable, allowing you to start with a list (or range) of possible outcomes, and assume they are all equal weight, until weights are added.
+
+Adding weights is simple and intuitive, allowing the target index to not only have more weight, but to also give more weight to the neighbouring indices (within radius).
 
 ## Quick Example
 
 ```elixir
-iex> import WeightedRandom
+iex> alias WeightedRandom, as: WR
 iex> # Pick a random number between 1..10, but 4 is 35x more likely than
 iex. # any other given number
 iex> range = 1..10
-iex> weight1 = %{target: 4, weight: 35}
-iex> rand(range, weight1)
+iex> weights = [ %{target: 4, weight: 35} ]
+iex> table = WR.preprocess(range, weights)
+iex> WR.take(table)
 4
-iex> # Multiple weights are supported
 iex> # You can even set a radius so that neighbouring values also get
 iex> # some added weight
 iex> weight1 = %{target: 7, weight: 15, radius: 4, curve: :ease_in_sine}
 iex> weight2 = %{target: 1, weight: 35}
 iex> weights = [weight1, weight2]
-iex> s = Stream.repeatedly(fn -> rand(range, weights, index: false) end)
-iex> Enum.take(s, 10)
+iex> table = WR.preprocess(range, weights, index: false)
+iex> WR.take(table, 4)
 [8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
 ```
 
@@ -82,6 +53,35 @@ radius = 25
 ### Ease Out
 
 <img width="473" height="244" alt="Image" src="https://github.com/user-attachments/assets/e91e7161-0703-411a-a403-4b1389f23a9b" />
+
+## Installation
+
+For older versions of elixir (before 1.17) and old OTP (before 27)
+
+```elixir
+def deps do
+  [
+    {:weighted_random, "~> 0.4.2"}
+  ]
+end
+```
+
+For newer projects
+
+```elixir
+# mix.exs
+def deps do
+  [
+    {:weighted_random, "~> 1.0.0-beta.0"}
+  ]
+end
+
+# Optionally if you want to use your own algorithm:
+# config.exs
+config :weighted_random,
+  backend: MyApp.CustomBackEnd
+
+```
 
 ## Dice
 

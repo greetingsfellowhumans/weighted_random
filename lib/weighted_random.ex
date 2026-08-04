@@ -54,6 +54,11 @@ defmodule WeightedRandom do
     WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
   end
 
+  def take(processed_struct) do
+    WeightedRandom.Backend.take(processed_struct, 1)
+      |> convert_index_to_outcome(processed_struct.outcomes)
+      |> List.first()
+  end
   def take(processed_struct, count) do
     WeightedRandom.Backend.take(processed_struct, count)
     |> convert_index_to_outcome(processed_struct.outcomes)
