@@ -2,12 +2,16 @@
 
 ## Introduction
 
-Sometimes random is *too* random. The WeightedRandom package is a framework for simulating bias in many different ways.
+Sometimes random is *too* random. The WeightedRandom package is a framework manipulating probability.
 
 It is high performance using the Walker-Alias Method by default, but with the ability to easily use plugins or your own algorithm instead. See [WeightedRandom.Backend](lib/weighted_random/backend/backend.ex)
-It is customizable, allowing you to start with a list (or range) of possible outcomes, and assume they are all equal weight, until weights are added.
+It is approachable, allowing you to start with a list (or range) of possible outcomes, and assume they are all equal weight, until weights are added.
+In theory, if you don't add any weights, `WeightedRandom.rand(1..10, [])` is the same as `Enum.rand(1..10)`
 
-Adding weights is simple and intuitive, allowing the target index to not only have more weight, but to also give more weight to the neighbouring indices (within radius).
+Adding [Weights] is simple yet powerful:
+
+- Add multiple weights, picking the index and it's magnitude.
+- Add a radius, affecting neighbouring indices, plus an optional bezier curve to determine how to spread out the weight.
 
 ## Quick Example
 
@@ -34,6 +38,8 @@ iex> WR.take(table, 4)
 
 Here I demonstrate picking 10_000 random numbers, and count how many times each
 number came up.
+
+Keep in mind that the target is 45. So numbers to the left of it are negative, as far as the curve is concerned. That's why an `ease-in` looks backward to the left, and normal to the right of 45.
 
 ```elixir
 range = 1..100
@@ -85,7 +91,7 @@ config :weighted_random,
 
 ## Dice
 
-WeightedRandom also includes a Dice rolling module.
+WeightedRandom also includes a [Dice] rolling module.
 
 ```elixir
 iex> :rand.seed(:exsss, {100, 231, 302})
@@ -96,7 +102,7 @@ iex> d6.total
 iex> d6 = Dice.roll(d6)
 iex> d6.total
 3
-iex> # You might know this as 4d8+1.
+iex> # You might know this as 4d8+1. or 4 x 8-sided dice, +1 to the total.
 iex> d8s =  ~d{4, 8, 1}
 iex> d8s.total
 27

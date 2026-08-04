@@ -71,12 +71,15 @@ defmodule WeightedRandom.Dice do
       20
 
   """
-  def roll(d) do
+  def roll(%__MODULE__{} = d) do
     dice = Enum.map(d.dice, &Die.roll/1)
 
     d
     |> Map.put(:dice, dice)
     |> count_dice()
+  end
+  def roll(%WeightedRandom.Die{} = d) do
+    Die.roll(d)
   end
 
   @doc """

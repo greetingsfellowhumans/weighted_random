@@ -22,7 +22,7 @@ defmodule WeightedRandom.MixProject do
 
   defp docs() do
     [
-      main: "weighted_random",
+      main: "README.md",
       extras: ["CHANGELOG.md"],
       extra_section: "GUIDES",
       extras: extras()
@@ -33,7 +33,7 @@ defmodule WeightedRandom.MixProject do
     [
       "guides/weighted_random.md",
       "guides/livebook.md",
-      "guides/dice.md"
+      "guides/DiceGuide.md"
     ]
   end
 
