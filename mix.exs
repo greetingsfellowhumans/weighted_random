@@ -38,7 +38,7 @@ defmodule WeightedRandom.MixProject do
   end
 
   defp description() do
-    "Helper functions for working with weighted random values."
+    "Fast, flexible, powerful framework for simulating weighted randomness"
   end
 
   defp package() do
