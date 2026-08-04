@@ -21,7 +21,7 @@ defmodule WeightedRandom do
     take: nil,
     index: true,
     with_index: false,
-    precision: 3,
+    precision: nil,
     probability_type: :float,
   ]
   @default_backend WeightedRandom.Backend.WalkerAlias

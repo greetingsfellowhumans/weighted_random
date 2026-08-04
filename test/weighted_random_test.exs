@@ -15,6 +15,23 @@ defmodule WeightedRandomTest do
 
       single = WeightedRandom.take(table)
       assert is_integer(single)
+
+      p = WeightedRandom.get_probabilities(0..10, [%{target: 5, weight: 50, radius: 2}], [probability_type: :fraction])
+      assert p == [
+        {1, 111.0},
+        {1, 111.0},
+        {1, 111.0},
+        {1, 111.0},
+        {26.0, 111.0},
+        {51, 111.0},
+        {26.0, 111.0},
+        {1, 111.0},
+        {1, 111.0},
+        {1, 111.0},
+        {1, 111.0}
+      ]
+      p = WeightedRandom.get_probabilities(0..10, [%{target: 5, weight: 50, radius: 2}], [probability_type: :float, precision: 2, tag: :log])
+      dbg p
     end
   end
 end

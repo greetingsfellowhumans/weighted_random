@@ -2,6 +2,11 @@ defmodule WeightedRandom.Probability do
   alias WeightedRandom.Weight
   @moduledoc false
 
+  def loggy(opts, x) do
+    if Keyword.get(opts, :tag) == :log do
+      dbg x
+    end
+  end
 
   def get_probabilities(outcomes, weights, opts) do
     weights = Weight.expand_weights(weights)
@@ -9,30 +14,38 @@ defmodule WeightedRandom.Probability do
 
     case Keyword.get(opts, :probability_type, :float) do
       :float ->
-        equal_share = get_equal_share(sum, weights)
+        equal_share = get_equal_share(sum, weights, opts)
         outcomes = List.duplicate(equal_share, sum)
         Enum.reduce(weights, outcomes, fn %{target: idx, total_weight: w}, outcomes ->
           shares = w * equal_share
-          List.update_at(outcomes, idx, &(&1 + shares))
+          List.update_at(outcomes, idx, &get_float(&1, shares, opts))
         end)
       :fraction ->
         outcomes = List.duplicate(1, sum)
         total_shares = get_total_shares(sum, weights)
         Enum.reduce(weights, outcomes, fn %{target: idx, total_weight: w}, outcomes ->
-          #shares = w * equal_share
           List.update_at(outcomes, idx, &(&1 + w))
         end)
           |> Enum.map(&{&1, total_shares})
-
     end
-
-
   end
 
+  defp get_float(outcome, shares, opts) do
+    with_precision(outcome + shares, opts)
+  end
 
-  def get_equal_share(count, expanded_weights) do
+  def get_equal_share(count, expanded_weights), do: get_equal_share(count, expanded_weights, [])
+  def get_equal_share(count, expanded_weights, opts) do
     total_shares = get_total_shares(count, expanded_weights)
-    1 / total_shares
+    with_precision(1 / total_shares, opts)
+  end
+
+  defp with_precision(f, opts) do
+    if precision = Keyword.get(opts, :precision) do
+      Float.round(f, precision)
+    else
+      f
+    end
   end
 
   defp get_total_shares(count, expanded_weights) do

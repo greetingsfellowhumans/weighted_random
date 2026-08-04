@@ -14,16 +14,15 @@ But instead of "2d12+1", you would write `~d{2, 12, 1}`
     iex> d.total
     11
 
-This is different from simply calling Enum.random/1, because it creates a persistent Dice struct which contains a `:dice` list, and some preprocessing magic which makes it extremely fast to reroll in the future with `WeightedRandom.Dice.roll/1`. Each die in the list is a persistent Die struct, that has a specific number of sides and weights.
+This is different from simply calling Enum.random/1, because it creates a persistent Dice struct which contains a `:dice` list, and some preprocessing magic which makes it extremely fast to reroll in the future with `WeightedRandom.Die.roll/1`, or if you have several dice,  `WeightedRandom.Dice.roll/1`. Each die in the list is a persistent Die struct, that has a specific number of sides and weights.
 
 So you would first define the dice, their various options, and then continue calling Dice.roll(dice) as many times as you need.
-The final value that you are looking for is under :total.
+The final value that you are looking for is under `:total`.
 
 Examples
 
 ```elixir
-    iex> :rand.seed(:exsss, {205, 301, 402})
-    iex> d = ~d{10, 20} 
+    iex> d = ~d{10, 20}
     iex> Enum.map(d.dice, &(&1.result))
     [17, 10, 1, 16, 17, 15, 11, 16, 12, 3]
     iex> d.total
