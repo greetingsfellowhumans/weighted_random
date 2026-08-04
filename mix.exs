@@ -22,8 +22,8 @@ defmodule WeightedRandom.MixProject do
 
   defp docs() do
     [
-      main: "README.md",
-      extras: ["CHANGELOG.md"],
+      main: "readme",
+      extras: ["README.md", "CHANGELOG.md"],
       extra_section: "GUIDES",
       extras: extras()
     ]
@@ -63,7 +63,7 @@ defmodule WeightedRandom.MixProject do
     [
       {:wam, "~> 0.1.0"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
-      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:mix_test_interactive, "~> 5.1", only: [:dev, :test], runtime: false}

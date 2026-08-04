@@ -31,7 +31,7 @@ defmodule WeightedRandomTest do
         {1, 111.0}
       ]
       p = WeightedRandom.get_probabilities(0..10, [%{target: 5, weight: 50, radius: 2}], [probability_type: :float, precision: 2, tag: :log])
-      dbg p
+      assert p == [0.01, 0.01, 0.01, 0.01, 0.26, 0.51, 0.26, 0.01, 0.01, 0.01, 0.01]
     end
   end
 end
