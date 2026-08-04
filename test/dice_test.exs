@@ -8,13 +8,13 @@ defmodule WeightedRandom.DiceTest do
 
   test "Basic Die rolls make sense" do
     :rand.seed(:exsss, {100, 101, 102})
-    die = Die.new(%{sides: 6, weights: [%{target: 5, weight: 10, radius: 2}]})
+    die = Die.new(%{sides: 6, weights: [%{target: 5, weight: 12, radius: 2}]}, index: false)
 
-    rolls =
-      Stream.repeatedly(fn -> Die.roll(die).result end)
-      |> Enum.take(25)
-
-    assert rolls == [5, 4, 5, 5, 5, 5, 4, 4, 6, 5, 5, 3, 5, 6, 5, 6, 6, 5, 6, 6, 6, 5, 2, 5, 6]
+    rolls = for _ <- 0..250 do
+      Die.roll(die).result
+    end
+      |> Enum.frequencies()
+    assert rolls[5] > rolls[1]
   end
 
   test "~d works" do

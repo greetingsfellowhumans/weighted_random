@@ -6,7 +6,8 @@ defmodule WeightedRandom.Weight do
   ]
   defstruct [
     :target,
-    internal_weight: 1,
+    expanded?: false,
+    #internal_weight: 1,
     total_weight: 1,
     radius: 1,
     curve: :linear,
@@ -14,7 +15,8 @@ defmodule WeightedRandom.Weight do
   ]
   @type t :: %__MODULE__{
     target: any(),
-    internal_weight: integer(),
+    expanded?: boolean(),
+    #internal_weight: integer(),
     total_weight: integer(),
     radius: integer(),
     curve: curve(),
@@ -28,7 +30,7 @@ defmodule WeightedRandom.Weight do
 
     body = %{
       target: target,
-      internal_weight: weight,
+      #internal_weight: weight,
       total_weight: weight,
     }
     opts = 
@@ -40,7 +42,30 @@ defmodule WeightedRandom.Weight do
     struct!(__MODULE__, body)
   end
 
-  def create_side_effect_weights(%{target: t1, radius: r, internal_weight: w1, curve: curve} = weight) do
+  # If non-struct maps are in the list, convert them to struct.
+  def normalize(weights) do
+    Enum.map(weights, fn 
+      %__MODULE__{} = w -> w
+      w -> new(w)
+    end)
+  end
+
+  # Given a list of weights, return the list in addition to all side effect weights.
+  def expand_weights(weights) do
+    weights
+      |> normalize()
+      |> Enum.reduce([], fn 
+      %__MODULE__{expanded?: false} = w, acc ->
+        neighbours = create_side_effect_weights(w)
+        [%{w | expanded?: true} | neighbours] ++ acc
+
+      w, acc -> 
+        [w | acc]
+      end)
+    |> Enum.sort_by(&(&1.target))
+  end
+
+  def create_side_effect_weights(%{target: t1, radius: r, total_weight: w1, curve: curve} = weight) do
     neighbours = generate_empty_neighbours(weight)
     Enum.map(neighbours, fn %{target: t2} = neighbour ->
       w2 = weight_at_location(t1, t2, r, w1, curve)
@@ -58,12 +83,12 @@ defmodule WeightedRandom.Weight do
   def weight_at_location(t1, t2, r, w1, curve \\ :linear) do
     perc = distance_perc(t1, r, t2)
     weight_perc = WeightedRandom.CubicBezier.solve(perc, curve)
-    round((1 - weight_perc) * w1)
+    (1 - weight_perc) * w1
   end
 
   def generate_empty_neighbours(%{target: t1, radius: r} = _weight) do
-    right = Range.new(t1 + 1, t1 + r) |> Enum.map(&(new(%{target: &1})))
-    left = Range.new(t1 - 1, t1 - r, -1) |> Enum.map(&(new(%{target: &1})))
+    right = Range.new(t1 + 1, t1 + r) |> Enum.map(&(new(%{target: &1, expanded?: true})))
+    left = Range.new(t1 - 1, t1 - r, -1) |> Enum.map(&(new(%{target: &1, expanded?: true})))
     List.flatten(right ++ left)
     |> Enum.sort_by(&(&1.target))
   end
@@ -76,6 +101,7 @@ defmodule WeightedRandom.Weight do
   end
 
   def split(%{target: t, total_weight: w} = _weight) do
+    w = round(w)
     Enum.map(1..w, fn _ -> t end)
   end
 
