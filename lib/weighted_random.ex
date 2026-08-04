@@ -20,7 +20,7 @@ defmodule WeightedRandom do
   @default_opts [
     take: nil,
     index: true,
-    with_index: true,
+    with_index: false,
     precision: 3,
     probability_type: :float,
   ]
@@ -49,14 +49,14 @@ defmodule WeightedRandom do
     end
 
     p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index) do
-      Enum.with_index(p)
-    else
-      p
-    end
+    p = if Keyword.get(opts, :with_index), do: Enum.with_index(p), else: p
 
+    WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+  end
 
-    WeightedRandom.Backend.preprocess(backend, p, opts)
+  def take(processed_struct, count) do
+    WeightedRandom.Backend.take(processed_struct, count)
+    |> convert_index_to_outcome(processed_struct.outcomes)
   end
 
 
@@ -115,13 +115,13 @@ defmodule WeightedRandom do
     end
 
 
-    table = WeightedRandom.Backend.preprocess(backend, p, opts)
+    processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
     case Keyword.get(opts, :take) do
        n when is_integer(n) -> 
-         WeightedRandom.Backend.take(backend, table, n)
+         WeightedRandom.Backend.take(processed_struct, n)
           |> convert_index_to_outcome(outcomes)
        nil ->
-        [idx] = WeightedRandom.Backend.take(backend, table, 1)
+        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
         convert_index_to_outcome(idx, outcomes)
     end
   end

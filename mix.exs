@@ -4,7 +4,7 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "1.0.0",
+      version: "1.0.0-alpha.0",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       description: description(),

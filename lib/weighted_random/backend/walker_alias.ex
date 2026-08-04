@@ -1,15 +1,18 @@
 defmodule WeightedRandom.Backend.WalkerAlias do
+  @moduledoc ~s"""
+  This is just a wrapper around the [WAM](https://hex.pm/packages/wam) hex package, which implements the Walker Alias Method.
+  """
   use WeightedRandom.Backend
 
   @impl true
   def options() do
-    [probability_type: :float, with_index: true]
+    [probability_type: :float, with_index: false]
   end
 
   @impl true
   def preprocess(probabilities, _opts) do
     probabilities
-      |> Enum.map(fn {prob, idx} -> {idx, prob} end)
+      |> Enum.with_index(fn element, index -> {index, element} end)
       |> WAM.new()
   end
 

@@ -2,8 +2,18 @@ defmodule WeightedRandom.Backend do
   @moduledoc ~s"""
   WeightedRandom.Backend offers a contract to all who implement it:
   1. The main WeightedRandom package presents a novel interface for generating a list of probabilities (floats that can be summed to equal exactly 1.0).
-  2. The custom Backend module exposes the discrete probability distribution algorithm.
+  2. The custom Backend module decides what to do with those probabilities once they are generated.
+
   """
+
+  @enforce_keys [:outcomes, :backend, :table]
+  defstruct [:outcomes, :backend, :table]
+
+  @type t :: %__MODULE__{
+    outcomes: list(),
+    backend: atom(),
+    table: struct()
+  }
 
   @type fraction() :: {numerator :: integer(), denominator :: integer()}
   @type fractions() :: list(fraction())
@@ -36,10 +46,15 @@ defmodule WeightedRandom.Backend do
   @optional_callbacks options: 0
 
 
-  def preprocess(backend, probabilities, opts) do
-    backend.preprocess(probabilities, opts)
+  def preprocess(backend, outcomes, probabilities, opts) do
+    table = backend.preprocess(probabilities, opts)
+    struct!(__MODULE__, %{
+      table: table,
+      backend: backend,
+      outcomes: outcomes,
+    })
   end
-  def take(backend, table, count) do
+  def take(%{backend: backend, table: table}, count) do
     backend.take(table, count)
   end
 

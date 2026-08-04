@@ -31,8 +31,10 @@ defmodule WeightedRandom.Dice do
       iex> :rand.seed(:exsss, {100, 101, 102})
       iex> d = ~d{4, 6, 1} # Equal to 4d6+1 in standard dice notation
       iex> [die1 | _] = d.dice
-      iex> die1
-      %WeightedRandom.Die{sides: 6, weights: [], result: 2}
+      iex> die1.sides
+      6
+      iex> die1.result
+      2
       iex> d.subtotal
       9
       iex> d.total
