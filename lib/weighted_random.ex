@@ -55,12 +55,21 @@ defmodule WeightedRandom do
   end
 
   def take(processed_struct) do
-    WeightedRandom.Backend.take(processed_struct, 1)
+    WeightedRandom.Backend.take(processed_struct, 1, [])
       |> convert_index_to_outcome(processed_struct.outcomes)
       |> List.first()
   end
-  def take(processed_struct, count) do
-    WeightedRandom.Backend.take(processed_struct, count)
+  def take(processed_struct, count) when is_integer(count) do
+    WeightedRandom.Backend.take(processed_struct, count, [])
+    |> convert_index_to_outcome(processed_struct.outcomes)
+  end
+  def take(processed_struct, opts) when is_list(opts) do
+    WeightedRandom.Backend.take(processed_struct, 1, opts)
+      |> convert_index_to_outcome(processed_struct.outcomes)
+      |> List.first()
+  end
+  def take(processed_struct, count, opts) do
+    WeightedRandom.Backend.take(processed_struct, count, opts)
     |> convert_index_to_outcome(processed_struct.outcomes)
   end
 
@@ -101,36 +110,53 @@ defmodule WeightedRandom do
   def rand(outcomes, weights), do: rand(outcomes, weights, [])
   def rand(outcomes, weight, opts) when is_map(weight), do: rand(outcomes, [weight], opts)
   def rand(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
-    opts = Keyword.merge(@default_opts, opts)
-    backend = get_backend(opts)
-    backend_opts = backend.options()
-    opts = Keyword.merge(opts, backend_opts)
-
-    weights = if Keyword.get(opts, :index) do
-      weights
+    table = preprocess(outcomes, weights, opts)
+    if count = Keyword.get(opts, :take) do
+      take(table, count, opts)
     else
-      convert_weights_to_indices(outcomes, weights)
+      take(table, opts)
     end
+    #opts = Keyword.merge(@default_opts, opts)
+    #backend = get_backend(opts)
+    #backend_opts = backend.options()
+    #opts = Keyword.merge(opts, backend_opts)
 
-    p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index) do
-      Enum.with_index(p)
-    else
-      p
-    end
+    #weights = if Keyword.get(opts, :index) do
+    #  weights
+    #else
+    #  convert_weights_to_indices(outcomes, weights)
+    #end
+
+    #p = get_probabilities(outcomes, weights, opts)
+    #p = if Keyword.get(opts, :with_index) do
+    #  Enum.with_index(p)
+    #else
+    #  p
+    #end
 
 
-    processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
-    case Keyword.get(opts, :take) do
-       n when is_integer(n) -> 
-         WeightedRandom.Backend.take(processed_struct, n)
-          |> convert_index_to_outcome(outcomes)
-       nil ->
-        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
-        convert_index_to_outcome(idx, outcomes)
-    end
+    #processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+    #case Keyword.get(opts, :take) do
+    #   n when is_integer(n) -> 
+    #     results = WeightedRandom.Backend.take(processed_struct, n, opts)
+    #     case results do
+    #       {%Nx.Tensor{} = key, indices} -> {key, convert_index_to_outcome(indices, outcomes)}
+    #       indices -> indices
+    #     end
+    #   nil ->
+    #    results = WeightedRandom.Backend.take(processed_struct, 1, opts)
+    #    case results do
+    #      [idx] -> convert_index_to_outcome(idx, outcomes)
+    #      {%Nx.Tensor{} = key, [idx]} ->
+    #        outcomes = convert_index_to_outcome(idx, outcomes)
+    #        {key, outcomes}
+    #    end
+    #end
   end
 
+  defp convert_index_to_outcome({%Nx.Tensor{} = key, indices}, outcomes) do
+    {key, convert_index_to_outcome(indices, outcomes)}
+  end
   defp convert_index_to_outcome(indices, outcomes) when is_list(indices)  do
     Enum.map(indices, &convert_index_to_outcome(&1, outcomes))
   end

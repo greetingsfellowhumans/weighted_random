@@ -39,7 +39,7 @@ defmodule WeightedRandom.Backends.LinearTest do
       {1, 15}
     ]
     table = Mod.preprocess(probabilities, [])
-    [n] = Mod.take(table, 1)
+    [n] = Mod.take(table, 1, [])
     assert is_integer(n)
   end
 end

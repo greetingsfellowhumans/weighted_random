@@ -62,10 +62,15 @@ defmodule WeightedRandom.MixProject do
   defp deps do
     [
       {:wam, "~> 0.1.0"},
-      {:benchee, "~> 1.5", only: [:dev, :test]},
+      {:nx, "~> 0.13"},
+      {:tucan, "~> 0.6.0", only: [:dev, :test], runtime: false},
+
+      {:exla, "~> 0.9", only: [:dev, :test]},
+      {:benchee, "~> 1.5", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},
-      {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
+      {:vega_lite, "~> 0.1.0", only: [:dev, :test], runtime: false},
       {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
+      {:vega_lite_convert, "~> 1.0.1", only: [:dev, :test]},
       {:mix_test_interactive, "~> 5.1", only: [:dev, :test], runtime: false}
     ]
   end

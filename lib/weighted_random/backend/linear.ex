@@ -36,7 +36,7 @@ defmodule WeightedRandom.Backend.Linear do
   end
 
   @impl true
-  def take(%__MODULE__{li: li}, count) do
+  def take(%__MODULE__{li: li}, count, _opts) do
     Enum.take_random(li, count)
   end
 

@@ -28,7 +28,7 @@ defmodule WeightedRandom.Backends.WalkerAliasTest do
     #probabilities = Enum.with_index(probabilities)
     table = Mod.preprocess(probabilities, [])
     assert table.values == {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
-    results = Mod.take(table, 25)
+    results = Mod.take(table, 25, [])
     results = Enum.frequencies(results)
     assert results == %{0 => 1, 3 => 1, 5 => 4, 6 => 1, 7 => 15, 8 => 2, 9 => 1}
   end

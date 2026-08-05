@@ -17,7 +17,7 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   end
 
   @impl true
-  def take(table, count) do
+  def take(table, count, _opts) do
     for _ <- 1..count do
       WAM.get(table, :rand.uniform(table.size) - 1, :rand.uniform())
     end

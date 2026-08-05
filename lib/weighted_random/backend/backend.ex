@@ -23,6 +23,7 @@ defmodule WeightedRandom.Backend do
   @type probability() :: fraction() | percentage()
   @type opts() :: keyword()
   @type table() :: struct()
+  @type random_key :: integer() | Nx.Tensor.t()
 
 
   @doc ~s"""
@@ -37,7 +38,7 @@ defmodule WeightedRandom.Backend do
   @doc ~s"""
   Given the struct returned by `preprocess/2`, return a list of random indices equal to `count`.
   """
-  @callback take(table :: struct(), count :: integer()) :: indices :: list(index :: integer())
+  @callback take(table :: struct(), count :: integer(), opts :: list()) :: indices() | {random_key(), indices()}
 
   @doc ~s"""
   Optionally provide the opts kwli 
@@ -54,8 +55,8 @@ defmodule WeightedRandom.Backend do
       outcomes: outcomes,
     })
   end
-  def take(%{backend: backend, table: table}, count) do
-    backend.take(table, count)
+  def take(%{backend: backend, table: table}, count, opts \\ []) do
+    backend.take(table, count, opts)
   end
 
   defmacro __using__(_opts) do
