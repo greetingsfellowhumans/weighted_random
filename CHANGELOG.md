@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Changed
+### Removed
 
-- Moved cubic bezier module to a separate hex package.
+- Moved cubic bezier module to a separate hex package, [Curves](https://hex.pm/packages/curves).
 
-## [1.0.0] - 2026-07-31
+### Added
+
+- new dependency: `:curves`
+
+## [1.0.0-alpha.1] - 2026-08-16
+
+## [1.0.0-alpha.0] - 2026-07-31
 
 This release is a massive overhaul, that improves performance and flexibility while *mostly* remaining backwards compatible. See section on breaking changes.
 
