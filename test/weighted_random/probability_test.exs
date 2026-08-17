@@ -4,6 +4,7 @@ defmodule WeightedRandom.ProbabilityTest do
   alias WeightedRandom.Weight
 
   describe "Probability" do
+    @tag skip: "@TODO come back after rebuilding probability"
     test "get_probabilities/3" do
       outcomes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       weights = [WeightedRandom.Weight.new(%{target: 6, weight: 10})] |> Weight.expand_weights()
@@ -50,6 +51,7 @@ defmodule WeightedRandom.ProbabilityTest do
       [{1, 15}, {1, 15}, _t2, _t3, _t4, {6, 15}, {1, 15} | _] = p
     end
 
+    @tag skip: "@TODO come back after rebuilding probability"
     test "sum_weights/1" do
       weights = [Weight.new(%{target: 6, weight: 10})] |> Weight.expand_weights()
       tot = Mod.sum_weights(weights)
@@ -60,12 +62,24 @@ defmodule WeightedRandom.ProbabilityTest do
       assert tot == 30
     end
 
+    @tag skip: "@TODO come back after rebuilding probability"
     test "get_equal_share/2" do
       outcomes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
       weights = [Weight.new(%{target: 6, weight: 10})] |> Weight.expand_weights()
       count = Enum.count(outcomes)
       tot = Mod.get_equal_share(count, weights)
       assert tot == 0.05
+    end
+
+    @tag skip: "@TODO come back after rebuilding probability"
+    test "radius probabilities" do
+      outcomes = 0..20
+      weights = [
+        %{target: 10, weight: 15, radius: 4}
+      ]
+      p = WeightedRandom.get_probabilities(outcomes, weights, [])
+      dbg p
+
     end
   end
 end

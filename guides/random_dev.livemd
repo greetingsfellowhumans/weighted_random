@@ -35,11 +35,42 @@ results
 ```
 
 ```elixir
-# Ok so 
+# Watch what happens when the number 7 is 5x more likely to appear than any other number
 
 outcomes = 0..9
 weights = [
   %{target: 7, weight: 5}
+]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# We can have more than one weight, too
+
+outcomes = 0..20
+weights = [
+  %{target: 6, weight: 5},
+  %{target: 15, weight: 5}
+]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# A weight can radiate out toward its neighbours
+
+outcomes = 0..20
+weights = [
+  %{target: 10, weight: 15, radius: 4}
 ]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, 1000)

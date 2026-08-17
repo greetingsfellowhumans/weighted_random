@@ -10,7 +10,8 @@ defmodule WeightedRandom.Utils.PlottingTest do
         Enum.random(outcomes)
       end
       plot = Mod.results_to_bars(results)
-      dbg plot
+      [%{outcome: 1, hits: n} | _] = plot
+      assert is_integer(n)
     end
 
   end
