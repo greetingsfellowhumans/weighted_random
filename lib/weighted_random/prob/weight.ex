@@ -3,8 +3,8 @@ defmodule WeightedRandom.Prob.Weight do
     :target,
     :amount,
     :curve,
-    :left_dist,
-    :right_dist,
+    left_dist: 0,
+    right_dist: 0,
     expanded?: false
   ]
 

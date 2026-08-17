@@ -29,13 +29,14 @@ defmodule WeightedRandom.Prob do
     prob
       |> add_weight(idx, amount)
       |> add_neighbour_weights_right(weight)
+      |> add_neighbour_weights_left(weight)
   end
   def add_weight(prob, idx, amount) do
     %{prob | weights: List.update_at(prob.weights, idx, &(&1 + amount))}
   end
 
 
-  def add_neighbour_weights_right(prob, %{right_dist: r, curve: curve, target: target} = weight) do
+  defp add_neighbour_weights_right(prob, %{right_dist: r, curve: curve, target: target} = weight) when r > 0 do
     weights =
       curve
       |> Curves.take!(r)
@@ -51,5 +52,25 @@ defmodule WeightedRandom.Prob do
       add_weight(prob, target + idx, weight)
     end)
   end
+  defp add_neighbour_weights_right(prob, _), do: prob
+
+
+  defp add_neighbour_weights_left(prob, %{left_dist: l, curve: curve, target: target} = weight) when l > 0 do
+    weights =
+      curve
+      |> Curves.take!(l)
+      |> Enum.map(fn {_x, perc} ->
+        (perc * weight.amount)
+      end)
+      |> Enum.reverse()
+      |> tl()
+
+    weights
+    |> Enum.with_index(1)
+    |> Enum.reduce(prob, fn {weight, idx}, prob ->
+      add_weight(prob, target - idx, weight)
+    end)
+  end
+  defp add_neighbour_weights_left(prob, _), do: prob
 
 end
