@@ -66,6 +66,29 @@ results
 ```
 
 ```elixir
+alias WeightedRandom.Prob
+prob = Prob.new(1..100)
+weight = Prob.Weight.new(%{
+  target: 20,
+  amount: 20,
+  curve: :ease_in_cubic,
+  right_dist: 25
+})
+prob = Prob.add_weight(prob, weight)
+weight = Prob.Weight.new(%{
+  target: 60,
+  amount: 20,
+  curve: :ease_in_out_cubic,
+  right_dist: 25
+})
+prob = Prob.add_weight(prob, weight)
+
+prob
+|> WeightedRandom.Utils.Plotting.weight_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
 # A weight can radiate out toward its neighbours
 
 outcomes = 0..20

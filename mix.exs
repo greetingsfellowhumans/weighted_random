@@ -62,7 +62,7 @@ defmodule WeightedRandom.MixProject do
   defp deps do
     [
       {:wam, "~> 0.1.0"},
-      {:curves, "~> 0.2.1"},
+      {:curves, "~> 0.2.2"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},

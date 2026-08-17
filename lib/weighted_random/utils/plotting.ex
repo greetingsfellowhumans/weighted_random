@@ -6,4 +6,13 @@ defmodule WeightedRandom.Utils.Plotting do
         %{outcome: outcome, hits: Enum.count(items)}
       end)
   end
+
+
+  def weight_to_bars(%WeightedRandom.Prob{} = prob) do
+    prob.weights
+      |> Enum.with_index()
+      |> Enum.map(fn {weight, idx} ->
+        %{outcome: idx, hits: weight}
+      end)
+  end
 end
