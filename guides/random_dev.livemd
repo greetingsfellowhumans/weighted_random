@@ -1,0 +1,50 @@
+# Weighted Random
+
+```elixir
+Mix.install(
+  [
+    {:weighted_random, path: Path.join(__DIR__, "../"), env: :dev},
+    {:tucan, "~> 0.6.0"},
+    {:vega_lite, "~> 0.1.0"},
+    {:kino_vega_lite, "~> 0.1.0"},
+  ],
+  config_path: :weighted_random,
+  lockfile: :weighted_random
+)
+```
+
+## Weighted Random tutorial
+
+```elixir
+# Before getting into the nitty gritty, let's start with a visual demo.
+# Without any weights, a random number between 1-10 has a probability of 10% for each outcome
+
+# Notice how the lines are pretty even
+outcomes = 0..9
+table = WeightedRandom.preprocess(outcomes, [])
+results = WeightedRandom.take(table, 1000)
+
+# This is equal to:
+# results = for 1..1000 do
+#   Enum.random(outcomes)
+# end
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Ok so 
+
+outcomes = 0..9
+weights = [
+  %{target: 7, weight: 5, radius: 0}
+]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```

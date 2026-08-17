@@ -80,9 +80,10 @@ defmodule WeightedRandom.Weight do
   end
 
 
-  def weight_at_location(t1, t2, r, w1, curve \\ :linear) do
+  def weight_at_location(t1, t2, r, w1, curve_spec \\ :linear) do
     perc = distance_perc(t1, r, t2)
-    weight_perc = WeightedRandom.CubicBezier.solve(perc, curve)
+    curve = Curves.define_bezier(curve_spec)
+    {_, weight_perc} = Curves.solve!(curve, perc)
     (1 - weight_perc) * w1
   end
 
