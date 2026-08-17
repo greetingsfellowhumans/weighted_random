@@ -39,7 +39,7 @@ results
 
 outcomes = 0..9
 weights = [
-  %{target: 7, weight: 5, radius: 0}
+  %{target: 7, weight: 5}
 ]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, 1000)

@@ -9,7 +9,7 @@ defmodule WeightedRandom.Weight do
     expanded?: false,
     #internal_weight: 1,
     total_weight: 1,
-    radius: 1,
+    radius: 0,
     curve: :linear,
     data_type: :integer
   ]
@@ -65,6 +65,7 @@ defmodule WeightedRandom.Weight do
     |> Enum.sort_by(&(&1.target))
   end
 
+  def create_side_effect_weights(%{radius: 0}), do: []
   def create_side_effect_weights(%{target: t1, radius: r, total_weight: w1, curve: curve} = weight) do
     neighbours = generate_empty_neighbours(weight)
     Enum.map(neighbours, fn %{target: t2} = neighbour ->
