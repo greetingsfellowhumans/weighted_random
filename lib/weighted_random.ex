@@ -35,7 +35,7 @@ defmodule WeightedRandom do
   """
   def preprocess(outcomes, weights), do: preprocess(outcomes, weights, [])
   def preprocess(outcomes, weight, opts) when is_map(weight), do: preprocess(outcomes, [weight], opts)
-  def preprocess(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
+  def preprocess(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Range) do
     opts = Keyword.merge(@default_opts, opts)
     backend = get_backend(opts)
     backend_opts = backend.options()
@@ -97,7 +97,7 @@ defmodule WeightedRandom do
   """
   def rand(outcomes, weights), do: rand(outcomes, weights, [])
   def rand(outcomes, weight, opts) when is_map(weight), do: rand(outcomes, [weight], opts)
-  def rand(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
+  def rand(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Range) do
     opts = Keyword.merge(@default_opts, opts)
     backend = get_backend(opts)
     backend_opts = backend.options()
