@@ -2,12 +2,6 @@ defmodule WeightedRandom.Probability do
   alias WeightedRandom.Weight
   @moduledoc false
 
-  def loggy(opts, x) do
-    if Keyword.get(opts, :tag) == :log do
-      dbg x
-    end
-  end
-
   def get_probabilities(outcomes, weights, opts) do
     weights = Weight.expand_weights(weights)
     sum = Enum.count(outcomes)
@@ -20,7 +14,7 @@ defmodule WeightedRandom.Probability do
           shares = w * equal_share
           List.update_at(outcomes, idx, &get_float(&1, shares, opts))
         end)
-      :fraction ->
+      :weight ->
         outcomes = List.duplicate(1, sum)
         total_shares = get_total_shares(sum, weights)
         Enum.reduce(weights, outcomes, fn %{target: idx, total_weight: w}, outcomes ->

@@ -1,18 +1,21 @@
-defmodule WeightedRandom.Prob do
+defmodule WeightedRandom.Input do
   @moduledoc ~s"""
   The data structure for keeping track of weights and probability
   """
   defstruct [
     :weights,
     :probabilities,
+    :outcomes,
     size: 0,
-  ] 
+  ]
+
 
   @doc ~s"""
-  Creates a new %Prob{} struct
+  Given a list of outcomes, create a new struct, setting each outcome to a weight of `1.0`
   """
-  def new(outcomes) do
+  def from_outcomes(outcomes) do
     struct(__MODULE__, %{
+      outcomes: outcomes,
       weights: Enum.map(outcomes, fn _ -> 1.0 end),
       size: Enum.count(outcomes)
     })
@@ -22,8 +25,11 @@ defmodule WeightedRandom.Prob do
   Given a list of floats, which must sum up to 1.0
   """
   def from_probabilities(probabilities) do
+    size = Enum.count(probabilities)
+
     struct(__MODULE__, %{
       probabilities: probabilities,
+      outcomes: 0..size + 1,
       size: Enum.count(probabilities)
     })
   end
@@ -34,10 +40,16 @@ defmodule WeightedRandom.Prob do
   """
   def at(prob, idx), do: Enum.at(prob.weights, idx)
 
+
   @doc ~s"""
   Add a certain amount of weight at a specific index
   """
-  def add_weight(prob, %WeightedRandom.Prob.Weight{target: idx, amount: amount} = weight) do
+  def add_weight(prob, weights) when is_list(weights) do
+    Enum.reduce(weights, prob, fn w, prob ->
+      add_weight(prob, w)
+    end)
+  end
+  def add_weight(prob, %WeightedRandom.Input.Weight{target: idx, amount: amount} = weight) do
     prob
       |> add_weight(idx, amount)
       |> add_neighbour_weights_right(weight)
@@ -89,7 +101,7 @@ defmodule WeightedRandom.Prob do
     total_weight = Enum.sum(weights)
     equal_share = (size / total_weight) * 0.01
     Enum.map(weights, &(&1 * equal_share))
-        |> fix_rounding_error()
+    #|> fix_rounding_error()
   end
 
   # The sum of all probabilities must always add up to 1.0

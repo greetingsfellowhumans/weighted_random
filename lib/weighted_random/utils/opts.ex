@@ -1,10 +1,12 @@
 defmodule WeightedRandom.Utils.Opts do
   @moduledoc false
 
+  @default_backend WeightedRandom.Backend.WalkerAlias
+
   @config_opts [
     backend: %{
       doc: "The module implementing a weighted randomness algorithm", 
-      default: WeightedRandom.Backend.WalkerAlias, 
+      default: @default_backend, 
       allow_nil: false,
       one_of: [
         WeightedRandom.Backend.WalkerAlias,
@@ -41,9 +43,12 @@ defmodule WeightedRandom.Utils.Opts do
   """
 
   def merge_opts(user_opts, default_opts \\ []) when is_list(user_opts) and is_list(default_opts) do
-    default_opts
-    |> Keyword.merge(config_opts())
-    |> Keyword.merge(user_opts)
+    opts =
+      default_opts
+      |> Keyword.merge(config_opts())
+      |> Keyword.merge(user_opts)
+
+    Keyword.put_new(opts, :backend, get_backend())
   end
 
   defp config_opts() do
@@ -59,13 +64,10 @@ defmodule WeightedRandom.Utils.Opts do
   end
 
 
-  defp get_backend(opts) do
-    case Keyword.fetch(opts, :backend) do
+  defp get_backend() do
+    case Application.fetch_env(:weighted_random, :backend) do
       {:ok, b} -> b
-      _ -> case Application.fetch_env(:weighted_random, :backend) do
-        {:ok, b} -> b
-        _ -> @default_backend
-      end
+      _ -> @default_backend
     end
   end
 end

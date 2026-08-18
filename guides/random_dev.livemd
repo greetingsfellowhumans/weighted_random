@@ -21,7 +21,8 @@ Mix.install(
 
 # Notice how the lines are pretty even
 outcomes = 0..9
-table = WeightedRandom.preprocess(outcomes, [])
+weights = []
+table = WeightedRandom.from_weights(outcomes, weights)
 results = WeightedRandom.take(table, 1000)
 
 # This is equal to:
@@ -35,13 +36,27 @@ results
 ```
 
 ```elixir
-# Watch what happens when the number 7 is 5x more likely to appear than any other number
+# Watch what happens when the number 7 is 3x more likely to appear than any other number
 
 outcomes = 0..9
 weights = [
-  %{target: 7, weight: 5}
+  %{target: 7, weight: 3}
 ]
-table = WeightedRandom.preprocess(outcomes, weights)
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Another way to do that is to use a list of probabilities, instead of weights
+
+probabilities = [
+  0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.3, 0.1, 0.1
+]
+table = WeightedRandom.from_probabilities(probabilities)
 results = WeightedRandom.take(table, 1000)
 
 results
@@ -57,7 +72,7 @@ weights = [
   %{target: 6, weight: 5},
   %{target: 15, weight: 5}
 ]
-table = WeightedRandom.preprocess(outcomes, weights)
+table = WeightedRandom.from_weights(outcomes, weights)
 results = WeightedRandom.take(table, 1000)
 
 results
@@ -66,37 +81,14 @@ results
 ```
 
 ```elixir
-alias WeightedRandom.Prob
-prob = Prob.new(1..100)
-weight = Prob.Weight.new(%{
-  target: 20,
-  amount: 20,
-  curve: :ease_in_cubic,
-  right_dist: 25
-})
-prob = Prob.add_weight(prob, weight)
-weight = Prob.Weight.new(%{
-  target: 60,
-  amount: 20,
-  curve: :ease_in_out_cubic,
-  right_dist: 25
-})
-prob = Prob.add_weight(prob, weight)
-
-prob
-|> WeightedRandom.Utils.Plotting.weight_to_bars()
-|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
-```
-
-```elixir
-# A weight can radiate out toward its neighbours
-
-outcomes = 0..20
+outcomes = 0..100
 weights = [
-  %{target: 10, weight: 15, radius: 4}
+  %{target: 20, weight: 20, right_dist: 15, curve: :ease_in},
+  %{target: 40, weight: 25, radius: 10, curve: :ease_in_out_cubic},
+  %{target: 80, weight: 30, left_dist: 15, curve: :ease_out},
 ]
-table = WeightedRandom.preprocess(outcomes, weights)
-results = WeightedRandom.take(table, 1000)
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 10000)
 
 results
 |> WeightedRandom.Utils.Plotting.results_to_bars()

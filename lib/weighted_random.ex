@@ -1,4 +1,7 @@
 defmodule WeightedRandom do
+  alias WeightedRandom.Utils.Opts
+  alias WeightedRandom.Input
+
   @moduledoc ~s"""
 
   ## Usage
@@ -23,34 +26,23 @@ defmodule WeightedRandom do
     precision: nil,
     probability_type: :float,
   ]
-  @default_backend WeightedRandom.Backend.WalkerAlias
 
-  @doc ~s"""
-  Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
-  """
-  defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
+  #@doc ~s"""
+  #Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
+  #"""
+  #defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
 
-  @doc ~s"""
-  For maximum performance, especially at scale, do this:
-  """
-  def preprocess(outcomes, weights), do: preprocess(outcomes, weights, [])
-  def preprocess(outcomes, weight, opts) when is_map(weight), do: preprocess(outcomes, [weight], opts)
-  def preprocess(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Range) do
-    opts = Keyword.merge(@default_opts, opts)
-    backend = get_backend(opts)
-    backend_opts = backend.options()
-    opts = Keyword.merge(opts, backend_opts)
-
-    weights = if Keyword.get(opts, :index) do
-      weights
-    else
-      convert_weights_to_indices(outcomes, weights)
-    end
-
-    p = get_probabilities(outcomes, weights, opts)
-
-    WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+  def from_probabilities(probabilities, opts \\ []) when is_list(probabilities) do
+    opts = Opts.merge_opts(opts, @default_opts)
+    inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
+    WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
+  def from_weights(outcomes, weights, opts \\ []) when is_list(weights) do
+    opts = Opts.merge_opts(opts, @default_opts)
+    inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
+    WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
+  end
+
 
   def take(processed_struct) do
     WeightedRandom.Backend.take(processed_struct, 1)
@@ -97,21 +89,8 @@ defmodule WeightedRandom do
   """
   def rand(outcomes, weights), do: rand(outcomes, weights, [])
   def rand(outcomes, weight, opts) when is_map(weight), do: rand(outcomes, [weight], opts)
-  def rand(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Range) do
-    opts = Keyword.merge(@default_opts, opts)
-    backend = get_backend(opts)
-    backend_opts = backend.options()
-    opts = Keyword.merge(opts, backend_opts)
-
-    weights = if Keyword.get(opts, :index) do
-      weights
-    else
-      convert_weights_to_indices(outcomes, weights)
-    end
-
-    p = get_probabilities(outcomes, weights, opts)
-
-    processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+  def rand(outcomes, weights, opts) when is_list(weights) do
+    processed_struct = from_weights(outcomes, weights, opts)
     case Keyword.get(opts, :take) do
        n when is_integer(n) -> 
          WeightedRandom.Backend.take(processed_struct, n)
@@ -130,22 +109,7 @@ defmodule WeightedRandom do
   end
 
 
-  defp convert_weights_to_indices(li, weights) do
-    Enum.map(weights, fn w -> 
-      t = Enum.find_index(li, &(&1 == w.target))
-      Map.put(w, :target, t)
-    end)
-  end
 
-  defp get_backend(opts) do
-    case Keyword.fetch(opts, :backend) do
-      {:ok, b} -> b
-      _ -> case Application.fetch_env(:weighted_random, :backend) do
-        {:ok, b} -> b
-        _ -> @default_backend
-      end
-    end
-  end
 
   @doc false
   @deprecated "Please use `Enum.random` instead"

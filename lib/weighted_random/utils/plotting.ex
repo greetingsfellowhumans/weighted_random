@@ -8,7 +8,7 @@ defmodule WeightedRandom.Utils.Plotting do
   end
 
 
-  def weight_to_bars(%WeightedRandom.Prob{} = prob) do
+  def weight_to_bars(%WeightedRandom.Input{} = prob) do
     prob.weights
       |> Enum.with_index()
       |> Enum.map(fn {weight, idx} ->

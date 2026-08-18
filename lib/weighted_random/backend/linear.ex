@@ -5,7 +5,7 @@ defmodule WeightedRandom.Backend.Linear do
 
   ## How it works
 
-  1. Take each probability as a fraction.
+  1. Take each probability as a weight.
   2. Create a list in which every outcome is duplicated a number of times equal to its numerator
   3. take randomly from the list.
 
@@ -22,13 +22,13 @@ defmodule WeightedRandom.Backend.Linear do
 
   @impl true
   def options() do
-    [probability_type: :fraction, with_index: false]
+    [probability_type: :weights]
   end
 
   @impl true
-  def preprocess(probabilities, _opts) do
-    probabilities = Enum.with_index(probabilities)
-    li = Enum.map(probabilities, fn {{weight, _total}, idx} ->
+  def preprocess(input, _opts) do
+    weights = Enum.with_index(input.weights)
+    li = Enum.map(weights, fn {weight, idx} ->
       List.duplicate(idx, round(weight))
     end)
       |> List.flatten()
