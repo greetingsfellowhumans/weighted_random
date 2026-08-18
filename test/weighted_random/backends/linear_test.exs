@@ -12,24 +12,16 @@ defmodule WeightedRandom.Backends.LinearTest do
     assert Enum.count(table.li) == Enum.count(200..300)
   end
 
-  @tag :skip
   test "take" do
-    probabilities = [
-      {1, 15},
-      {4, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15},
-      {1, 15}
-    ]
-    table = Mod.preprocess(probabilities, [])
-    [n] = Mod.take(table, 1)
+    probabilities = [0.1, 0.1, 0.3]
+    input = WeightedRandom.Input.FromProbabilities.get_inputs(probabilities, [])
+    table = Mod.preprocess(input, [])
+    samples = Mod.take(table, 100)
+    assert Enum.count(samples) == 100
+    [n | _] = samples
     assert is_integer(n)
+    groups = Enum.frequencies(samples)
+    assert groups[0] < groups[2]
+    assert groups[1] < groups[2]
   end
 end

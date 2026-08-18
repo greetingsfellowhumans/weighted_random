@@ -9,19 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.0-alpha.1] - 2026-08-16
 
+This is a big one. I got frustrated and ended up just rewriting a massive amount of code from scratch.
+
 ### Removed
 
-- Moved cubic bezier module to a separate hex package, [Curves](https://hex.pm/packages/curves).
+- `WeightedRandom.CubicBezier` -> Use `:curves` library instead. [Curves](https://hex.pm/packages/curves)
+- `WeightedRandom.Weight` -> Use `WeightedRandom.Input.Weight` instead
+- `WeightedRandom.Probability` -> Use `WeightedRandom.Input` and its submodules instead
 
 ### Added
 
-- new dependency: `:curves`
 - livebook guide with visual demo
+- Finer control over radiating weights. instead of only `:radius`, there are now options for `:left_dist` and `:right_dist`
+- Support for using a list of probabilities, rather than outcomes and weights
 
 ### Fixed
 
 - Bug in which radius of 0 would break
-- Bug in which all neighbours within a radius are treated equal, regardless of distance from target
+- Bug in which the radius curve didn't really work
+
+### BREAKING CHANGES
+
+Probably a lot. This was such a large scale refactor, I am not sure which edge cases are going to fail. Certainly much of the work from alpha.0, but I am less concerned about that.
+
+- `WeightedRandom.CubicBezier`
 
 ## [1.0.0-alpha.0] - 2026-07-31
 
