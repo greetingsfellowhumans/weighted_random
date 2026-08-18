@@ -3,8 +3,9 @@ defmodule WeightedRandom.Prob do
   The data structure for keeping track of weights and probability
   """
   defstruct [
+    :weights,
+    :probabilities,
     size: 0,
-    weights: [],
   ] 
 
   @doc ~s"""
@@ -16,6 +17,17 @@ defmodule WeightedRandom.Prob do
       size: Enum.count(outcomes)
     })
   end
+
+  @doc ~s"""
+  Given a list of floats, which must sum up to 1.0
+  """
+  def from_probabilities(probabilities) do
+    struct(__MODULE__, %{
+      probabilities: probabilities,
+      size: Enum.count(probabilities)
+    })
+  end
+
 
   @doc ~s"""
   Acess the weight at a certain index
@@ -54,7 +66,6 @@ defmodule WeightedRandom.Prob do
   end
   defp add_neighbour_weights_right(prob, _), do: prob
 
-
   defp add_neighbour_weights_left(prob, %{left_dist: l, curve: curve, target: target} = weight) when l > 0 do
     weights =
       curve
@@ -72,5 +83,38 @@ defmodule WeightedRandom.Prob do
     end)
   end
   defp add_neighbour_weights_left(prob, _), do: prob
+
+
+  def weights_to_probabilities(%__MODULE__{weights: weights, size: size}) do
+    total_weight = Enum.sum(weights)
+    equal_share = (size / total_weight) * 0.01
+    Enum.map(weights, &(&1 * equal_share))
+        |> fix_rounding_error()
+  end
+
+  # The sum of all probabilities must always add up to 1.0
+  defp fix_rounding_error(probabilities) do
+    case 1.0 - Enum.sum(probabilities) do
+      0.0 -> probabilities
+
+      rounding_error when rounding_error > 0.0 and rounding_error < 0.0000001 ->
+        [hd | tl] = probabilities
+        [hd + rounding_error | tl]
+
+      rounding_error when rounding_error < 0.0 and rounding_error > -0.0000001 ->
+        [hd | tl] = probabilities
+        [hd - rounding_error | tl]
+
+    end
+  end
+
+
+  def probabilities_to_weights(probabilities) do
+    smallest = Enum.min(probabilities)
+    Enum.map(probabilities, fn p ->
+      p / smallest
+    end)
+  end
+
 
 end
