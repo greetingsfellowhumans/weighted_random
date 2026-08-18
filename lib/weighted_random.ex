@@ -20,7 +20,6 @@ defmodule WeightedRandom do
   @default_opts [
     take: nil,
     index: true,
-    with_index: false,
     precision: nil,
     probability_type: :float,
   ]
@@ -49,7 +48,6 @@ defmodule WeightedRandom do
     end
 
     p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index), do: Enum.with_index(p), else: p
 
     WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
   end
@@ -92,7 +90,6 @@ defmodule WeightedRandom do
   ## Opts
   * `:backend` [module]: WeightedRandom.Backend.WalkerAlias. We also provide WeightedRandom.Backend.Linear which can have slightly better performance if you are not taking that many samples. Worse performance in most other cases.
   * `:index` [boolean]: true. Whether the `:target` of a `%WeightedRandom.Weight{}` points at an index of the outcomes (if true), or at the actual value of one of the outcomes (if false).
-  * `:with_index` [boolean]: true. set by backend. Determines whether to call `Enum.with_index` on the list of probabilities before preprocessing.
   * `:probability_type` [:float | :fraction]: :float. To avoid floating point precision issues, you can use :fraction so that the probabilities are all tuples of `{numenator :: integer(), denominator :: integer()}` In which they all have the same denominator which equals the sum of all numinators.
   * `:precision` [integer]: 3. Only applies when the `probability_type` is `:float`. Probability floats will be rounded to this number of decimal places.
   * `:take` [integer | nil]: `nil`. If used, then instead of returning one random value, will return a list of random value with size equal to take.
@@ -113,12 +110,6 @@ defmodule WeightedRandom do
     end
 
     p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index) do
-      Enum.with_index(p)
-    else
-      p
-    end
-
 
     processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
     case Keyword.get(opts, :take) do

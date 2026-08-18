@@ -22,7 +22,7 @@ defmodule WeightedRandom.Backend.Linear do
 
   @impl true
   def options() do
-    [probability_type: :fraction]
+    [probability_type: :fraction, with_index: false]
   end
 
   @impl true
