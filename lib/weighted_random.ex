@@ -101,6 +101,20 @@ defmodule WeightedRandom do
     end
   end
 
+  @doc ~s"""
+  similar to `rand/3` but instead of a list of outcomes, and a list of weights, `rand_p/3` accepts a list of probability floats.
+  """
+  def rand_p(probabilities, opts \\ []) when is_list(probabilities) do
+    processed_struct = from_probabilities(probabilities, opts)
+    case Keyword.get(opts, :take) do
+       n when is_integer(n) -> 
+         WeightedRandom.Backend.take(processed_struct, n)
+       nil ->
+        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
+        idx
+    end
+  end
+
   defp convert_index_to_outcome(indices, outcomes) when is_list(indices)  do
     Enum.map(indices, &convert_index_to_outcome(&1, outcomes))
   end

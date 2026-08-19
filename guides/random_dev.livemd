@@ -83,8 +83,8 @@ results
 ```elixir
 outcomes = 0..100
 weights = [
-  %{target: 20, weight: 20, right_dist: 15, curve: :ease_in},
-  %{target: 40, weight: 25, radius: 10, curve: :ease_in_out_cubic},
+  %{target: 20, weight: 30, right_dist: 15, curve: :ease_in},
+  %{target: 50, weight: 25, radius: 10, curve: :ease_in_out},
   %{target: 80, weight: 30, left_dist: 15, curve: :ease_out},
 ]
 table = WeightedRandom.from_weights(outcomes, weights)

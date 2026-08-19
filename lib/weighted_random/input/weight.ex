@@ -1,6 +1,7 @@
 defmodule WeightedRandom.Input.Weight do
   @default_curve :ease_in_out
 
+  @enforce_keys [:target, :amount, :left_dist, :right_dist, :expanded?]
   defstruct [
     :target,
     :amount,

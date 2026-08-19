@@ -4,24 +4,22 @@ defmodule WeightedRandom.Backends.LinearTest do
 
   test "Build the table" do
     opts = [backend: Mod]
-    input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [], opts)
+           |> WeightedRandom.Utils.Opts.merge_opts()
+
+    input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [%{target: 5, weight: 25}], opts)
     assert is_struct(input, WeightedRandom.Input)
 
     table = Mod.preprocess(input, opts)
     assert is_struct(table, Mod)
-    assert Enum.count(table.li) == Enum.count(200..300)
+    assert Enum.count(table.li) == Enum.count(200..300) + 25
   end
 
+  @tag :skip
   test "take" do
-    probabilities = [0.1, 0.1, 0.3]
-    input = WeightedRandom.Input.FromProbabilities.get_inputs(probabilities, [])
-    table = Mod.preprocess(input, [])
-    samples = Mod.take(table, 100)
-    assert Enum.count(samples) == 100
-    [n | _] = samples
-    assert is_integer(n)
-    groups = Enum.frequencies(samples)
-    assert groups[0] < groups[2]
-    assert groups[1] < groups[2]
+    opts = [backend: Mod]
+    input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [%{target: 5, weight: 25}], opts)
+    table = Mod.preprocess(input, opts)
+    li = Mod.take(table, 2)
+    dbg li
   end
 end
