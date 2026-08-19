@@ -101,24 +101,8 @@ defmodule WeightedRandom.Input do
     total_weight = Enum.sum(weights)
     equal_share = (size / total_weight) * 0.01
     Enum.map(weights, &(&1 * equal_share))
-    #|> fix_rounding_error()
   end
 
-  # The sum of all probabilities must always add up to 1.0
-  defp fix_rounding_error(probabilities) do
-    case 1.0 - Enum.sum(probabilities) do
-      0.0 -> probabilities
-
-      rounding_error when rounding_error > 0.0 and rounding_error < 0.0000001 ->
-        [hd | tl] = probabilities
-        [hd + rounding_error | tl]
-
-      rounding_error when rounding_error < 0.0 and rounding_error > -0.0000001 ->
-        [hd | tl] = probabilities
-        [hd - rounding_error | tl]
-
-    end
-  end
 
 
   def probabilities_to_weights(probabilities) do

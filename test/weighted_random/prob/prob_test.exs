@@ -1,7 +1,6 @@
 defmodule WeightedRandom.InputTest do
   use ExUnit.Case
   alias WeightedRandom.Input
-  import Input
   doctest Input
 
 

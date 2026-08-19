@@ -26,10 +26,15 @@ defmodule WeightedRandom.Backend.Linear do
   end
 
   @impl true
-  def preprocess(input, _opts) do
+  def preprocess(input, opts) do
     weights = Enum.with_index(input.weights)
     li = Enum.map(weights, fn {weight, idx} ->
-      List.duplicate(idx, round(weight))
+      item = if Keyword.get(opts, :index) == false do
+        Enum.at(input.outcomes, idx)
+      else 
+        idx
+      end
+      List.duplicate(item, round(weight))
     end)
       |> List.flatten()
     struct(__MODULE__, %{li: li})

@@ -17,8 +17,12 @@ defmodule WeightedRandom.Input.FromWeights do
       weights
     else
       Enum.map(weights, fn w -> 
-        t = Enum.find_index(outcomes, &(&1 == w.target))
-        Map.put(w, :target, t)
+        case Enum.find_index(outcomes, &(&1 == w.target)) do
+          nil -> 
+            IO.inspect(outcomes, label: "Outcomes")
+            raise "Unable to find an outcome that equals the weight target: #{w.target}. Perhaps you meant to use `index: true`?"
+          t -> Map.put(w, :target, t)
+        end
       end)
     end
   end
