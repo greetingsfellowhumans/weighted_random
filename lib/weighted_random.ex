@@ -1,4 +1,7 @@
 defmodule WeightedRandom do
+  alias WeightedRandom.Utils.Opts
+  alias WeightedRandom.Input
+
   @moduledoc ~s"""
 
   ## Usage
@@ -20,39 +23,26 @@ defmodule WeightedRandom do
   @default_opts [
     take: nil,
     index: true,
-    with_index: false,
     precision: nil,
     probability_type: :float,
   ]
-  @default_backend WeightedRandom.Backend.WalkerAlias
 
-  @doc ~s"""
-  Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
-  """
-  defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
+  #@doc ~s"""
+  #Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
+  #"""
+  #defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
 
-  @doc ~s"""
-  For maximum performance, especially at scale, do this:
-  """
-  def preprocess(outcomes, weights), do: preprocess(outcomes, weights, [])
-  def preprocess(outcomes, weight, opts) when is_map(weight), do: preprocess(outcomes, [weight], opts)
-  def preprocess(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
-    opts = Keyword.merge(@default_opts, opts)
-    backend = get_backend(opts)
-    backend_opts = backend.options()
-    opts = Keyword.merge(opts, backend_opts)
-
-    weights = if Keyword.get(opts, :index) do
-      weights
-    else
-      convert_weights_to_indices(outcomes, weights)
-    end
-
-    p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index), do: Enum.with_index(p), else: p
-
-    WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+  def from_probabilities(probabilities, opts \\ []) when is_list(probabilities) do
+    opts = Opts.merge_opts(opts, @default_opts)
+    inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
+    WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
+  def from_weights(outcomes, weights, opts \\ []) when is_list(weights) do
+    opts = Opts.merge_opts(opts, @default_opts)
+    inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
+    WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
+  end
+
 
   def take(processed_struct) do
     WeightedRandom.Backend.take(processed_struct, 1)
@@ -92,7 +82,6 @@ defmodule WeightedRandom do
   ## Opts
   * `:backend` [module]: WeightedRandom.Backend.WalkerAlias. We also provide WeightedRandom.Backend.Linear which can have slightly better performance if you are not taking that many samples. Worse performance in most other cases.
   * `:index` [boolean]: true. Whether the `:target` of a `%WeightedRandom.Weight{}` points at an index of the outcomes (if true), or at the actual value of one of the outcomes (if false).
-  * `:with_index` [boolean]: true. set by backend. Determines whether to call `Enum.with_index` on the list of probabilities before preprocessing.
   * `:probability_type` [:float | :fraction]: :float. To avoid floating point precision issues, you can use :fraction so that the probabilities are all tuples of `{numenator :: integer(), denominator :: integer()}` In which they all have the same denominator which equals the sum of all numinators.
   * `:precision` [integer]: 3. Only applies when the `probability_type` is `:float`. Probability floats will be rounded to this number of decimal places.
   * `:take` [integer | nil]: `nil`. If used, then instead of returning one random value, will return a list of random value with size equal to take.
@@ -100,27 +89,8 @@ defmodule WeightedRandom do
   """
   def rand(outcomes, weights), do: rand(outcomes, weights, [])
   def rand(outcomes, weight, opts) when is_map(weight), do: rand(outcomes, [weight], opts)
-  def rand(outcomes, weights, opts) when is_list(outcomes) or is_struct(outcomes, Stream) or is_struct(outcomes, Range) do
-    opts = Keyword.merge(@default_opts, opts)
-    backend = get_backend(opts)
-    backend_opts = backend.options()
-    opts = Keyword.merge(opts, backend_opts)
-
-    weights = if Keyword.get(opts, :index) do
-      weights
-    else
-      convert_weights_to_indices(outcomes, weights)
-    end
-
-    p = get_probabilities(outcomes, weights, opts)
-    p = if Keyword.get(opts, :with_index) do
-      Enum.with_index(p)
-    else
-      p
-    end
-
-
-    processed_struct = WeightedRandom.Backend.preprocess(backend, outcomes, p, opts)
+  def rand(outcomes, weights, opts) when is_list(weights) do
+    processed_struct = from_weights(outcomes, weights, opts)
     case Keyword.get(opts, :take) do
        n when is_integer(n) -> 
          WeightedRandom.Backend.take(processed_struct, n)
@@ -128,6 +98,20 @@ defmodule WeightedRandom do
        nil ->
         [idx] = WeightedRandom.Backend.take(processed_struct, 1)
         convert_index_to_outcome(idx, outcomes)
+    end
+  end
+
+  @doc ~s"""
+  similar to `rand/3` but instead of a list of outcomes, and a list of weights, `rand_p/3` accepts a list of probability floats.
+  """
+  def rand_p(probabilities, opts \\ []) when is_list(probabilities) do
+    processed_struct = from_probabilities(probabilities, opts)
+    case Keyword.get(opts, :take) do
+       n when is_integer(n) -> 
+         WeightedRandom.Backend.take(processed_struct, n)
+       nil ->
+        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
+        idx
     end
   end
 
@@ -139,22 +123,7 @@ defmodule WeightedRandom do
   end
 
 
-  defp convert_weights_to_indices(li, weights) do
-    Enum.map(weights, fn w -> 
-      t = Enum.find_index(li, &(&1 == w.target))
-      Map.put(w, :target, t)
-    end)
-  end
 
-  defp get_backend(opts) do
-    case Keyword.fetch(opts, :backend) do
-      {:ok, b} -> b
-      _ -> case Application.fetch_env(:weighted_random, :backend) do
-        {:ok, b} -> b
-        _ -> @default_backend
-      end
-    end
-  end
 
   @doc false
   @deprecated "Please use `Enum.random` instead"

@@ -21,7 +21,7 @@ defmodule WeightedRandom.Die do
   end
 
   defp add_preprocess(%__MODULE__{sides: sides, weights: weights} = die) do
-    pre = WeightedRandom.preprocess(1..sides, weights, index: false)
+    pre = WeightedRandom.from_weights(1..sides, weights, index: false)
     Map.put(die, :preprocessed, pre)
   end
 
@@ -38,7 +38,7 @@ defmodule WeightedRandom.Die do
 
   def add_weight(die, weight) do
     new_weights = [weight | die.weights]
-    pre = WeightedRandom.preprocess(1..die.sides, new_weights, index: false)
+    pre = WeightedRandom.from_weights(1..die.sides, new_weights, index: false)
     die
       |> Map.put(:weights, new_weights)
       |> Map.put(:preprocessed, pre)

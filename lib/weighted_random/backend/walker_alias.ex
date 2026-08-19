@@ -6,7 +6,7 @@ defmodule WeightedRandom.Backend.WalkerAlias do
 
   @impl true
   def options() do
-    [probability_type: :float, with_index: false]
+    [probability_type: :probabilities]
   end
 
   @impl true

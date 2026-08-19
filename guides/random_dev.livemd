@@ -1,0 +1,96 @@
+# Weighted Random
+
+```elixir
+Mix.install(
+  [
+    {:weighted_random, path: Path.join(__DIR__, "../"), env: :dev},
+    {:tucan, "~> 0.6.0"},
+    {:vega_lite, "~> 0.1.0"},
+    {:kino_vega_lite, "~> 0.1.0"},
+  ],
+  config_path: :weighted_random,
+  lockfile: :weighted_random
+)
+```
+
+## Weighted Random tutorial
+
+```elixir
+# Before getting into the nitty gritty, let's start with a visual demo.
+# Without any weights, a random number between 1-10 has a probability of 10% for each outcome
+
+# Notice how the lines are pretty even
+outcomes = 0..9
+weights = []
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+# This is equal to:
+# results = for 1..1000 do
+#   Enum.random(outcomes)
+# end
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Watch what happens when the number 7 is 3x more likely to appear than any other number
+
+outcomes = 0..9
+weights = [
+  %{target: 7, weight: 3}
+]
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Another way to do that is to use a list of probabilities, instead of weights
+
+probabilities = [
+  0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.3, 0.1, 0.1
+]
+table = WeightedRandom.from_probabilities(probabilities)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# We can have more than one weight, too
+
+outcomes = 0..20
+weights = [
+  %{target: 6, weight: 5},
+  %{target: 15, weight: 5}
+]
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 1000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+outcomes = 0..100
+weights = [
+  %{target: 20, weight: 30, right_dist: 15, curve: :ease_in},
+  %{target: 50, weight: 25, radius: 10, curve: :ease_in_out},
+  %{target: 80, weight: 30, left_dist: 15, curve: :ease_out},
+]
+table = WeightedRandom.from_weights(outcomes, weights)
+results = WeightedRandom.take(table, 10000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
