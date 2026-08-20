@@ -27,12 +27,10 @@ defmodule WeightedRandom do
     probability_type: :float,
   ]
 
-  #@doc ~s"""
-  #Given a list of outcomes and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
-  #"""
-  #defdelegate get_probabilities(outcomes, weights, opts), to: WeightedRandom.Probability
-
-  def from_probabilities(probabilities, opts \\ []) when is_list(probabilities) do
+  @doc ~s"""
+  Given a non-empty list of floats and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
+  """
+  def from_probabilities([f | _] = probabilities, opts \\ []) when is_float(f) do
     opts = Opts.merge_opts(opts, @default_opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
