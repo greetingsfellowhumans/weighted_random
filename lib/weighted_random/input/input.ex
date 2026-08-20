@@ -97,10 +97,9 @@ defmodule WeightedRandom.Input do
   defp add_neighbour_weights_left(prob, _), do: prob
 
 
-  def weights_to_probabilities(%__MODULE__{weights: weights, size: size}) do
-    total_weight = Enum.sum(weights)
-    equal_share = (size / total_weight) * 0.01
-    Enum.map(weights, &(&1 * equal_share))
+  def weights_to_probabilities(%__MODULE__{weights: weights}) do
+    total_weights = Enum.sum(weights)
+    Enum.map(weights, &(&1 / total_weights))
   end
 
 

@@ -29,9 +29,7 @@ defmodule WeightedRandom.WeightedRandomTest do
       num_probs = Enum.count(probabilities)
 
       li = Mod.rand_p(probabilities, [take: 10000])
-
-      #f = Analysis.get_delta(probabilities, li)
-      #dbg f
+      assert Analysis.match_probability?(probabilities, li)
 
     end
   end

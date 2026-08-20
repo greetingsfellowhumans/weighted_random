@@ -1,8 +1,33 @@
 defmodule WeightedRandom.InputTest do
   use ExUnit.Case
   alias WeightedRandom.Input
+  alias WeightedRandom.Utils.Analysis
   doctest Input
 
+  describe "Probability" do
+    
+    test "Get probability from outcomes" do
+      probs = Enum.map(1..100, fn _ -> 0.01 end)
+      psum = Enum.sum(probs)
+      refute psum == 1.0
+      assert Analysis.equalish?(psum, 1.0, 0.001)
+
+
+      outcomes = 1..100
+      weights = []
+      opts = []
+      inputs = Input.from_outcomes(outcomes)
+      inputs =
+        inputs
+        |> Map.put(:probabilities, Input.weights_to_probabilities(inputs))
+      [prob | _] = inputs.probabilities
+      assert prob == 0.01
+      #p = Mod.get_probabilities_from_weights(1..10, [])
+      #assert Mod.sum_delta(p, 1.0) == 0.0
+      #Mod.sum_delta(p, )
+
+    end
+  end
 
   describe "Input Add Weight" do
     test "neighbours right" do
@@ -62,6 +87,7 @@ defmodule WeightedRandom.InputTest do
       prob = Input.add_weight(prob, weight)
 
       probabilities = Input.weights_to_probabilities(prob)
+
       assert Float.round(Enum.sum(probabilities), 10) == 1.0
       assert Enum.count(probabilities) == 100
     end
@@ -77,6 +103,7 @@ defmodule WeightedRandom.InputTest do
       prob = Input.add_weight(prob, weight)
 
       probabilities = Input.weights_to_probabilities(prob)
+
       weights = Input.probabilities_to_weights(probabilities)
 
       # Due to floating point rounding weirdness, it often won't be *exactly* the same.

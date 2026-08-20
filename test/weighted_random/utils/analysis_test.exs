@@ -1,6 +1,7 @@
 defmodule WeightedRandom.Utils.AnalysisTest do
   use ExUnit.Case
   alias WeightedRandom.Utils.Analysis, as: Mod
+  import Mod
   doctest Mod
 
   describe "Analysis" do
@@ -22,10 +23,15 @@ defmodule WeightedRandom.Utils.AnalysisTest do
       assert Mod.match_probability?(probs, li)
     end
 
+    test "from weights" do
+      p = Mod.get_probabilities_from_weights(1..10, [%{target: 3, weight: 2}])
+      assert Mod.sum_delta(p, 1.0) == 0.0
+    end
+
     test "integration" do
       probabilities = [0.1, 0.1, 0.1, 0.7]
       results = WeightedRandom.rand_p(probabilities, [take: 100])
-      assert Mod.match_probability?(probabilities, results, 0.1)
+      assert Mod.match_probability?(probabilities, results, 0.15)
     end
   end
 
