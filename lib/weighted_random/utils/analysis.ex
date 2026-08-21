@@ -12,6 +12,20 @@ defmodule WeightedRandom.Utils.Analysis do
       |> Enum.frequencies()
       |> Map.new(fn {result, freq} -> {result, freq / size} end)
   end
+  def get_probabilities_from_results_and_outcomes(results, outcomes, opts \\ []) do
+    opts = Keyword.put_new(opts, :index, true)
+
+    size = Enum.count(results)
+    table = outcome_to_index_table(outcomes, opts)
+    dbg table
+
+    results
+      |> Enum.frequencies()
+      |> Map.new(fn {result, freq} ->
+        dbg result
+        {result, freq / size}
+      end)
+  end
 
 
   @doc ~s"""
@@ -79,4 +93,39 @@ defmodule WeightedRandom.Utils.Analysis do
   end
 
 
+  @doc ~s"""
+  Returns a map of %{index => outcome}
+
+  ## Examples
+      iex> outcomes = 100..130//10
+      iex> index_to_outcome_table(outcomes, [index: true])
+      %{0 => 100, 1 => 110, 2 => 120, 3 => 130}
+  """
+  @spec index_to_outcome_table(outcomes :: T.outcomes(), opts :: list()) :: %{optional(integer()) => any()}
+  def index_to_outcome_table(outcomes, opts) do
+    if Keyword.get(opts, :index) do
+      Enum.with_index(outcomes)
+        |> Map.new(fn {v, i} -> {i, v} end)
+    else
+      Enum.with_index(outcomes)
+        |> Map.new(fn {v, i} -> 
+          {i, v}
+        end)
+    end
+  end
+
+
+  @doc ~s"""
+  Returns a map of %{outcome => index}
+
+  ## Examples
+      iex> outcomes = 100..130//10
+      iex> outcome_to_index_table(outcomes, [index: true])
+      %{100 => 0, 110 => 1, 120 => 2, 130 => 3}
+  """
+  @spec outcome_to_index_table(outcomes :: T.outcomes(), opts :: list()) :: %{optional(integer()) => any()}
+  def outcome_to_index_table(outcomes, _opts) do
+    Enum.with_index(outcomes)
+      |> Map.new(fn {v, i} -> {v, i} end)
+  end
 end
