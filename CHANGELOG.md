@@ -54,6 +54,10 @@ You can also use your own algorithm by passing in any module which `use`s `Weigh
   backend that was extremely resource intensive and needed to save bits. But it
   does not make sense as a platform that needs to provide an accurate api.
 
+### Added
+
+- Better documentation and validation of options, using NimbleOptions
+
 ## [0.4.2] - 2025-08-04
 
 ### Added
