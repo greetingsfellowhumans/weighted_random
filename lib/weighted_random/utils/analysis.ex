@@ -101,6 +101,7 @@ defmodule WeightedRandom.Utils.Analysis do
   """
   @spec get_probabilities_from_weights(outcomes :: T.outcomes(), weights :: list(T.weight_spec()), opts :: list()) :: list(float())
   def get_probabilities_from_weights(outcomes, weights, opts \\ []) do
+    opts = WeightedRandom.Input.Opts.from_weights_merge_opts(opts)
     inputs = WeightedRandom.Input.FromWeights.get_inputs(outcomes, weights, opts)
     inputs.probabilities
   end

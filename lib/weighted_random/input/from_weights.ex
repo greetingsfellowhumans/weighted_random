@@ -13,17 +13,16 @@ defmodule WeightedRandom.Input.FromWeights do
 
 
   defp convert_weights_to_indices(outcomes, weights, opts) do
-    if Keyword.get(opts, :index) do
-      weights
-    else
-      Enum.map(weights, fn w -> 
-        case Enum.find_index(outcomes, &(&1 == w.target)) do
-          nil -> 
-            IO.inspect(outcomes, label: "Outcomes")
-            raise "Unable to find an outcome that equals the weight target: #{w.target}. Perhaps you meant to use `index: true`?"
-          t -> Map.put(w, :target, t)
-        end
-      end)
+    case opts[:outcome_type] do
+      :index -> weights
+      :value -> 
+        Enum.map(weights, fn w -> 
+          case Enum.find_index(outcomes, &(&1 == w.target)) do
+            nil -> 
+              raise "Unable to find an outcome that equals the weight target: #{w.target}. Perhaps you meant to use `outcome_type: :index`? Or you might have passed `index: false` (the deprecated version of the same option)."
+            t -> Map.put(w, :target, t)
+          end
+        end)
     end
   end
 

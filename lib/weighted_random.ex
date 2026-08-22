@@ -40,7 +40,7 @@ defmodule WeightedRandom do
 
 
   @doc ~s"""
-  Given a non-empty list of possible outdomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
+  Given a non-empty list of possible outcomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
 
   Supported options:\n#{NimbleOptions.docs(WeightedRandom.Input.Opts.from_weights_schema())}
   """

@@ -28,6 +28,20 @@ defmodule WeightedRandom.WeightedRandomTest do
       assert Enum.all?(li, &(&1 >= 1))
       assert Enum.all?(li, &(&1 <= 6))
     end
+    test "parse options" do
+      opts = WeightedRandom.Input.Opts.from_weights_merge_opts([])
+      assert opts[:outcome_type] == :index
+      assert opts[:probability_type] == :weight
+      assert opts[:backend] == WalkerAlias
+
+      opts = WeightedRandom.Input.Opts.from_weights_merge_opts([index: true])
+      assert opts[:outcome_type] == :index
+      assert opts[:index] == nil
+
+      opts = WeightedRandom.Input.Opts.from_weights_merge_opts([index: false])
+      assert opts[:outcome_type] == :value
+      assert opts[:index] == nil
+    end
   end
 
   describe "rand_p/2" do
@@ -38,8 +52,19 @@ defmodule WeightedRandom.WeightedRandomTest do
     end
 
     test "parse options" do
-      opts_schema = WeightedRandom.Input.Opts.from_probabilities_schema()
-      dbg opts_schema
+      opts = WeightedRandom.Input.Opts.from_probabilities_merge_opts([])
+      assert opts[:outcome_type] == :index
+      assert opts[:probability_type] == :probability
+      assert opts[:backend] == WalkerAlias
+
+      opts = WeightedRandom.Input.Opts.from_probabilities_merge_opts([index: true])
+      assert opts[:outcome_type] == :index
+      assert opts[:index] == nil
+
+      # probabilities MUST be indexed. Otherwise, what is the expected behaviour supposed to be?
+      opts = WeightedRandom.Input.Opts.from_probabilities_merge_opts([index: false])
+      assert opts[:outcome_type] == :index
+      assert opts[:index] == nil
     end
   end
 

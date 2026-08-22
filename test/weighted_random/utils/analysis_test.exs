@@ -43,7 +43,7 @@ defmodule WeightedRandom.Utils.AnalysisTest do
 
     test "from weights" do
       p = Mod.get_probabilities_from_weights(1..10, [%{target: 3, weight: 2}])
-      assert Mod.sum_delta(p, 1.0) == 0.0
+      assert Mod.sum_equalish?(p, 1.0)
     end
 
     test "index_to_outcome_table" do

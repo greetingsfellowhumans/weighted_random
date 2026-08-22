@@ -5,8 +5,10 @@ defmodule WeightedRandom.Input.Opts do
 
   @outcome_type [
     doc: ~s"""
-    `index:` pick random indices from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `0` and `5`.
-    `value:` pick random values from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `125` and `130`.
+    When you take a random sample, will it return the index of an outcome, or the value?
+
+    - `index:` pick random indices from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `0` and `5`.
+    - `value:` pick random values from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `125` and `130`.
     """,
     default: :index,
     type: {:in, [:index, :value]},
@@ -14,8 +16,10 @@ defmodule WeightedRandom.Input.Opts do
 
   @probability_type [
     doc: ~s"""
+    How will the algorithm determine bias?
+
     `probability:` Expects a list of floats between `0.0` and `1.0`. They should add up to `1.0`. but if not, they'll be automatically normalized until they do.
-    `weight:` Expects a list of maps that "add" probability to one (or more) targets.
+    `weight:` Every outcome has a default weight of `1.0`. The list of weights can alter this in an additive way.
     """,
     required: true,
     type: {:in, [:probability, :weight]},

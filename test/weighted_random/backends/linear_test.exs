@@ -18,18 +18,20 @@ defmodule WeightedRandom.Backends.LinearTest do
   end
 
   test "index false" do
+    outcomes = 200..300
     target = 205
+    outcome_type = :value
     weight = 25
 
-    opts = [backend: Mod, index: false]
-           |> WeightedRandom.Utils.Opts.merge_opts()
+    opts = [backend: Mod, outcome_type: outcome_type]
+           |> WeightedRandom.Input.Opts.from_weights_merge_opts()
 
-    input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [%{target: target, weight: weight}], opts)
+    input = WeightedRandom.Input.FromWeights.get_inputs(outcomes, [%{target: target, weight: weight}], opts)
     assert is_struct(input, WeightedRandom.Input)
 
     table = Mod.preprocess(input, opts)
     assert is_struct(table, Mod)
-    assert Enum.count(table.li) == Enum.count(200..300) + weight
+    assert Enum.count(table.li) == Enum.count(outcomes) + weight
 
     li = Mod.take(table, 400)
     assert Enum.all?(li, &(&1 >= 200))

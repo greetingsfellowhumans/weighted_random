@@ -29,10 +29,9 @@ defmodule WeightedRandom.Backend.Linear do
   def preprocess(input, opts) do
     weights = Enum.with_index(input.weights)
     li = Enum.map(weights, fn {weight, idx} ->
-      item = if Keyword.get(opts, :index) == false do
-        Enum.at(input.outcomes, idx)
-      else 
-        idx
+      item = case opts[:outcome_type] do
+        :value -> Enum.at(input.outcomes, idx)
+        :index -> idx
       end
       List.duplicate(item, round(weight))
     end)
