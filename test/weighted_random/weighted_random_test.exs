@@ -6,6 +6,7 @@ defmodule WeightedRandom.WeightedRandomTest do
 
   @opts []
 
+
   describe "rand/3" do
     @tag skip: "come back when you fix analysis for outcomes."
     test "No weights" do
@@ -34,6 +35,11 @@ defmodule WeightedRandom.WeightedRandomTest do
       probabilities = [0.1, 0.1, 0.1, 0.7]
       li = Mod.rand_p(probabilities, [take: 10000])
       assert Analysis.match_probability?(probabilities, li)
+    end
+
+    test "parse options" do
+      opts_schema = WeightedRandom.Input.Opts.from_probabilities_schema()
+      dbg opts_schema
     end
   end
 

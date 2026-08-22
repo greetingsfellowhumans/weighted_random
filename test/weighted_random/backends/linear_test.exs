@@ -3,8 +3,7 @@ defmodule WeightedRandom.Backends.LinearTest do
   alias WeightedRandom.Backend.Linear, as: Mod
 
   test "Index true" do
-    opts = [backend: Mod]
-           |> WeightedRandom.Utils.Opts.merge_opts()
+    opts = WeightedRandom.Input.Opts.from_weights_merge_opts([backend: Mod])
 
     input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [%{target: 5, weight: 25}], opts)
     assert is_struct(input, WeightedRandom.Input)

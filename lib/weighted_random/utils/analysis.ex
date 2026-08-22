@@ -28,6 +28,7 @@ defmodule WeightedRandom.Utils.Analysis do
   end
 
 
+
   @doc ~s"""
   Given a list of probabilities, and a list of results, determine whether the results were roughly correct.
 
@@ -59,7 +60,7 @@ defmodule WeightedRandom.Utils.Analysis do
   end
 
 
-  @default_tolerance 0.2
+  @default_tolerance 0.05
   @doc ~s"""
   Determine whether two numbers are equal; within a very small rounding error.
 
@@ -69,7 +70,19 @@ defmodule WeightedRandom.Utils.Analysis do
       iex> equalish?(0.5, 0.6, 0.01)
       false
   """
-  def equalish?(left, right, tolerance \\ @default_tolerance), do: abs(left - right) <= tolerance
+  def equalish?(left, right), do: equalish?(left, right, @default_tolerance)
+  def equalish?(left, right, tolerance) when is_number(left) and is_number(right), do: abs(left - right) <= tolerance
+  def equalish?(left, right, tolerance) when is_list(left) and is_list(right) do
+    Enum.zip(left, right)
+      |> Enum.all?(fn {l, r} -> equalish?(l, r, tolerance) end)
+  end
+
+
+  def sum_equalish?(li, target), do: sum_equalish?(li, target, @default_tolerance)
+  def sum_equalish?(li, target, tolerance) do
+    sum_delta(li, target)
+      |> equalish?(0.0, tolerance)
+  end
 
 
   @doc ~s"""

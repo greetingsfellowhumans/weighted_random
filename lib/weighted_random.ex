@@ -28,15 +28,24 @@ defmodule WeightedRandom do
   ]
 
   @doc ~s"""
-  Given a non-empty list of floats and a list of weights, map the list of outcomes into a list of floats which sum to 1.0 (potentially with rounding errors)
+  Given a non-empty list of percentages, build a struct that can later be used for very fast random sampling, matching those probabilities.
+
+  Supported options:\n#{NimbleOptions.docs(WeightedRandom.Input.Opts.from_probabilities_schema())}
   """
-  def from_probabilities([f | _] = probabilities, opts \\ []) when is_float(f) do
-    opts = Opts.merge_opts(opts, @default_opts)
+  def from_probabilities([f | _] = probabilities, opts \\ []) when is_number(f) do
+    opts = WeightedRandom.Input.Opts.from_probabilities_merge_opts(opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
+
+
+  @doc ~s"""
+  Given a non-empty list of possible outdomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
+
+  Supported options:\n#{NimbleOptions.docs(WeightedRandom.Input.Opts.from_weights_schema())}
+  """
   def from_weights(outcomes, weights, opts \\ []) when is_list(weights) do
-    opts = Opts.merge_opts(opts, @default_opts)
+    opts = WeightedRandom.Input.Opts.from_weights_merge_opts(opts)
     inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
