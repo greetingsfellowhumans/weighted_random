@@ -1,4 +1,4 @@
-# Weighted Random
+# Weighted Random Dev
 
 ```elixir
 Mix.install(
@@ -22,7 +22,7 @@ Mix.install(
 # Notice how the lines are pretty even
 outcomes = 0..9
 weights = []
-table = WeightedRandom.from_weights(outcomes, weights)
+table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, 1000)
 
 # This is equal to:
@@ -42,7 +42,7 @@ outcomes = 0..9
 weights = [
   %{target: 7, weight: 3}
 ]
-table = WeightedRandom.from_weights(outcomes, weights)
+table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, 1000)
 
 results
@@ -56,7 +56,9 @@ results
 probabilities = [
   0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.3, 0.1, 0.1
 ]
-table = WeightedRandom.from_probabilities(probabilities)
+
+# Notice we use `preprocess_p/1` instead of `preprocess/1`
+table = WeightedRandom.preprocess_p(probabilities)
 results = WeightedRandom.take(table, 1000)
 
 results
@@ -72,7 +74,7 @@ weights = [
   %{target: 6, weight: 5},
   %{target: 15, weight: 5}
 ]
-table = WeightedRandom.from_weights(outcomes, weights)
+table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, 1000)
 
 results
@@ -81,14 +83,48 @@ results
 ```
 
 ```elixir
+types = Curves.Bezier.Predefined.list()
+        |> Enum.map(&{&1, &1})
+bezier_type = Kino.Input.select("Curve Type", types, default: :ease_in_out)
+
+```
+
+```elixir
+## Curves
+
+# Now let's make it interesting by making our random weights into bezier curves
+# The first weight starts at index: 10, and moves right for 30 indices
+# The second weight starts at 50 and does the same, ending at 80.
+# By using different predefined curves, we clearly get very distinct shapes
+outcomes = 0..100
+curve = Kino.Input.read(bezier_type)
+
+weights = [
+  %{target: 50, weight: 25, right_dist: 40, curve: curve},
+  #%{target: 50, weight: 25, right_dist: 30, curve: :ease_out},
+]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, 100_000)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# This is just an implementation of the Curves library,
+# So you can also use your own custom bezier curve.
 outcomes = 0..100
 weights = [
-  %{target: 20, weight: 30, right_dist: 15, curve: :ease_in},
-  %{target: 50, weight: 25, radius: 10, curve: :ease_in_out},
-  %{target: 80, weight: 30, left_dist: 15, curve: :ease_out},
+  %{target: 45, weight: 30, left_dist: 35, curve: [
+    {0, 0},
+    {0.8, 0},
+    {0.3, 1.2},
+    {1, 1}
+  ]},
 ]
-table = WeightedRandom.from_weights(outcomes, weights)
-results = WeightedRandom.take(table, 10000)
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, 100_000)
 
 results
 |> WeightedRandom.Utils.Plotting.results_to_bars()

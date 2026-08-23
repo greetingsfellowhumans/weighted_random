@@ -27,14 +27,14 @@ defmodule WeightedRandom do
   Next, pass the resulting struct into `WeightedRandom.take/2` to get rand
 
   ## Examples
-      iex> r = WeightedRandom.preprocesses_p([0.01, 0.01, 0.98])
+      iex> r = WeightedRandom.preprocess_p([0.01, 0.01, 0.98])
       iex> li = WeightedRandom.take(r, 5)
       [2, 2, 2, 2, 2]
 
 
   Supported options:\n#{NimbleOptions.docs(Input.Opts.from_probabilities_schema())}
   """
-  def preprocesses_p([f | _] = probabilities, opts \\ []) when is_number(f) do
+  def preprocess_p([f | _] = probabilities, opts \\ []) when is_number(f) do
     opts = Input.Opts.from_probabilities_merge_opts(opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
@@ -119,7 +119,7 @@ defmodule WeightedRandom do
   Supported options:\n#{NimbleOptions.docs(Input.Opts.rand_p_docs())}
   """
   def rand_p(probabilities, opts \\ []) when is_list(probabilities) do
-    r = preprocesses_p(probabilities, opts)
+    r = preprocess_p(probabilities, opts)
     case Keyword.get(opts, :take) do
        n when is_integer(n) -> take(r, n)
        nil -> take(r)
