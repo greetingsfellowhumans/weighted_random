@@ -1,6 +1,7 @@
 defmodule WeightedRandom.Input.Opts do
   @moduledoc false
   alias WeightedRandom.Backend.Opts, as: BackendOpts
+  alias WeightedRandom.Utils.Opts, as: Utils
 
 
   @outcome_type [
@@ -12,17 +13,6 @@ defmodule WeightedRandom.Input.Opts do
     """,
     default: :index,
     type: {:in, [:index, :value]},
-  ]
-
-  @probability_type [
-    doc: ~s"""
-    How will the algorithm determine bias?
-
-    `probability:` Expects a list of floats between `0.0` and `1.0`. They should add up to `1.0`. but if not, they'll be automatically normalized until they do.
-    `weight:` Every outcome has a default weight of `1.0`. The list of weights can alter this in an additive way.
-    """,
-    required: true,
-    type: {:in, [:probability, :weight]},
   ]
 
   @precision [
@@ -38,6 +28,7 @@ defmodule WeightedRandom.Input.Opts do
     required: false,
     type: :pos_integer
   ]
+
 
   #def outcome_type(), do: @outcome_type
   #def probability_type(), do: @probability_type
@@ -65,6 +56,13 @@ defmodule WeightedRandom.Input.Opts do
   ])
   def rand_p_schema(), do: @rand_p_schema
 
+  @rand_p_docs NimbleOptions.new!([
+    backend: BackendOpts.backend(false),
+    precision: @precision,
+    take: @take,
+  ])
+  def rand_p_docs(), do: @rand_p_docs
+
 
   @from_weights_schema NimbleOptions.new!([
     backend: BackendOpts.backend(),
@@ -78,6 +76,27 @@ defmodule WeightedRandom.Input.Opts do
     |> WeightedRandom.Utils.Opts.sanitize(@from_weights_schema)
     |> WeightedRandom.Backend.Opts.add_backend()
     |> NimbleOptions.validate!(@from_weights_schema)
+    |> Keyword.put(:probability_type, :weight)
+  end
+
+  # Because we do a little extra work involing config files to get the :backend, it is not required at the beginning of the function.
+  # In the docs, it defaults to WalkerAlias, but in the Nimble validation it is set to required.
+  @rand_schema NimbleOptions.new!([
+    take: @take,
+    backend: BackendOpts.backend(),
+  ])
+  @rand_docs NimbleOptions.new!([
+    take: @take,
+    backend: BackendOpts.backend(false),
+  ])
+  def rand_schema(), do: Utils.merge([from_weights_schema(), @rand_schema])
+  def rand_docs(), do: Utils.merge([from_weights_schema(), @rand_docs])
+  def rand_merge_opts(opts) do
+    opts
+    |> index_adapter()
+    |> WeightedRandom.Utils.Opts.sanitize(@rand_schema)
+    |> WeightedRandom.Backend.Opts.add_backend()
+    |> NimbleOptions.validate!(@rand_schema)
     |> Keyword.put(:probability_type, :weight)
   end
 

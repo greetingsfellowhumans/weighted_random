@@ -71,5 +71,22 @@ defmodule WeightedRandom.Utils.Opts do
     Keyword.take(opts, keys)
   end
 
+  # Merge opts schemas, both in list form and in struct form.
+  # Returns struct regardless
+  def merge([schema | nimble_schemas]) do
+    Enum.reduce(nimble_schemas, safe_new(schema), &merge/2)
+  end
+  def merge(schema1, %{schema: inner} = schema2) do
+    s = case schema1 do
+      %NimbleOptions{schema: s} -> s
+      s when is_list(s) -> s
+    end
+    %{schema2 | schema: Keyword.merge(inner, s)}
+  end
+
+  # Turn a schema into a NimbleOptions struct, unless it already is one.
+  def safe_new(%NimbleOptions{} = opt), do: opt
+  def safe_new(schema), do: NimbleOptions.new!(schema)
+
 
 end

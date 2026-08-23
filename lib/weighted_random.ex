@@ -1,5 +1,5 @@
 defmodule WeightedRandom do
-  alias WeightedRandom.Utils.Opts
+  alias WeightedRandom.Utils.Types, as: T
   alias WeightedRandom.Input
 
   @moduledoc ~s"""
@@ -20,42 +20,75 @@ defmodule WeightedRandom do
   So it will be far better to preprocess once, and take many times. `rand/3` preprocesses EVERY time it is called.
   """
 
-  @default_opts [
-    take: nil,
-    index: true,
-    precision: nil,
-    probability_type: :float,
-  ]
 
   @doc ~s"""
-  Given a non-empty list of percentages, build a struct that can later be used for very fast random sampling, matching those probabilities.
+  Given a non-empty list of percentages (floats from 0.0 - 1.0), build the struct.
 
-  Supported options:\n#{NimbleOptions.docs(WeightedRandom.Input.Opts.from_probabilities_schema())}
+  Next, pass the resulting struct into `WeightedRandom.take/2` to get rand
+
+  ## Examples
+      iex> r = WeightedRandom.preprocesses_p([0.01, 0.01, 0.98])
+      iex> li = WeightedRandom.take(r, 5)
+      [2, 2, 2, 2, 2]
+
+
+  Supported options:\n#{NimbleOptions.docs(Input.Opts.from_probabilities_schema())}
   """
-  def from_probabilities([f | _] = probabilities, opts \\ []) when is_number(f) do
-    opts = WeightedRandom.Input.Opts.from_probabilities_merge_opts(opts)
+  def preprocesses_p([f | _] = probabilities, opts \\ []) when is_number(f) do
+    opts = Input.Opts.from_probabilities_merge_opts(opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
 
 
   @doc ~s"""
-  Given a non-empty list of possible outcomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
+  Given a non-empty list (or range) of possible outcomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
 
-  Supported options:\n#{NimbleOptions.docs(WeightedRandom.Input.Opts.from_weights_schema())}
+  Next, pass the resulting struct into `WeightedRandom.take/2` to get rand
+
+  ## Examples
+      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> li = WeightedRandom.take(r, 5)
+      [2, 2, 2, 2, 2]
+
+
+  Supported options:\n#{NimbleOptions.docs(Input.Opts.from_weights_schema())}
   """
-  def from_weights(outcomes, weights, opts \\ []) when is_list(weights) do
-    opts = WeightedRandom.Input.Opts.from_weights_merge_opts(opts)
+  def preprocess(outcomes, weights, opts \\ []) when is_list(weights) do
+    opts = Input.Opts.from_weights_merge_opts(opts)
     inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
 
 
+  @doc ~s"""
+  Given a WeightedRandom struct, return a single random value.
+
+
+  ## Examples
+      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> li = WeightedRandom.take(r)
+      2
+
+  """
   def take(processed_struct) do
     WeightedRandom.Backend.take(processed_struct, 1)
       |> convert_index_to_outcome(processed_struct.outcomes)
       |> List.first()
   end
+
+
+  @doc ~s"""
+  Given a WeightedRandom struct, return a list of random values
+
+
+  ## Examples
+      iex> # Make the item at index 2 1000x more likely than any other single index.
+      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> li = WeightedRandom.take(r, 3)
+      [2, 2, 2]
+
+  """
   def take(processed_struct, count) do
     WeightedRandom.Backend.take(processed_struct, count)
     |> convert_index_to_outcome(processed_struct.outcomes)
@@ -64,61 +97,32 @@ defmodule WeightedRandom do
 
   @doc ~s"""
   Returns a random value based on the weights given.
+  If you need *a lot* of random numbers over time, this is suboptimal and you should use `preprocess` + `take` instead.
 
-  By default this operates on the index, not the value.
-
-  #  ## Examples
-  #      iex> :rand.seed(:exsss, {108, 101, 102})
-  #      iex> li = 1..10
-  #      iex> weights = [ %{target: 7, weight: 100} ]
-  #      iex>
-  #      iex> # By default this uses the index 7, not the *value* 7.
-  #      iex> WeightedRandom.rand(li, weights)
-  #      8
-  #      iex> # But we can use the value by passing the option index: false
-  #      iex> WeightedRandom.rand(li, weights, index: false)
-  #      7
-  #      iex> li = [:a, :b, :c, :d, :e, :f, :g, :h, :j, :k, :l]
-  #      iex> WeightedRandom.rand(li, weights)
-  #      :h
-  #      iex> weights = [ %{target: :d, weight: 100} ]
-  #      iex> WeightedRandom.rand(li, weights, index: false)
-  #      :d
-
-
-  ## Opts
-  * `:backend` [module]: WeightedRandom.Backend.WalkerAlias. We also provide WeightedRandom.Backend.Linear which can have slightly better performance if you are not taking that many samples. Worse performance in most other cases.
-  * `:index` [boolean]: true. Whether the `:target` of a `%WeightedRandom.Weight{}` points at an index of the outcomes (if true), or at the actual value of one of the outcomes (if false).
-  * `:probability_type` [:float | :fraction]: :float. To avoid floating point precision issues, you can use :fraction so that the probabilities are all tuples of `{numenator :: integer(), denominator :: integer()}` In which they all have the same denominator which equals the sum of all numinators.
-  * `:precision` [integer]: 3. Only applies when the `probability_type` is `:float`. Probability floats will be rounded to this number of decimal places.
-  * `:take` [integer | nil]: `nil`. If used, then instead of returning one random value, will return a list of random value with size equal to take.
-
+  Supported options:\n#{NimbleOptions.docs(Input.Opts.rand_docs())}
   """
-  def rand(outcomes, weights), do: rand(outcomes, weights, [])
-  def rand(outcomes, weight, opts) when is_map(weight), do: rand(outcomes, [weight], opts)
-  def rand(outcomes, weights, opts) when is_list(weights) do
-    processed_struct = from_weights(outcomes, weights, opts)
-    case Keyword.get(opts, :take) do
-       n when is_integer(n) -> 
-         WeightedRandom.Backend.take(processed_struct, n)
-          |> convert_index_to_outcome(outcomes)
-       nil ->
-        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
-        convert_index_to_outcome(idx, outcomes)
+  @spec rand(outcomes :: T.outcomes(), weights :: list(T.weight_spec()), opts :: list()) :: term()
+  def rand(outcomes, weights, opts \\ []) do
+    weights = if is_map(weights), do: [weights], else: weights
+    r = preprocess(outcomes, weights, opts)
+    opts = Input.Opts.rand_merge_opts(opts)
+    case opts[:take] do
+       n when is_integer(n) -> take(r, n)
+       nil -> take(r)
     end
   end
 
   @doc ~s"""
   similar to `rand/3` but instead of a list of outcomes, and a list of weights, `rand_p/3` accepts a list of probability floats.
+  If you need *a lot* of random numbers over time, this is suboptimal and you should use `preprocess` + `take` instead.
+
+  Supported options:\n#{NimbleOptions.docs(Input.Opts.rand_p_docs())}
   """
   def rand_p(probabilities, opts \\ []) when is_list(probabilities) do
-    processed_struct = from_probabilities(probabilities, opts)
+    r = preprocesses_p(probabilities, opts)
     case Keyword.get(opts, :take) do
-       n when is_integer(n) -> 
-         WeightedRandom.Backend.take(processed_struct, n)
-       nil ->
-        [idx] = WeightedRandom.Backend.take(processed_struct, 1)
-        idx
+       n when is_integer(n) -> take(r, n)
+       nil -> take(r)
     end
   end
 

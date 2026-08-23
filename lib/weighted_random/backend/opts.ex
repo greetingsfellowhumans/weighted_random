@@ -12,7 +12,7 @@ defmodule WeightedRandom.Backend.Opts do
     type: :atom,
   ]
 
-  def backend, do: @backend
+  def backend(required? \\ true), do: Keyword.put(@backend, :required, required?)
 
   # Takes the first backend module found, checking in order:
   # 1. opts passed in
