@@ -18,10 +18,6 @@ defmodule WeightedRandom.Input.AddWeight do
     %{prob | weights: List.update_at(prob.weights, idx, &(&1 + amount))}
   end
 
-  # New problem.
-  # if the curve starts high and goes down, like :linear_down_right,
-  # then there is A huge spike at the first index, before droppng to zero and slowly climbing.
-  # Expected behaviour would be that actually the starting spike is correct, and then the curve glides down from there.
   defp add_target_weight(prob, %WeightedRandom.Input.Weight{target: idx, amount: amount, right_dist: rd, left_dist: ld, curve: _curve}) do
     amount = cond do
       rd > 0 -> 0
@@ -33,15 +29,15 @@ defmodule WeightedRandom.Input.AddWeight do
   end
 
 
-  defp add_neighbour_weights_right(prob, %{right_dist: r, curve: curve, target: target} = weight) when r > 0 do
+  defp add_neighbour_weights_right(prob, %{right_dist: r, amount: amount, curve: curve, target: target}) when r > 0 do
     weights =
-      curve
-      |> Curves.take!(r + 1)
-      |> Enum.map(fn {_x, perc} ->
-        (perc * weight.amount)
+      0..r
+      |> Enum.map(fn idx ->
+        perc = idx / (r)
+        {_x, y} = Curves.solve!(curve, perc)
+        y * amount
       end)
       |> Enum.reverse()
-      |> tl()
 
     weights
     |> Enum.with_index(0)
@@ -52,14 +48,15 @@ defmodule WeightedRandom.Input.AddWeight do
   defp add_neighbour_weights_right(prob, _), do: prob
 
 
-  defp add_neighbour_weights_left(prob, %{right_dist: rd, left_dist: ld, curve: curve, target: target} = weight) when ld > 0 do
+  defp add_neighbour_weights_left(prob, %{amount: amount, right_dist: rd, left_dist: ld, curve: curve, target: target}) when ld > 0 do
     take_amount = if rd == 0, do: ld + 1, else: ld
     start_index = if rd == 0, do: 0, else: 1
     weights =
-      curve
-      |> Curves.take!(take_amount)
-      |> Enum.map(fn {_x, perc} ->
-        (perc * weight.amount)
+      1..take_amount
+      |> Enum.map(fn idx ->
+        perc = idx / (ld + 1)
+        {_x, y} = Curves.solve!(curve, perc)
+        y * amount
       end)
       |> Enum.reverse()
       |> tl()
