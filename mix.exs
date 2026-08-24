@@ -22,7 +22,7 @@ defmodule WeightedRandom.MixProject do
 
   defp docs() do
     [
-      main: "readme",
+      main: "WeightedRandom",
       extras: [
         "CHANGELOG.md",
         "guides/tutorial.livemd"
@@ -33,7 +33,7 @@ defmodule WeightedRandom.MixProject do
 
 
   defp description() do
-    "Fast, flexible, powerful framework for simulating weighted randomness"
+    "Fast, flexible, powerful framework for simulating weighted randomness, customizing probabilities and bias."
   end
 
   defp package() do

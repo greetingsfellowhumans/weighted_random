@@ -3,12 +3,17 @@ defmodule WeightedRandom do
   alias WeightedRandom.Input
 
   @moduledoc ~s"""
+  ## Livebook
+
+  The best way to learn is through the interactive [Livebook tutorial](guides/tutorial.livemd)
 
   ## Usage
 
   ```elixir
-  table = WeightedRandom.preprocess(0..100, [%{target: 25, weight: 50, radius: 10}])
-  [n1, n2, n3, n4] = WeightedRandom.take(table, 4)
+  outcomes = 0..100
+  weight = %{target: 25, weight: 50, radius: 10}
+  r = WeightedRandom.preprocess(0..100, [weight])
+  [n1, n2, n3, n4] = WeightedRandom.take(r, 4)
   ```
 
   Alternately, if you care less about performance, you can do it all at once:
