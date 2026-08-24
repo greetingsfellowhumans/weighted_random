@@ -4,7 +4,7 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "1.0.0-alpha.0",
+      version: "1.0.0-alpha.1",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       description: description(),
@@ -23,19 +23,14 @@ defmodule WeightedRandom.MixProject do
   defp docs() do
     [
       main: "readme",
-      extras: ["README.md", "CHANGELOG.md"],
-      extra_section: "GUIDES",
-      extras: extras()
+      extras: [
+        "CHANGELOG.md",
+        "guides/tutorial.livemd"
+      ],
+      skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
     ]
   end
 
-  defp extras do
-    [
-      "guides/weighted_random.md",
-      "guides/livebook.md",
-      "guides/DiceGuide.md"
-    ]
-  end
 
   defp description() do
     "Fast, flexible, powerful framework for simulating weighted randomness"

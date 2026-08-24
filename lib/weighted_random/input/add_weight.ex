@@ -1,5 +1,6 @@
 defmodule WeightedRandom.Input.AddWeight do
-  
+  @moduledoc false
+
   @doc ~s"""
   Add a certain amount of weight at a specific index
   """

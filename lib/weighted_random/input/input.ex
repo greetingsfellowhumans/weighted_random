@@ -1,7 +1,5 @@
 defmodule WeightedRandom.Input do
-  @moduledoc ~s"""
-  The data structure for keeping track of weights and probability
-  """
+  @moduledoc false
   defstruct [
     :weights,
     :probabilities,
@@ -10,9 +8,7 @@ defmodule WeightedRandom.Input do
   ]
 
 
-  @doc ~s"""
-  Given a list of outcomes, create a new struct, setting each outcome to a weight of `1.0`
-  """
+  @doc false
   def from_outcomes(outcomes) do
     struct(__MODULE__, %{
       outcomes: outcomes,
@@ -21,9 +17,7 @@ defmodule WeightedRandom.Input do
     })
   end
 
-  @doc ~s"""
-  Given a list of floats, which must sum up to 1.0
-  """
+  @doc false
   def from_probabilities(probabilities) do
     size = Enum.count(probabilities)
 
@@ -35,10 +29,8 @@ defmodule WeightedRandom.Input do
   end
 
 
-  @doc ~s"""
-  Acess the weight at a certain index
-  """
-  def at(prob, idx), do: Enum.at(prob.weights, idx)
+  @doc false
+  #def at(prob, idx), do: Enum.at(prob.weights, idx)
 
 
   defdelegate add_weight(input, weight), to: WeightedRandom.Input.AddWeight

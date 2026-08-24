@@ -1,4 +1,8 @@
 defmodule WeightedRandom.Utils.Plotting do
+  @moduledoc ~s"""
+  This is mostly for use in Livebooks.
+  """
+
   def results_to_bars(results) when is_list(results) do
     results
       |> Enum.group_by(&(&1), fn _ -> true end)

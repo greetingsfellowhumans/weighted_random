@@ -1,5 +1,6 @@
 defmodule WeightedRandom.Input.Adapters do
-  
+  @moduledoc false
+
   def probabilities_to_weights(probabilities) do
     smallest = Enum.min(probabilities)
     Enum.map(probabilities, fn p ->

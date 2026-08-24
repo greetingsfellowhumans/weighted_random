@@ -1,4 +1,6 @@
 defmodule WeightedRandom.Utils.Analysis do
+  @moduledoc false
+
   alias WeightedRandom.Utils.Types, as: T
   @doc ~s"""
   Given a list of random values, determine the probability of each value.

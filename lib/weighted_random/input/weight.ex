@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Input.Weight do
+  @moduledoc false
   @default_curve :ease_in_out
 
   @enforce_keys [:target, :amount, :left_dist, :right_dist, :expanded?]

@@ -1,0 +1,176 @@
+# Tutorial
+
+```elixir
+Mix.install(
+  [
+    {:weighted_random, "~> 1.0.0-alpha.1"},
+    {:tucan, "~> 0.6.0"},
+    {:vega_lite, "~> 0.1.0"},
+    {:kino_vega_lite, "~> 0.1.0"},
+  ]
+)
+```
+
+
+```elixir
+# Before getting into the nitty gritty, let's start with a visual demo.
+# Without any weights, a random number between 1-10 has a probability of 10% for each outcome
+
+# Notice how the lines are pretty even
+
+
+#### Controls
+outcomes = 0..4
+sample_size = 1000
+####
+
+
+weights = []
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+# This is equal to:
+# results = for 1..sample_size do
+#   Enum.random(outcomes)
+# end
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Watch what happens when the number 3 is 10x more likely to appear than any other number
+
+#### Controls
+outcomes = 0..4
+sample_size = 1000
+weights = [
+  %{target: 3, weight: 10}
+]
+####
+
+
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Another way to do that is to use a list of probabilities, 
+# instead of outcomes + weights
+
+
+#### Controls
+sample_size = 1000
+probabilities = [
+  0.01, 0.01, 0.97, 0.01
+]
+####
+
+# Notice we use `preprocess_p/1` instead of `preprocess/1`
+table = WeightedRandom.preprocess_p(probabilities)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# We can have more than one weight, too
+
+
+#### Controls
+sample_size = 1000
+outcomes = 0..20
+weights = [
+  %{target: 6, weight: 5},
+  %{target: 15, weight: 5}
+]
+####
+
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+## Randomness following Bezier Curves
+
+## let's set up a select list to be used in the next code block       
+types = [
+  :ease_in, :ease_out, :ease_in_out, :linear, :quadratic_down,
+  :quadratic_up
+] |> Enum.map(&{&1, &1})
+bezier_type = Kino.Input.select("Curve Type", types, default: :ease_in_out)
+
+```
+
+```elixir
+# By using different predefined curves, we clearly get very distinct shapes
+
+# Although you should be cautious not to rely on the accuracy of curves.
+# For a lot of 'mathy' reasons, it is often not possible to
+# precisely match a curve, and they work better in some situations than others.
+
+#### Controls
+window_size = 300
+length = 100
+outcomes = 0..length
+sample_size = 100_000
+curve = Kino.Input.read(bezier_type) # Use the select list above this code block
+####
+
+weights = [
+  %{target: length, weight: 20, left_dist: length, curve: curve},
+]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: window_size, width: window_size, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# This is just an implementation of the Curves library,
+# So you can also use your own custom bezier curve.
+
+# Unfortunately, due to some 'mathy' reasons about probabilities not being
+#   the same as coordinates on a graph, your results will often look 'flatter' or 
+#   more linear than the actual bezier curve.
+
+# So it is best to keep your curves simple and not rely too much on matching them
+
+
+#### Controls
+window_size = 300
+length = 100
+sample_size = 100_000
+curve = [
+  {0, 0},
+  {0.8, 0.2},
+  {0.3, 2.2},
+  {1, 1}
+]
+####
+
+
+weights = [
+  %{target: length, weight: 20, left_dist: length, curve: curve},
+]
+outcomes = 0..length
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: window_size, width: window_size, fill_color: "#33245A", corner_radius: 5)
+```

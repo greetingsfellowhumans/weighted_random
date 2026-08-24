@@ -26,7 +26,8 @@ This is a big one. I got frustrated and ended up just rewriting a massive amount
 ### Fixed
 
 - Bug in which radius of 0 would break
-- Bug in which the radius curve didn't really work
+- Bugs in which the radius curve didn't really work
+- Bugs with passing in probabilities instead of weights
 
 ### BREAKING CHANGES
 
