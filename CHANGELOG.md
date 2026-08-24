@@ -26,7 +26,8 @@ This is a big one. I got frustrated and ended up just rewriting a massive amount
 ### Fixed
 
 - Bug in which radius of 0 would break
-- Bug in which the radius curve didn't really work
+- Bugs in which the radius curve didn't really work
+- Bugs with passing in probabilities instead of weights
 
 ### BREAKING CHANGES
 
@@ -53,6 +54,10 @@ You can also use your own algorithm by passing in any module which `use`s `Weigh
 - When calculating radius, stop rounding the floats. It made sense with a single
   backend that was extremely resource intensive and needed to save bits. But it
   does not make sense as a platform that needs to provide an accurate api.
+
+### Added
+
+- Better documentation and validation of options, using NimbleOptions
 
 ## [0.4.2] - 2025-08-04
 

@@ -4,34 +4,11 @@
 
 Sometimes random is *too* random. The WeightedRandom package is a framework manipulating probability.
 
-It is high performance using the Walker-Alias Method by default, but with the ability to easily use plugins or your own algorithm instead. See [WeightedRandom.Backend](lib/weighted_random/backend/backend.ex)
-It is approachable, allowing you to start with a list (or range) of possible outcomes, and assume they are all equal weight, until weights are added.
-In theory, if you don't add any weights, `WeightedRandom.rand(1..10, [])` is the same as `Enum.rand(1..10)`
+This library is:
 
-Adding [Weights] is simple yet powerful:
+- high performance
+- approachable, with an interactive [Livebook](tutorial.livemd) tutorial
 
-- Add multiple weights, picking the index and it's magnitude.
-- Add a radius, affecting neighbouring indices, plus an optional bezier curve to determine how to spread out the weight.
-
-## Quick Example
-
-```elixir
-iex> alias WeightedRandom, as: WR
-iex> # Pick a random number between 1..10, but 4 is 35x more likely than
-iex. # any other given number
-iex> range = 1..10
-iex> weights = [ %{target: 4, weight: 35} ]
-iex> table = WR.preprocess(range, weights)
-iex> WR.take(table)
-4
-iex> # You can even set a radius so that neighbouring values also get
-iex> # some added weight
-iex> weight1 = %{target: 7, weight: 15, radius: 4, curve: :ease_in_sine}
-iex> weight2 = %{target: 1, weight: 35}
-iex> weights = [weight1, weight2]
-iex> table = WR.preprocess(range, weights, index: false)
-iex> WR.take(table, 4)
-[8, 1, 1, 5, 8, 6, 7, 7, 1, 10]
 ```
 
 ## Visual example
@@ -46,6 +23,7 @@ range = 1..100
 target = 45
 weight = 15
 radius = 25
+
 ```
 
 ### Enum.random(1..100)
@@ -67,7 +45,7 @@ For older versions of elixir (before 1.17) and old OTP (before 27)
 ```elixir
 def deps do
   [
-    {:weighted_random, "~> 0.4.2"}
+    {:weighted_random, "~> 1.4.2"}
   ]
 end
 ```
@@ -78,43 +56,7 @@ For newer projects
 # mix.exs
 def deps do
   [
-    {:weighted_random, "~> 1.0.0-beta.0"}
+    {:weighted_random, "~> 1.0.0-alpha.1"}
   ]
 end
-
-# Optionally if you want to use your own algorithm:
-# config.exs
-config :weighted_random,
-  backend: MyApp.CustomBackEnd
-
-```
-
-## Dice
-
-WeightedRandom also includes a [Dice] rolling module.
-
-```elixir
-iex> :rand.seed(:exsss, {100, 231, 302})
-iex> import WeightedRandom.Dice
-iex> d6 = ~d{6}
-iex> d6.total
-6
-iex> d6 = Dice.roll(d6)
-iex> d6.total
-3
-iex> # You might know this as 4d8+1. or 4 x 8-sided dice, +1 to the total.
-iex> d8s =  ~d{4, 8, 1}
-iex> d8s.total
-27
-iex> d8s = Dice.roll(d8s)
-iex> d8s.total
-15
-iex> mixed_dice = Dice.merge_dice([d6, d8s])
-iex> mixed_dice.total == d6.total + d8s.total
-true
-iex> heavy_d4 = Dice.add_weight(~d{4}, %{weight: 400, target: 4})
-iex> heavy_d4.total == 4
-iex> mixed_dice = Dice.merge_dice(mixed_dice, heavy_d4)
-iex> mixed_dice.total
-3 + 15 + 4
 ```

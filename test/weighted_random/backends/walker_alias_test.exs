@@ -2,9 +2,15 @@ defmodule WeightedRandom.Backends.WalkerAliasTest do
   use ExUnit.Case
   alias WeightedRandom.Backend.WalkerAlias, as: Mod
 
+  @opts [
+    backend: Mod,
+    outcome_type: :index,
+  ]
+
   describe "WalkerAlias Backend" do
     test "Integration" do
-      results = WeightedRandom.rand(1..100, [%{target: 50, weight: 50, radius: 15}], [backend: Mod, index: false, take: 1_000])
+      opts = [{:take, 1_000} | @opts]
+      results = WeightedRandom.rand(1..100, [%{target: 50, weight: 50, radius: 15}], opts)
       assert Enum.count(results) == 1_000
       results = Enum.frequencies(results)
       assert results[50] > 10
