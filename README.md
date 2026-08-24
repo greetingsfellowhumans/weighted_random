@@ -45,7 +45,7 @@ For older versions of elixir (before 1.17) and old OTP (before 27)
 ```elixir
 def deps do
   [
-    {:weighted_random, "~> 1.4.2"}
+    {:weighted_random, "~> 0.4.2"}
   ]
 end
 ```
