@@ -112,6 +112,9 @@ types = [
   :ease_in, :ease_out, :ease_in_out, :linear, :quadratic_down,
   :quadratic_up
 ] |> Enum.map(&{&1, &1})
+
+types = Curves.Bezier.Predefined.list()
+|> Enum.map(&{&1, &1})
 bezier_type = Kino.Input.select("Curve Type", types, default: :ease_in_out)
 
 ```
@@ -132,7 +135,13 @@ curve = Kino.Input.read(bezier_type) # Use the select list above this code block
 ####
 
 weights = [
-  %{target: length, weight: 20, left_dist: length, curve: curve},
+  %{
+    target: round(length / 2),
+    weight: 30,
+    left_dist: round(length / 4), 
+    right_dist: round(length / 4),
+    curve: curve
+  },
 ]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
