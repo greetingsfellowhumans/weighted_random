@@ -4,6 +4,14 @@ defmodule WeightedRandom.Utils.AnalysisTest do
   import Mod
   doctest Mod
 
+  describe "Analysis.get_delta" do
+    test "probabilities" do
+      probs = [1 / 4, 2 / 4, 1 / 4]
+      results = [0, 1, 1, 2]
+      assert Mod.get_delta(probs, results) == [0, 0, 0]
+    end
+  end
+
   describe "Analysis" do
 
     test "get probabilities" do

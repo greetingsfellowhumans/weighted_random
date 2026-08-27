@@ -7,10 +7,10 @@ defmodule WeightedRandom.InputTest do
   describe "Probability" do
     
     test "Get probability from outcomes" do
-      probs = Enum.map(1..100, fn _ -> 0.01 end)
+      probs = Enum.map(1..100, fn _ -> 1 / 100 end)
       psum = Enum.sum(probs)
       refute psum == 1.0
-      assert Analysis.equalish?(psum, 1.0, 0.001)
+      assert Analysis.equalish?(psum, 1.0)
 
 
       outcomes = 1..100
@@ -22,10 +22,6 @@ defmodule WeightedRandom.InputTest do
         |> Map.put(:probabilities, Input.weights_to_probabilities(inputs))
       [prob | _] = inputs.probabilities
       assert prob == 0.01
-      #p = Mod.get_probabilities_from_weights(1..10, [])
-      #assert Mod.sum_delta(p, 1.0) == 0.0
-      #Mod.sum_delta(p, )
-
     end
   end
 

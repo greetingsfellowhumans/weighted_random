@@ -17,12 +17,13 @@ Mix.install(
 
 ```elixir
 # Before getting into the nitty gritty, let's start with a visual demo.
-# Without any weights, a random number between 1-10 has a probability of 10% for each outcome
+# Without any weights, every outcome has an equal chance of being drawn.
+# For example, when picking a random number between 1-10, each outcome has a 10% chance.
 
 # Notice how the lines are pretty even
 
 
-#### Controls
+#### Controls ####
 outcomes = 0..4
 sample_size = 1000
 ####
@@ -45,7 +46,7 @@ results
 ```elixir
 # Watch what happens when the number 3 is 10x more likely to appear than any other number
 
-#### Controls
+#### Controls ####
 outcomes = 0..4
 sample_size = 1000
 weights = [
@@ -67,14 +68,19 @@ results
 # instead of outcomes + weights
 
 
-#### Controls
+#### Controls ####
 sample_size = 1000
 probabilities = [
   0.01, 0.01, 0.97, 0.01
 ]
+
+# alternately, as fractions
+# probabilities = [1 / 100, 1 / 100, 97 / 100, 1 / 100]
+
 ####
 
 # Notice we use `preprocess_p/1` instead of `preprocess/1`
+# The `_p` is for probabilities.
 table = WeightedRandom.preprocess_p(probabilities)
 results = WeightedRandom.take(table, sample_size)
 
@@ -87,7 +93,7 @@ results
 # We can have more than one weight, too
 
 
-#### Controls
+#### Controls ####
 sample_size = 1000
 outcomes = 0..20
 weights = [
@@ -105,56 +111,39 @@ results
 ```
 
 ```elixir
-## Randomness following Bezier Curves
+#### Using the Curves library  ####
 
-## let's set up a select list to be used in the next code block       
-types = [
-  :ease_in, :ease_out, :ease_in_out, :linear, :quadratic_down,
-  :quadratic_up
-] |> Enum.map(&{&1, &1})
-
+# WeightedRandom weights can easily follow bezier curves.
+# let's set up a select list to be used in the next code block    
+# That way, we can pick different curves and watch how they affect the randomness.
 types = Curves.Bezier.Predefined.list()
 |> Enum.map(&{&1, &1})
+
 bezier_type = Kino.Input.select("Curve Type", types, default: :ease_in_out)
 
 ```
 
 ```elixir
 # By using different predefined curves, we clearly get very distinct shapes
+# (Of course, some curves work better than others when doing this)
 
-# Although you should be cautious not to rely on the accuracy of curves.
-# For a lot of 'mathy' reasons, it is often not possible to
-# precisely match a curve, and they work better in some situations than others.
-
-#### Controls
-window_size = 300
+#### Controls ####
 length = 100
 outcomes = 0..length
-sample_size = 100_000
+sample_size = 1_000_000
 curve = Kino.Input.read(bezier_type) # Use the select list above this code block
 ####
 
-
-
-weights = [
-  %{
-    target: round(length / 2),
-    weight: 30,
-    left_dist: round(length / 4), 
-    right_dist: round(length / 4),
-    curve: curve
-  },
-]
+weights = [%{target: round(length / 2), weight: 100, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
 
 results
 |> WeightedRandom.Utils.Plotting.results_to_bars()
-|> Tucan.bar("outcome", "hits", height: window_size, width: window_size, fill_color: "#33245A", corner_radius: 5)
+|> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
 ```
 
 ```elixir
-# This is just an implementation of the Curves library,
 # So you can also use your own custom bezier curve.
 
 # Unfortunately, due to some 'mathy' reasons about probabilities not being
@@ -164,27 +153,23 @@ results
 # So it is best to keep your curves simple and not rely too much on matching them
 
 
-#### Controls
-window_size = 300
+#### Controls ####
 length = 100
-sample_size = 100_000
+outcomes = 0..length
+sample_size = 1_000_000
 curve = [
   {0, 0},
-  {0.8, 0.2},
-  {0.3, 2.2},
+  {0.33, -4},
+  {0.67, 4},
   {1, 1}
 ]
+
 ####
-
-
-weights = [
-  %{target: length, weight: 20, left_dist: length, curve: curve},
-]
-outcomes = 0..length
+weights = [%{target: round(length / 2), weight: 100, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
 
 results
 |> WeightedRandom.Utils.Plotting.results_to_bars()
-|> Tucan.bar("outcome", "hits", height: window_size, width: window_size, fill_color: "#33245A", corner_radius: 5)
+|> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
 ```

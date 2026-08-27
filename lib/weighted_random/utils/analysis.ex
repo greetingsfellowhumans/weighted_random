@@ -30,6 +30,19 @@ defmodule WeightedRandom.Utils.Analysis do
   Given a list of probabilities, and a list of results, determine whether the results were roughly correct.
 
   By default we use a tolerance of `0.2` (i.e. 20%). If the results have a very large sample size, then you should be able lower the tolerance.
+
+  This returns the absolute values, so they will never be negative.
+
+  ## Examples
+      iex> probs = [0.25, 0.5, 0.25]
+      iex> results = [0, 1, 1, 2]
+      iex> get_delta(probs, results)
+      [0.0, 0.0, 0.0]
+
+      iex> probs = [0.5, 0.5]
+      iex> results = [0, 1, 1, 1]
+      iex> get_delta(probs, results)
+      [0.25, 0.25]
   """
   @spec get_delta(expected :: list(float()), results :: list()) :: list(float())
   def get_delta(expected, results) when is_list(results) do
@@ -85,7 +98,7 @@ defmodule WeightedRandom.Utils.Analysis do
   @doc ~s"""
   Given a list of deltas, determine whether they are all within the tolerance level.
 
-  By default we use a tolerance of `0.2` (i.e. 20%). If the results have a very large sample size, then you should be able lower the tolerance.
+  By default we use a tolerance of `0.05` (i.e. 5%). If the results have a very large sample size, then you should be able lower the tolerance.
   """
   @spec match_probability?(expected :: list(float()), results :: list(), tolerance :: float()) :: boolean()
   def match_probability?(expected, results, tolerance \\ @default_tolerance) do

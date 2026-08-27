@@ -1,14 +1,12 @@
 defmodule WeightedRandom.WeightedRandomTest do
   use ExUnit.Case
-  alias WeightedRandom.Backend.{WalkerAlias, Linear}
+  alias WeightedRandom.Backend.{WalkerAlias}
   alias WeightedRandom, as: Mod
   alias Mod.Utils.Analysis
 
-  @opts []
-
 
   describe "rand/3" do
-    @tag skip: "come back when you fix analysis for outcomes."
+    @tag skip: "Come back after fixing the outcome_type: value bug for get_delta"
     test "No weights" do
       outcomes = 1..6
       weights = []
@@ -19,6 +17,8 @@ defmodule WeightedRandom.WeightedRandomTest do
       assert Enum.all?(li, &(&1 >= 1))
       assert Enum.all?(li, &(&1 <= 6))
 
+      dbg li
+      dbg probs
       Analysis.match_probability?(probs, li)
     end
     test "simple weight" do
