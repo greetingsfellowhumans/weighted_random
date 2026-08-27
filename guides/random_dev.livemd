@@ -179,13 +179,26 @@ results
 alias WeightedRandom.Dice
 import Dice
 
-# This creates 4 x 6-sided dice, and adds +1 to the total.
-# In standard dice notation this would be written as "4d6+1"
-d = ~d{4, 6, 1}
+# This creates 4 x 6-sided dice
+# In standard dice notation this would be written as "4d6"
+d = ~d{4, 6}
 
 # Now let's make the number 2 have more weight
-# Dice always use outcome_type: :value, not :index
-d = Dice.add_weight(d, [%{target: 2, amount: 50}])
+# Dice always use outcome_type: :value, not :index, so the target is 2
+weights = [%{target: 2, amount: 50}]
+d = Dice.add_weight(d, weights)
 d = Dice.roll(d)
-d.dice |> Enum.map(&(&1.result))
+
+IO.inspect(Dice.results(d), label: "results")
+d.total
+```
+
+```elixir
+# We can also add modifiers to the dice notation.
+# for example 2d8+1 would create 2 x 8-sided dice, and add +1 to the total
+d = ~d{2, 8, 1}
+    |> Dice.roll()
+
+IO.inspect(Dice.results(d), label: "results")
+d.total
 ```
