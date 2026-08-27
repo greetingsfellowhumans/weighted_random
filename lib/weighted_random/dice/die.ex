@@ -1,7 +1,5 @@
 defmodule WeightedRandom.Die do
-  @moduledoc ~s"""
-  Represents a single Die, with a certain number of sides, weights, and current result.
-  """
+  @moduledoc false
   @enforce_keys [:sides, :weights, :result]
   defstruct sides: 6,
             weights: [],

@@ -6,28 +6,23 @@ defmodule WeightedRandom.Utils.Analysis do
   Given a list of random values, determine the probability of each value.
   This is basically the inverse of `WeightedRandom.rand_p/2`
   """
-  @spec get_probabilities_from_results(results :: list()) :: list(float())
-  def get_probabilities_from_results(results) do
+  @spec get_frequency_of_results(results :: list()) :: %{optional(result :: any()) => count :: integer()}
+  def get_frequency_of_results(results) do
     size = Enum.count(results)
 
     results
       |> Enum.frequencies()
       |> Map.new(fn {result, freq} -> {result, freq / size} end)
   end
-  def get_probabilities_from_results_and_outcomes(results, outcomes, opts \\ []) do
-    opts = Keyword.put_new(opts, :index, true)
 
-    size = Enum.count(results)
-    table = outcome_to_index_table(outcomes, opts)
-    dbg table
-
-    results
-      |> Enum.frequencies()
-      |> Map.new(fn {result, freq} ->
-        dbg result
-        {result, freq / size}
-      end)
+  @spec get_probabilities_from_results(results :: list(), outcomes :: list()) :: list(float())
+  def get_probabilities_from_results(results, outcomes) do
+    table = get_frequency_of_results(results)
+    Enum.map(outcomes, fn v ->
+      Map.get(table, v, 0.0)
+    end)
   end
+
 
 
 
@@ -35,10 +30,23 @@ defmodule WeightedRandom.Utils.Analysis do
   Given a list of probabilities, and a list of results, determine whether the results were roughly correct.
 
   By default we use a tolerance of `0.2` (i.e. 20%). If the results have a very large sample size, then you should be able lower the tolerance.
+
+  This returns the absolute values, so they will never be negative.
+
+  ## Examples
+      iex> probs = [0.25, 0.5, 0.25]
+      iex> results = [0, 1, 1, 2]
+      iex> get_delta(probs, results)
+      [0.0, 0.0, 0.0]
+
+      iex> probs = [0.5, 0.5]
+      iex> results = [0, 1, 1, 1]
+      iex> get_delta(probs, results)
+      [0.25, 0.25]
   """
   @spec get_delta(expected :: list(float()), results :: list()) :: list(float())
   def get_delta(expected, results) when is_list(results) do
-    actual_freq = get_probabilities_from_results(results)
+    actual_freq = get_frequency_of_results(results)
 
     expected
       |> Enum.with_index()
@@ -90,7 +98,7 @@ defmodule WeightedRandom.Utils.Analysis do
   @doc ~s"""
   Given a list of deltas, determine whether they are all within the tolerance level.
 
-  By default we use a tolerance of `0.2` (i.e. 20%). If the results have a very large sample size, then you should be able lower the tolerance.
+  By default we use a tolerance of `0.05` (i.e. 5%). If the results have a very large sample size, then you should be able lower the tolerance.
   """
   @spec match_probability?(expected :: list(float()), results :: list(), tolerance :: float()) :: boolean()
   def match_probability?(expected, results, tolerance \\ @default_tolerance) do

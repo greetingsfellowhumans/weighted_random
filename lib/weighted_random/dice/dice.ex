@@ -1,4 +1,33 @@
 defmodule WeightedRandom.Dice do
+  @moduledoc ~s"""
+  Implement standard dice notation with `~d{num_dice, sides, optional_modifier}`
+
+  ```elixir
+  alias WeightedRandom.Dice
+  import Dice
+
+  # This creates 4 x 6-sided dice
+  # In standard dice notation this would be written as "4d6"
+  d = ~d{4, 6}
+  ```
+
+  Now let's make the number 2 have more weight
+  Dice always use `outcome_type: :value`, not `:index`, so the target is 2
+
+  ```elixir
+  weights = [%{target: 2, amount: 50}]
+  d = Dice.add_weight(d, weights)
+
+  # Always remember to roll again so the new weight takes effect.
+  d = Dice.roll(d)
+
+  IO.inspect(Dice.results(d), label: "results")
+  # => [2, 2, 3, 2]
+  d.total
+  # => 9
+  ```
+
+  """
   alias WeightedRandom.Die
   alias WeightedRandom.Dice
 
@@ -80,6 +109,14 @@ defmodule WeightedRandom.Dice do
   end
   def roll(%WeightedRandom.Die{} = d) do
     Die.roll(d)
+  end
+
+  @doc ~s"""
+  Given some dice, return a list showing the result of each one.
+  """
+  @spec results(dice :: __MODULE__.t()) :: list(integer())
+  def results(%__MODULE__{dice: dice}) do
+    Enum.map(dice, &(&1.result))
   end
 
   @doc """

@@ -30,7 +30,7 @@ defmodule WeightedRandom.Input do
 
 
   @doc false
-  #def at(prob, idx), do: Enum.at(prob.weights, idx)
+  def at(prob, idx), do: Enum.at(prob.weights, idx)
 
 
   defdelegate add_weight(input, weight), to: WeightedRandom.Input.AddWeight

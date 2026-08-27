@@ -22,7 +22,17 @@ defmodule WeightedRandom.MixProject do
 
   defp docs() do
     [
-      main: "readme",
+      main: "WeightedRandom",
+      groups_for_modules: [
+        "Backend": ~r"WeightedRandom.Backend",
+        "Dice": [WeightedRandom.Dice, WeightedRandom.Die],
+        "Utils": [WeightedRandom.Utils],
+      ],
+      nest_modules_by_prefix: [
+        WeightedRandom.Backend,
+        WeightedRandom.Dice,
+        WeightedRandom.Utils,
+      ],
       extras: [
         "CHANGELOG.md",
         "guides/tutorial.livemd"
@@ -33,7 +43,7 @@ defmodule WeightedRandom.MixProject do
 
 
   defp description() do
-    "Fast, flexible, powerful framework for simulating weighted randomness"
+    "Fast, flexible, powerful framework for simulating weighted randomness, customizing probabilities and bias."
   end
 
   defp package() do

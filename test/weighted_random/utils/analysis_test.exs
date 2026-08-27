@@ -4,11 +4,20 @@ defmodule WeightedRandom.Utils.AnalysisTest do
   import Mod
   doctest Mod
 
+  describe "Analysis.get_delta" do
+    test "probabilities" do
+      probs = [1 / 4, 2 / 4, 1 / 4]
+      results = [0, 1, 1, 2]
+      assert Mod.get_delta(probs, results) == [0, 0, 0]
+    end
+  end
+
   describe "Analysis" do
 
     test "get probabilities" do
       li = List.duplicate(1, 25) ++ List.duplicate(0, 75)
-      assert Mod.get_probabilities_from_results(li) == %{0 => 0.75, 1 => 0.25}
+        |> Enum.shuffle()
+      assert Mod.get_probabilities_from_results(li, [0, 1]) == [0.75, 0.25]
     end
 
     @tag skip: "Come back once you clean up options"
@@ -23,7 +32,7 @@ defmodule WeightedRandom.Utils.AnalysisTest do
       outcomes = 100..130//10
       expected = [0.25, 0.25, 0.25, 0.25]
       results = [100, 120, 110, 130]
-      actual_freq = get_probabilities_from_results_and_outcomes(results, outcomes, index: false)
+      actual_freq = get_probabilities_from_results(results, outcomes)
       dbg actual_freq
       # @TODO
       # build an actual analysis domain
