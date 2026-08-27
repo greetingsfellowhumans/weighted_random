@@ -134,6 +134,8 @@ sample_size = 100_000
 curve = Kino.Input.read(bezier_type) # Use the select list above this code block
 ####
 
+
+
 weights = [
   %{
     target: round(length / 2),

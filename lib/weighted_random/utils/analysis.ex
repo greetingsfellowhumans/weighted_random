@@ -6,28 +6,23 @@ defmodule WeightedRandom.Utils.Analysis do
   Given a list of random values, determine the probability of each value.
   This is basically the inverse of `WeightedRandom.rand_p/2`
   """
-  @spec get_probabilities_from_results(results :: list()) :: list(float())
-  def get_probabilities_from_results(results) do
+  @spec get_frequency_of_results(results :: list()) :: %{optional(result :: any()) => count :: integer()}
+  def get_frequency_of_results(results) do
     size = Enum.count(results)
 
     results
       |> Enum.frequencies()
       |> Map.new(fn {result, freq} -> {result, freq / size} end)
   end
-  def get_probabilities_from_results_and_outcomes(results, outcomes, opts \\ []) do
-    opts = Keyword.put_new(opts, :index, true)
 
-    size = Enum.count(results)
-    table = outcome_to_index_table(outcomes, opts)
-    dbg table
-
-    results
-      |> Enum.frequencies()
-      |> Map.new(fn {result, freq} ->
-        dbg result
-        {result, freq / size}
-      end)
+  @spec get_probabilities_from_results(results :: list(), outcomes :: list()) :: list(float())
+  def get_probabilities_from_results(results, outcomes) do
+    table = get_frequency_of_results(results)
+    Enum.map(outcomes, fn v ->
+      Map.get(table, v, 0.0)
+    end)
   end
+
 
 
 
@@ -38,7 +33,7 @@ defmodule WeightedRandom.Utils.Analysis do
   """
   @spec get_delta(expected :: list(float()), results :: list()) :: list(float())
   def get_delta(expected, results) when is_list(results) do
-    actual_freq = get_probabilities_from_results(results)
+    actual_freq = get_frequency_of_results(results)
 
     expected
       |> Enum.with_index()
