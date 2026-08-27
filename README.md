@@ -23,7 +23,7 @@ Improvements in v1.0.0:
 - Support for probabilities, not just weights
 - Better user experience and quality of life improvements
 - Polished docs and a livebook tutorial
-- extensible backends, swap in different algorithms
+- swappable backends, not locked into any particular algorithm.
 
 ## Docs
 
