@@ -92,6 +92,7 @@ defmodule WeightedRandom do
 
   Supported options:\n#{NimbleOptions.docs(Input.Opts.from_probabilities_schema())}
   """
+  @spec preprocess_p(T.probabilities(), T.opts()) :: WeightedRandom.Backend.t()
   def preprocess_p([f | _] = probabilities, opts \\ []) when is_number(f) do
     opts = Input.Opts.from_probabilities_merge_opts(opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
@@ -112,6 +113,7 @@ defmodule WeightedRandom do
 
   Supported options:\n#{NimbleOptions.docs(Input.Opts.from_weights_schema())}
   """
+  @spec preprocess(T.outcomes(), list(T.weight_spec()), T.opts()) :: WeightedRandom.Backend.t()
   def preprocess(outcomes, weights, opts \\ []) when is_list(weights) do
     opts = Input.Opts.from_weights_merge_opts(opts)
     inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
@@ -129,6 +131,7 @@ defmodule WeightedRandom do
       2
 
   """
+  @spec take(WeightedRandom.Backend.t()) :: any()
   def take(processed_struct) do
     WeightedRandom.Backend.take(processed_struct, 1)
       |> convert_index_to_outcome(processed_struct.outcomes)
@@ -147,6 +150,7 @@ defmodule WeightedRandom do
       [2, 2, 2]
 
   """
+  @spec take(WeightedRandom.Backend.t(), count :: integer()) :: list()
   def take(processed_struct, count) do
     WeightedRandom.Backend.take(processed_struct, count)
     |> convert_index_to_outcome(processed_struct.outcomes)
@@ -159,7 +163,7 @@ defmodule WeightedRandom do
 
   Supported options:\n#{NimbleOptions.docs(Input.Opts.rand_docs())}
   """
-  @spec rand(outcomes :: T.outcomes(), weights :: list(T.weight_spec()), opts :: list()) :: term()
+  @spec rand(outcomes :: T.outcomes(), weights :: list(T.weight_spec()), T.opts()) :: any()
   def rand(outcomes, weights, opts \\ []) do
     weights = if is_map(weights), do: [weights], else: weights
     r = preprocess(outcomes, weights, opts)
@@ -176,6 +180,7 @@ defmodule WeightedRandom do
 
   Supported options:\n#{NimbleOptions.docs(Input.Opts.rand_p_docs())}
   """
+  @spec rand_p(T.probabilities(), T.opts()) :: any()
   def rand_p(probabilities, opts \\ []) when is_list(probabilities) do
     r = preprocess_p(probabilities, opts)
     case Keyword.get(opts, :take) do
