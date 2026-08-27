@@ -3,13 +3,14 @@
 ```elixir
 Mix.install(
   [
-    {:weighted_random, path: Path.join(__DIR__, "../"), env: :dev},
+    #{:weighted_random, path: Path.join(__DIR__, "../"), env: :dev},
+    {:weighted_random, "~> 1.0.0-alpha.2"},
     {:tucan, "~> 0.6.0"},
     {:vega_lite, "~> 0.1.0"},
     {:kino_vega_lite, "~> 0.1.0"},
-  ],
-  config_path: :weighted_random,
-  lockfile: :weighted_random
+  ]#,
+  #config_path: :weighted_random,
+  #lockfile: :weighted_random
 )
 ```
 
@@ -165,7 +166,7 @@ curve = [
 ]
 
 ####
-weights = [%{target: round(length / 2), weight: 100, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
+weights = [%{target: round(length / 2), weight: 200, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
 
