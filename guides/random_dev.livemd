@@ -173,3 +173,19 @@ results
 |> WeightedRandom.Utils.Plotting.results_to_bars()
 |> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
 ```
+
+```elixir
+## Dice
+alias WeightedRandom.Dice
+import Dice
+
+# This creates 4 x 6-sided dice, and adds +1 to the total.
+# In standard dice notation this would be written as "4d6+1"
+d = ~d{4, 6, 1}
+
+# Now let's make the number 2 have more weight
+# Dice always use outcome_type: :value, not :index
+d = Dice.add_weight(d, [%{target: 2, amount: 50}])
+d = Dice.roll(d)
+d.dice |> Enum.map(&(&1.result))
+```

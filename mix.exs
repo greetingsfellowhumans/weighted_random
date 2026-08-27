@@ -23,6 +23,16 @@ defmodule WeightedRandom.MixProject do
   defp docs() do
     [
       main: "WeightedRandom",
+      groups_for_modules: [
+        "Backend": ~r"WeightedRandom.Backend",
+        "Dice": [WeightedRandom.Dice, WeightedRandom.Die],
+        "Utils": [WeightedRandom.Utils],
+      ],
+      nest_modules_by_prefix: [
+        WeightedRandom.Backend,
+        WeightedRandom.Dice,
+        WeightedRandom.Utils,
+      ],
       extras: [
         "CHANGELOG.md",
         "guides/tutorial.livemd"

@@ -15,8 +15,8 @@ defmodule WeightedRandom do
   outcomes = 0..10
   weight = %{target: 5, weight: 20}
   r = WeightedRandom.preprocess(0..100, [weight])
-
   count = 8
+
   [4, 5, 5, 5, 4, 1, 5, 5] = WeightedRandom.take(r, count)
   ```
 
@@ -33,21 +33,19 @@ defmodule WeightedRandom do
   Mirroring the functions above, we can also use the `*_p` functions to use probabilities instead of outcomes + weights
 
   ```elixir
-
-
   probabilities = [0.01, 0.01, 0.01, 0.95, 0.01, 0.01]
   r = WeightedRandom.preprocess_p(probabilities)
-
   count = 5
+
   [3, 3, 3, 3, 3] = WeightedRandom.take(r, count)
   ```
 
   Or, in rand form (with the same disclaimer)
 
   ```elixir
-
   probabilities = [0.01, 0.01, 0.01, 0.95, 0.01, 0.01]
   count = 5
+
   [3, 3, 3, 3, 3] = WeightedRandom.rand_p(r, count)
 
   ```
