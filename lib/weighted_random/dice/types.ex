@@ -6,6 +6,10 @@ defmodule WeightedRandom.Dice.Types do
     :dice => list(WeightedRandom.Die.t()),
     optional(:modifier) => integer()
   }
+  @type die_spec :: %{
+    optional(:sides) => integer(),
+    optional(:weights) => list(WeightedRandom.Utils.Types.weight_spec())
+  }
 
   @type num_dice :: pos_integer()
   @type dice_sides :: pos_integer()

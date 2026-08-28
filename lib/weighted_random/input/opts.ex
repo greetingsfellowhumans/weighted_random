@@ -3,6 +3,67 @@ defmodule WeightedRandom.Input.Opts do
   alias WeightedRandom.Backend.Opts, as: BackendOpts
   alias WeightedRandom.Utils.Opts, as: Utils
 
+  @weight_spec [
+    target: [
+      doc: ~s"""
+      If `outcome_type: :index`, then `:target` must be an integer.
+
+      If `outcome_type: :value`, then `:target` must be one of the items in the list of `outcomes`.
+      """,
+      type: :any,
+      required: true
+    ],
+    amount: [
+      doc: ~s"""
+      The amount of weight to add to the target outcome.
+
+      Before any weights have been added, every outcome already has a weight of 1.0. Therefore adding a new `:amount` of 1, will set it to 2.0 in total.
+      """,
+      type: {:or, [:integer, :float]},
+      required: true
+    ],
+    left_dist: [
+      doc: ~s"""
+      The number of outcomes *before* `:target` to receive weight when a `:curve` is used.
+      """,
+      type: :integer,
+      default: 0
+    ],
+    right_dist: [
+      doc: ~s"""
+      The number of outcomes *after* `:target` to receive weight when a `:curve` is used.
+      """,
+      type: :integer,
+      default: 0
+    ],
+    radius: [
+      doc: ~s"""
+      The number of outcomes on either side of `:target` to receive weight when a `:curve` is used. Overridden by `:left_dist` and `:right_dist`.
+      """,
+      type: :integer,
+      default: 0
+    ],
+    curve: [
+      doc: ~s"""
+      The value passed into `Curves.define_bezier/2` to generate a bezier curve.
+      """,
+      type: {:or, [:atom, {:list, {:tuple, [{:or, [:integer, :float]}, {:or, [:integer, :float]}]}}]},
+      required: false
+    ]
+  ] 
+  @weight_spec_schema @weight_spec |> NimbleOptions.new!()
+  def weight_spec(), do: @weight_spec
+  def weight_spec_schema(), do: @weight_spec_schema
+
+  @weights [
+    weights: [
+      doc: "A list of weight specs",
+      type: {:list, @weight_spec},
+      default: []
+    ]
+  ]
+  def weights(), do: @weights |> NimbleOptions.new!()
+
 
   @outcome_type [
     doc: ~s"""

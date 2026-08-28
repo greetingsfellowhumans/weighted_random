@@ -3,20 +3,15 @@ defmodule WeightedRandom.Dice do
   alias Dice.{Types, Opts}
 
   @moduledoc ~s"""
-  # Dice
-  
   ## Creating Dice
 
   ```elixir
-  alias WeightedRandom.Dice
+  alias WeightedRandom.{Dice, Die}
   import Dice
 
   # This creates 4 x 6-sided dice
   # In standard dice notation this would be written as "4d6"
   d = ~d{4, 6}
-
-  # Alternately, create dice manually
-  Dice.new(%{})
   ```
 
   Now let's make the number 2 have more weight.
@@ -56,12 +51,12 @@ defmodule WeightedRandom.Dice do
 
 
   @doc """
-  Manually create a Dice struct. It is usually easier to use `sigil_d/2`.
+  Manually create a Dice struct. This is a lower-level alternative to `sigil_d/2`. One advantage of using `new/1` is that you can use different types of dice, with any combination of sides and weights.
 
   ## Eamples
-      iex> die = WeightedRandom.Die.new(%{sides: 6})
-      iex> dice = WeightedRandom.Dice.new(%{dice: [die]})
-      iex> %WeightedRandom.Dice{dice: [d]} = dice
+      iex> die = Die.new(%{sides: 6})
+      iex> dice = Dice.new(%{dice: [die]})
+      iex> %Dice{dice: [d]} = dice
       iex> d == die
       true
 
@@ -102,7 +97,7 @@ defmodule WeightedRandom.Dice do
     syntax_type = if String.contains?(str, "d"), do: :string, else: :tuple
     {count, sides, modifier} = split_sigil(str, syntax_type) |> join_sigil()
 
-    dice = for _ <- 1..count, do: Die.new(%{sides: sides})
+    dice = for _ <- 1..count, do: Die.new(%{sides: sides, weights: []})
     Dice.new(%{dice: dice, modifier: modifier})
   end
   defp split_sigil(str, :tuple) do
