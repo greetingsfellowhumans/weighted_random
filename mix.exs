@@ -7,6 +7,7 @@ defmodule WeightedRandom.MixProject do
       version: "1.0.0-alpha.2",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
       description: description(),
       package: package(),
       cli: cli(),
@@ -19,6 +20,9 @@ defmodule WeightedRandom.MixProject do
   defp cli() do
     [preferred_cli_env: ["test.watch": :test]]
   end
+
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
 
   defp docs() do
     [
@@ -73,6 +77,7 @@ defmodule WeightedRandom.MixProject do
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},
       {:vega_lite, "~> 0.1.0", only: :dev, runtime: false},
       {:kino_vega_lite, "~> 0.1.0", only: :dev, runtime: false},
+      {:stream_data, "~> 1.0", only: :test},
       {:mix_test_interactive, "~> 5.1", only: [:dev, :test], runtime: false}
     ]
   end
