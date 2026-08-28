@@ -36,4 +36,6 @@ defmodule WeightedRandom.Utils.Types do
   See function docs for details.
   """
   @type opts :: keyword()
+
+
 end

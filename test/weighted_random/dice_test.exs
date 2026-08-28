@@ -10,7 +10,7 @@ defmodule WeightedRandom.DiceTest do
   defp gen_dice(sides, count, modifier) do
     case modifier do
       0 -> sigil_d("#{count}, #{sides}")
-      pos when pos > 0 -> sigil_d("#{count}, #{sides}, +#{pos}")
+      pos when pos > 0 -> sigil_d("#{count}, #{sides}, #{pos}")
       neg when neg < 0 -> sigil_d("#{count}, #{sides}, #{neg}")
     end
   end
@@ -48,7 +48,7 @@ defmodule WeightedRandom.DiceTest do
   end
 
   describe "Dice merge" do
-    property "dice rolls should be within possible ranges" do
+    property "dice can be merged in any combination" do
       check all sides_a <- StreamData.positive_integer(),
                 sides_b <- StreamData.positive_integer(),
                 count_a <- StreamData.positive_integer(),
