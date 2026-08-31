@@ -43,12 +43,11 @@ end
 
 ```elixir
 
-sample_size = 1000
 probabilities = [
   0.3, 0.05, 0.6, 0.05
 ]
 WeightedRandom.preprocess_p(probabilities)
-|> WeightedRandom.take(sample_size)
+|> WeightedRandom.take(1000)
 ```
 
 ![Probabilities](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/probabilities.png)
@@ -60,55 +59,50 @@ WeightedRandom.preprocess_p(probabilities)
 
 #### Controls ####
 outcomes = 0..3
-sample_size = 5000
 weights = [
-  %{target: 2, weight: 0.8}
+  %{target: 2, amount: 0.8}
 ]
 ####
 
 
 WeightedRandom.preprocess(outcomes, weights)
-|> WeightedRandom.take(sample_size)
+|> WeightedRandom.take(5000)
 ```
 
 ![Small Weight](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/small_weight.png)
 
 ```elixir
+####
 # By using different predefined curves, we clearly get very distinct shapes
 # (Of course, some curves work better than others when doing this)
 
-#### Controls ####
-outcomes = 0..100
-sample_size = 1_000_000
 curve = :ease_in_out
+outcomes = 0..100
+weights = [%{target: 50, amount: 100, radius: 25, curve: curve}]
 ####
 
-weights = [%{target: 50, weight: 100, left_dist: 25, right_dist: 25, curve: curve}]
+
 WeightedRandom.preprocess(outcomes, weights)
-|> WeightedRandom.take(sample_size)
+|> WeightedRandom.take(1_000_000)
 ```
 
 ![Ease In Out](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/ease_in_out.png)
 
 ```elixir
-# Define your own bezier curves
-
-
-#### Controls ####
-length = 100
-outcomes = 0..length
-sample_size = 1_000_000
+#### Define your own bezier curve ####
 curve = [
   {0, 0},
   {0.33, -4},
   {0.67, 4},
   {1, 1}
 ]
-
+outcomes = 0..100
+weights = [%{target: 50, amount: 200, radius: 25, curve: curve}]
 ####
-weights = [%{target: round(length / 2), weight: 200, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
+
+
 WeightedRandom.preprocess(outcomes, weights)
-|> WeightedRandom.take(sample_size)
+|> WeightedRandom.take(1_000_000)
 ```
 
 ![Custom Curve](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/custom_curve.png)

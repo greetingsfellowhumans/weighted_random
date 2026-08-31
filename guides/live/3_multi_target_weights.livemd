@@ -49,7 +49,7 @@ results
 outcomes = 0..3
 sample_size = 5000
 weights = [
-  %{target: 2, weight: 0.8}
+  %{target: 2, amount: 0.8}
 ]
 ####
 
@@ -92,8 +92,8 @@ results
 sample_size = 1000
 outcomes = 0..20
 weights = [
-  %{target: 6, weight: 5},
-  %{target: 15, weight: 5}
+  %{target: 6, amount: 5},
+  %{target: 15, amount: 5}
 ]
 ####
 
@@ -129,7 +129,7 @@ sample_size = 1_000_000
 curve = Kino.Input.read(bezier_type) # Use the select list above this code block
 ####
 
-weights = [%{target: round(length / 2), weight: 100, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
+weights = [%{target: round(length / 2), amount: 100, radius: round(length / 4), curve: curve}]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
 
@@ -160,7 +160,7 @@ curve = [
 ]
 
 ####
-weights = [%{target: round(length / 2), weight: 200, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
+weights = [%{target: round(length / 2), amount: 200, radius: round(length / 4), curve: curve}]
 table = WeightedRandom.preprocess(outcomes, weights)
 results = WeightedRandom.take(table, sample_size)
 
