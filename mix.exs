@@ -44,6 +44,7 @@ defmodule WeightedRandom.MixProject do
       extras: [
         "CHANGELOG.md",
         "README.md",
+        "guides/upgrading_guide.md",
       ] ++ Path.wildcard("guides/static/*.md")
         ++ Path.wildcard("guides/live/*.livemd"),
       skip_undefined_reference_warnings_on: ["CHANGELOG.md", "README.md"]
