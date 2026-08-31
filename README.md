@@ -7,7 +7,7 @@ Pick a random number between 0 and 10, but 7 is 50x more likely than any other n
 ```elixir
 iex> outcomes = 0..10
 iex> weights = [ %{target: 7, weight: 50} ]
-ieX> WeightedRandom.rand(outcomes, weights)
+iex> WeightedRandom.rand(outcomes, weights)
 7
 ```
 
@@ -23,7 +23,7 @@ Improvements in v1.0.0:
 - Support for probabilities, not just weights
 - Better user experience and quality of life improvements
 - Polished docs and a livebook tutorial
-- extensible backends, swap in different algorithms
+- swappable backends, not locked into any particular algorithm.
 
 ## Docs
 

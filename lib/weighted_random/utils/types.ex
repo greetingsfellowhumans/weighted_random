@@ -21,7 +21,7 @@ defmodule WeightedRandom.Utils.Types do
 
 
   @typedoc ~s"""
-  Anything compatible with `Curves.define_bezier/3`.
+  Anything compatible with `Curves.define_bezier/2`.
   """
   @type curve_spec :: atom() | list({number(), number()})
 
@@ -36,4 +36,6 @@ defmodule WeightedRandom.Utils.Types do
   See function docs for details.
   """
   @type opts :: keyword()
+
+
 end

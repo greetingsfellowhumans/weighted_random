@@ -3,9 +3,9 @@ defmodule WeightedRandom do
   alias WeightedRandom.Input
 
   @moduledoc ~s"""
-  ## Livebook
+  ## Interact Tutorial
 
-  The best way to learn is through the interactive [Livebook tutorial](guides/tutorial.livemd)
+  The best way to learn is through the [Livebook](guides/tutorial.livemd)
 
   ## Quickstart
 
@@ -17,12 +17,13 @@ defmodule WeightedRandom do
   r = WeightedRandom.preprocess(0..100, [weight])
   count = 8
 
-  [4, 5, 5, 5, 4, 1, 5, 5] = WeightedRandom.take(r, count)
+  WeightedRandom.take(r, count) == [4, 5, 5, 5, 4, 1, 5, 5]
   ```
+
 
   Alternately, if you care less about performance, and only need to do it once:
   ```elixir
-  [5, 5, 2] = WeightedRandom.rand(0..10, [%{target: 5, weight: 20}], take: 3)
+  WeightedRandom.rand(0..10, [%{target: 5, weight: 20}], take: 3) == [5, 5, 2]
   ```
 
   But please note the algorithm is optimized to take longer ( O(n) ) during preprocessing, in order to be very fast ( O(1) ) during the sampling step.
@@ -37,7 +38,8 @@ defmodule WeightedRandom do
   r = WeightedRandom.preprocess_p(probabilities)
   count = 5
 
-  [3, 3, 3, 3, 3] = WeightedRandom.take(r, count)
+  results = WeightedRandom.take(r, count)
+  results == [3, 3, 3, 3, 3]
   ```
 
   Or, in rand form (with the same disclaimer)
@@ -46,33 +48,14 @@ defmodule WeightedRandom do
   probabilities = [0.01, 0.01, 0.01, 0.95, 0.01, 0.01]
   count = 5
 
-  [3, 3, 3, 3, 3] = WeightedRandom.rand_p(r, count)
-
+  results = WeightedRandom.rand_p(r, count)
+  results == [3, 3, 3, 3, 3] 
   ```
 
+  ## Customizing weights
+  A weight is a map with the following fields:
 
-
-
-
-  ## Weight vs Probability
-  Weights eventually get converted into probabilities under the hood. Here are a few differences to keep in mind.
-
-  ### Adding to one takes from others
-  You can *add* weights to a target to make it more likely to appear as a result. Doing so makes ALL other outcomes less likely to appear as results, an they are all affected evenly.
-
-  Probabilities are floats that should add up to 1.0 (within a reasonable margin of rounding error. More on that later).
-  So any time you increase one probability, you need to *subtract* from one or many of the other probabilities.
-  This gives you finer control, but is more manual work and risk of human error.
-
-  ### Coupling of outcomes
-
-  Weights force you to manually pass in a list of possible outcomes.
-  *The target of a weight is an index of an outcome*
-  So if your outcomes are `100..200` then a weight of `%{target: 4, ...}` would influence the outcome `104`, not the literal value `4`.
-  You can change that by passing in the option `[outcome_type: :value]`. Now the weight should be `%{target: 104, ...}`
-
-  Probabilities on the other hand implicitly create a list of outcomes from their indices.
-  So if `probabilities = [0.75, 0.25]`, then we have two possible outcomes: `0` with a 75% chance, and `1` with a 25% chance.
+  #{NimbleOptions.docs(WeightedRandom.Input.Opts.weight_spec_schema())}
 
   """
 
@@ -99,9 +82,7 @@ defmodule WeightedRandom do
 
 
   @doc ~s"""
-  Given a non-empty list (or range) of possible outcomes, and a list of weight maps, build a struct that can later be used for very fast random sampling.
-
-  Next, pass the resulting struct into `WeightedRandom.take/2` to get rand
+  Given a non-empty list (or range) of possible outcomes, and a list of weight maps, build a struct that can later be passed into `WeightedRandom.take/2` for very fast random sampling.
 
   ## Examples
       iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
