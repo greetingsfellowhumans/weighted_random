@@ -76,8 +76,8 @@ WeightedRandom.preprocess(outcomes, weights)
 sample_size = 1000
 outcomes = 0..20
 weights = [
-  %{target: 6, weight: 5},
-  %{target: 15, weight: 5}
+  %{target: 6, amount: 5},
+  %{target: 15, amount: 5}
 ]
 ####
 
@@ -97,7 +97,7 @@ sample_size = 1_000_000
 curve = :ease_in_out
 ####
 
-weights = [%{target: 50, weight: 100, left_dist: 25, right_dist: 25, curve: curve}]
+weights = [%{target: 50, amount: 100, radius: 25, curve: curve}]
 WeightedRandom.preprocess(outcomes, weights)
 |> WeightedRandom.take(sample_size)
 ```
@@ -120,7 +120,7 @@ curve = [
 ]
 
 ####
-weights = [%{target: round(length / 2), weight: 200, left_dist: round(length / 4), right_dist: round(length / 4), curve: curve}]
+weights = [%{target: round(length / 2), amount: 200, radius: round(length / 4), curve: curve}]
 WeightedRandom.preprocess(outcomes, weights)
 |> WeightedRandom.take(sample_size)
 ```
