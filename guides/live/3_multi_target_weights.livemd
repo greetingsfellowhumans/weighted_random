@@ -42,13 +42,14 @@ results
 ```
 
 ```elixir
-# Watch what happens when the number 3 is 10x more likely to appear than any other number
+# By default, every number has a weight of 1.
+# Let's add a little weight to the index 2 for a total weight of 1.8
 
 #### Controls ####
-outcomes = 0..4
-sample_size = 1000
+outcomes = 0..3
+sample_size = 5000
 weights = [
-  %{target: 3, weight: 10}
+  %{target: 2, weight: 0.8}
 ]
 ####
 
@@ -69,12 +70,8 @@ results
 #### Controls ####
 sample_size = 1000
 probabilities = [
-  0.01, 0.01, 0.97, 0.01
+  0.3, 0.05, 0.6, 0.05
 ]
-
-# alternately, as fractions
-# probabilities = [1 / 100, 1 / 100, 97 / 100, 1 / 100]
-
 ####
 
 # Notice we use `preprocess_p/1` instead of `preprocess/1`
@@ -170,33 +167,4 @@ results = WeightedRandom.take(table, sample_size)
 results
 |> WeightedRandom.Utils.Plotting.results_to_bars()
 |> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
-```
-
-```elixir
-## Dice
-alias WeightedRandom.Dice
-import Dice
-
-# This creates 4 x 6-sided dice
-# In standard dice notation this would be written as "4d6"
-d = ~d{4, 6}
-
-# Now let's make the number 2 have more weight
-# Dice always use outcome_type: :value, not :index, so the target is 2
-weights = [%{target: 2, amount: 50}]
-d = Dice.add_weight(d, weights)
-d = Dice.roll(d)
-
-IO.inspect(Dice.results(d), label: "results")
-d.total
-```
-
-```elixir
-# We can also add modifiers to the dice notation.
-# for example 2d8+1 would create 2 x 8-sided dice, and add +1 to the total
-d = ~d{2, 8, 1}
-    |> Dice.roll()
-
-IO.inspect(Dice.results(d), label: "results")
-d.total
 ```
