@@ -1,16 +1,5 @@
 # README
 
-## Quick example
-
-Pick a random number between 0 and 10, but 7 is 50x more likely than any other number to occur.
-
-```elixir
-iex> outcomes = 0..10
-iex> weights = [ %{target: 7, weight: 50} ]
-iex> WeightedRandom.rand(outcomes, weights)
-7
-```
-
 ## Current state of the project
 
 Version 1.0.0: In alpha. Actively being developed.
@@ -53,8 +42,8 @@ WeightedRandom.preprocess_p(probabilities)
 ![Probabilities](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/probabilities.png)
 
 ```elixir
-# Weights offer an alternative syntax to probabilities.
-# By default, every number has a weight of 1.
+# Weights offer an alternative paradigm to probabilities.
+# By default, every number has a weight of 1.0
 # Let's add a little weight to the outcome of 2 for a total of 1.8
 
 #### Controls ####
@@ -70,6 +59,8 @@ WeightedRandom.preprocess(outcomes, weights)
 ```
 
 ![Small Weight](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/small_weight.png)
+
+WeightedRandom integrates well with the [Curves](https://hex.pm/packages/curves) library.
 
 ```elixir
 ####
