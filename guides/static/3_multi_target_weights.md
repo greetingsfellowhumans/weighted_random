@@ -28,25 +28,6 @@ WeightedRandom.take(table, sample_size)
 ![Uniform](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/uniform.png)
 
 ```elixir
-# By default, every number has a weight of 1.
-# Let's add a little weight to the index 2
-
-#### Controls ####
-outcomes = 0..3
-sample_size = 5000
-weights = [
-  %{target: 2, weight: 0.8}
-]
-####
-
-
-WeightedRandom.preprocess(outcomes, weights)
-|> WeightedRandom.take(sample_size)
-```
-
-![Small Weight](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/small_weight.png)
-
-```elixir
 # Another way to do that is to use a list of probabilities, 
 # instead of outcomes + weights
 
@@ -67,6 +48,25 @@ WeightedRandom.preprocess_p(probabilities)
 ```
 
 ![Probabilities](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/probabilities.png)
+
+```elixir
+# By default, every number has a weight of 1.
+# Let's add a little weight to the index 2
+
+#### Controls ####
+outcomes = 0..3
+sample_size = 5000
+weights = [
+  %{target: 2, weight: 0.8}
+]
+####
+
+
+WeightedRandom.preprocess(outcomes, weights)
+|> WeightedRandom.take(sample_size)
+```
+
+![Small Weight](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/small_weight.png)
 
 ```elixir
 # We can have more than one weight, too

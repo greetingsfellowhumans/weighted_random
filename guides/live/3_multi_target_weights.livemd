@@ -43,7 +43,7 @@ results
 
 ```elixir
 # By default, every number has a weight of 1.
-# Let's add a little weight to the index 2
+# Let's add a little weight to the index 2 for a total weight of 1.8
 
 #### Controls ####
 outcomes = 0..3
