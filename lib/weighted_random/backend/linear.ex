@@ -5,14 +5,10 @@ defmodule WeightedRandom.Backend.Linear do
 
   ## How it works
 
-  1. Take each probability as a weight.
-  2. Create a list in which every outcome is duplicated a number of times equal to its numerator
-  3. take randomly from the list.
+  1. Create a list in which every outcome is duplicated, a number of times equal to its weight.
+  2. Higher weight outcomes appear more often in the list.
+  3. During `take`, the list is passed into `Enum.random/1`
 
-  So for example, given the outcomes 0..5, and a single weight: %{target: 0, weight: 1},
-  the probabilities should look like: 2/6. 1/6, 1/6, 1/6, 1/6, 1/6
-  thus, the preprocessed list is [0, 0, 1, 2, 3, 4, 5]
-  making index `0` the most likely to be sampled with `Enum.random(list)`
   """
   use WeightedRandom.Backend
 
