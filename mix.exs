@@ -29,12 +29,12 @@ defmodule WeightedRandom.MixProject do
       main: "1_quickstart-1",
       groups_for_modules: [
         "Backend": ~r"WeightedRandom.Backend",
-        "Dice": [WeightedRandom.Dice, WeightedRandom.Die],
+        "Dice": ~r"WeightedRandom.(Dice|Die)",# [WeightedRandom.Dice, WeightedRandom.Die],
         "Utils": [WeightedRandom.Utils],
       ],
       nest_modules_by_prefix: [
         WeightedRandom.Backend,
-        WeightedRandom.Dice,
+        #  WeightedRandom.Dice,
         WeightedRandom.Utils,
       ],
       groups_for_extras: [

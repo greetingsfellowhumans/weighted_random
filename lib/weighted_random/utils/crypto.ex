@@ -3,7 +3,7 @@ defmodule WeightedRandom.Utils.Crypto do
   Based on this [blog post](https://hashrocket.com/blog/posts/the-adventures-of-generating-random-numbers-in-erlang-and-elixir)
   run `reseed`, to generate a cryptographically secure seed for your random number generators.
 
-  I would actually suggest *every* elixir app should call this function at the beginning of it's startup process, even if the `WeightedRandom` library is not being used.
+  I would actually argue *every* elixir app should call this function at the beginning of it's startup process, even if the `WeightedRandom` library is not being used.
 
   ## Usage
   ```elixir
@@ -24,6 +24,10 @@ defmodule WeightedRandom.Utils.Crypto do
   ```
   """
 
+  @doc ~s"""
+  Takes no arguments, and has no meaningful return value.
+  This function sets the current random seed to something more cryptographically secure.
+  """
   def reseed() do
     <<a :: unsigned-integer-32, b :: unsigned-integer-32, c :: unsigned-integer-32>> = :crypto.strong_rand_bytes(12)
     :rand.seed(:exsplus, {a, b, c})
