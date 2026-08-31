@@ -25,7 +25,7 @@ WeightedRandom.take(table, sample_size)
 
 ```
 
-![Uniform](https://github.com/greetingsfellowhumans/weighted_random/raw/main/assets/examples/uniform.png)
+![Uniform](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/uniform.png)
 
 ```elixir
 # Watch what happens when the number 3 is 10x more likely to appear than any other number
