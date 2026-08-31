@@ -22,6 +22,11 @@ defmodule WeightedRandom.Input.Opts do
       type: {:or, [:integer, :float]},
       required: true
     ],
+    weight: [
+      deprecated: "As of v1.0.0, use :amount instead.",
+      type: {:or, [:integer, :float]},
+      required: false
+    ],
     left_dist: [
       doc: ~s"""
       The number of outcomes *before* `:target` to receive weight when a `:curve` is used.

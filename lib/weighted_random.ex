@@ -3,54 +3,94 @@ defmodule WeightedRandom do
   alias WeightedRandom.Input
 
   @moduledoc ~s"""
-  ## Interact Tutorial
+  ## Interactive Playground
 
   The best way to learn is through the [Livebook](guides/tutorial.livemd)
 
-  ## Quickstart
+  # Quickstart
 
-  ### Randomness from outcomes and weights.
-
-  ```elixir
-  outcomes = 0..10
-  weight = %{target: 5, weight: 20}
-  r = WeightedRandom.preprocess(0..100, [weight])
-  count = 8
-
-  WeightedRandom.take(r, count) == [4, 5, 5, 5, 4, 1, 5, 5]
-  ```
-
-
-  Alternately, if you care less about performance, and only need to do it once:
-  ```elixir
-  WeightedRandom.rand(0..10, [%{target: 5, weight: 20}], take: 3) == [5, 5, 2]
-  ```
-
-  But please note the algorithm is optimized to take longer ( O(n) ) during preprocessing, in order to be very fast ( O(1) ) during the sampling step.
-  So it will be far better to use `WeightedRandom.preprocess/3` once, and `WeightedRandom.take/2` many times. `rand/3` preprocesses EVERY time it is called.
+  The most optimal workflow is to:
+  1. Define your requirements (outcomes, weights, probabilities, other options)
+  2. Preprocess it to create a struct that is optimized for making future sampling faster
+  2. Take n random values
 
 
   ### Randomness from probabilities
-  Mirroring the functions above, we can also use the `*_p` functions to use probabilities instead of outcomes + weights
 
   ```elixir
-  probabilities = [0.01, 0.01, 0.01, 0.95, 0.01, 0.01]
-  r = WeightedRandom.preprocess_p(probabilities)
-  count = 5
+  # Probabilities are floats representing percentages, that should add up to 1.0
+  probabilities = [0.1, 0.6, 0.2, 0.1]
+  optimized_struct = WeightedRandom.preprocess_p(probabilities)
 
-  results = WeightedRandom.take(r, count)
-  results == [3, 3, 3, 3, 3]
+  n = 5
+  WeightedRandom.take(optimized_struct, n)
+  #=> [1, 2, 1, 1, 1]
   ```
 
-  Or, in rand form (with the same disclaimer)
+  Alternately, if you won't need the same probabilities again:
+  ```elixir
+  probabilities = [0.1, 0.6, 0.2, 0.1]
+  WeightedRandom.rand_p(probabilities)
+  #=> 1
+
+  opts = [take: 5]
+  WeightedRandom.rand_p(probabilities, opts)
+  #=> [2, 1, 1, 2, 1]
+  ```
+
+  ### Randomness from outcomes and weights.
+
+  When given 4 equal probabilities (25% each), you could also write them as `[1/4, 1/4, 1/4, 1/4]`.
+  What if we simplified it into a list of `[1, 1, 1, 1]`, and automatically normalized it to divide each by the whole?
+  That is exactly what a weight is.
+
+  One benefit over probabilities is that you can adjust one weight without needing to manually recalculate all of them.
+
+  To use this, we must now decouple the outcomes from the weights. Before, the index of the probability WAS the outcome.
 
   ```elixir
-  probabilities = [0.01, 0.01, 0.01, 0.95, 0.01, 0.01]
-  count = 5
+  outcomes = 0..3
+  weight = %{target: 1, weight: 2}
+  opts = []
 
-  results = WeightedRandom.rand_p(r, count)
-  results == [3, 3, 3, 3, 3] 
+  # under the hood, this creates the probabilities: `[1/5, 2/5, 1/5, 1/5]`
+  optimized_struct = WeightedRandom.preprocess(outcomes, [weight], opts)
+
+  n = 5
+  WeightedRandom.take(optimized_struct, n)
+  #=> [2, 1, 1, 0, 1]
   ```
+
+  Be careful to call the right function.
+
+  | Weights                       	| Probabilities                   	|
+  |-------------------------------	|---------------------------------	|
+  | `WeightedRandom.preprocess/3` 	| `WeightedRandom.preprocess_p/2` 	|
+  | `WeightedRandom.rand/3`       	| `WeightedRandom.rand_p/2`       	|
+  | `WeightedRandom.take/2`       	| `WeightedRandom.take/2`         	|
+
+
+
+  Another benefit of weights is that you can do more than random numbers
+  ```elixir
+  outcomes = ["a", "b", :c, 3.14]
+  weights = [%{target: 2, amount: 20}]
+  WeightedRandom.rand(outcomes, weights)
+  #=> :c
+  ```
+
+  Using the `:outcome_type` option, you can even target the value of an outcome, rather than the index.
+  ```elixir
+  outcomes = ["a", "b", :c, 3.14]
+  weights = [%{target: "b", amount: 10}]
+  WeightedRandom.rand(outcomes, weights, outcome_type: :value)
+  #=> "b"
+
+  weights = [%{target: 3.14, amount: 200} | weights]
+  WeightedRandom.rand(outcomes, weights, outcome_type: :value)
+  #=> 3.14
+  ```
+
 
   ## Customizing weights
   A weight is a map with the following fields:

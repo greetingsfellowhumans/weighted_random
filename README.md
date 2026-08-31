@@ -1,4 +1,4 @@
-# WeightedRandom
+# README
 
 ## Quick example
 

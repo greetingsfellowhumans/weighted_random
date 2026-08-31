@@ -1,9 +1,9 @@
-# Tutorial
+# 3. MultiTarget Weights
 
 ```elixir
 Mix.install(
   [
-    {:weighted_random, "~> 1.0.0-alpha.1"},
+    {:weighted_random, "~> 1.0.0-alpha.2"},
     {:tucan, "~> 0.6.0"},
     {:vega_lite, "~> 0.1.0"},
     {:kino_vega_lite, "~> 0.1.0"},
@@ -11,8 +11,7 @@ Mix.install(
 )
 ```
 
-
-## Weighted Random tutorial
+## Tutorial
 
 ```elixir
 # Before getting into the nitty gritty, let's start with a visual demo.

@@ -37,17 +37,22 @@ defmodule WeightedRandom.MixProject do
         WeightedRandom.Dice,
         WeightedRandom.Utils,
       ],
+      groups_for_extras: [
+        "Static Tutorial": Path.wildcard("guides/static/*.md"),
+        "Livebook Tutorial": Path.wildcard("guides/live/*.livemd"),
+      ],
       extras: [
         "CHANGELOG.md",
-        "guides/tutorial.livemd"
-      ],
-      skip_undefined_reference_warnings_on: ["CHANGELOG.md"]
+        "README.md",
+      ] ++ Path.wildcard("guides/static/*.md")
+        ++ Path.wildcard("guides/live/*.livemd"),
+      skip_undefined_reference_warnings_on: ["CHANGELOG.md", "README.md"]
     ]
   end
 
 
   defp description() do
-    "Fast, flexible, powerful framework for simulating weighted randomness, customizing probabilities and bias."
+    "Fast and flexible framework for simulating weighted randomness with custom probabilities and bias."
   end
 
   defp package() do
@@ -71,7 +76,7 @@ defmodule WeightedRandom.MixProject do
   defp deps do
     [
       {:wam, "~> 0.1.0"},
-      {:curves, "~> 0.2.3"},
+      {:curves, "~> 0.2.4"},
       {:nimble_options, "~> 1.0"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},

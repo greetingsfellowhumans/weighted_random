@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## Unreleased [1.0.0-alpha.2] - 2026-09-30
 
-## [1.0.0-alpha.1] - 2026-09-xx
+### Changed
 
-## Release
+- Increased version of :curves dependency
+- Revamped documentation, added typespecs to all documented functions
+- More thorough prop testing
+- Added string support to sigil_d.
 
 ## [1.0.0-alpha.1] - 2026-08-26
 
