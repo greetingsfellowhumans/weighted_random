@@ -26,7 +26,7 @@ defmodule WeightedRandom.MixProject do
 
   defp docs() do
     [
-      main: "WeightedRandom",
+      main: "1_quickstart-1",
       groups_for_modules: [
         "Backend": ~r"WeightedRandom.Backend",
         "Dice": [WeightedRandom.Dice, WeightedRandom.Die],

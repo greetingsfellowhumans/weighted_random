@@ -3,7 +3,7 @@
 ```elixir
 Mix.install(
   [
-    {:weighted_random, "~> 1.0.0-alpha.2"},
+    {:weighted_random, "~> 1.0.0-alpha.1"},
     {:tucan, "~> 0.6.0"},
     {:vega_lite, "~> 0.1.0"},
     {:kino_vega_lite, "~> 0.1.0"},
@@ -16,14 +16,14 @@ Mix.install(
 ```elixir
 # Before getting into the nitty gritty, let's start with a visual demo.
 # Without any weights, every outcome has an equal chance of being drawn.
-# For example, when picking a random number between 1-10, each outcome has a 10% chance.
+# For example, when picking a random number between 0-3, each outcome has a 25% chance.
 
 # Notice how the lines are pretty even
 
 
 #### Controls ####
-outcomes = 0..4
-sample_size = 1000
+outcomes = 0..3
+sample_size = 5000
 ####
 
 

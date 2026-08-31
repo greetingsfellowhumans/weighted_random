@@ -1,4 +1,4 @@
-# 1. Basics
+# 1. Quickstart
 
 The most optimal workflow is to:
 
