@@ -5,14 +5,15 @@ defmodule WeightedRandom.Backends.Walker2Test do
   alias WeightedRandom.Utils.Analysis
 
 
-  #describe "Preprocess" do
-  #  property "Split the probabilities" do
-  #    check all probabilities <- StreamData.list_of(StreamData.float(min: 0.0, max: 1.0), min_length: 1) do
-  #      table = WeightedRandom.preprocess_p(probabilities, [backend: Mod])
-  #      #dbg {probabilities, table}
-  #    end
-  #  end
-  #end
+  describe "Preprocess" do
+    property "Split the probabilities" do
+      check all floats <- StreamData.list_of(StreamData.float(min: 0.000001, max: 1.0), min_length: 1) do
+        probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats)
+        table = WeightedRandom.preprocess_p(probabilities, [backend: Mod])
+        dbg table
+      end
+    end
+  end
 
   #describe "WalkerAlias Analysis" do
   #  test "Weights, indexed" do

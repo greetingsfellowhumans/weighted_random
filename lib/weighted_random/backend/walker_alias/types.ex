@@ -1,5 +1,5 @@
 defmodule WeightedRandom.Backend.WalkerAlias2.Types do
-  @type index() :: pos_integer()
+  alias WeightedRandom.Utils.Types, as: T
 
 
   @typedoc ~s"""
@@ -14,6 +14,7 @@ defmodule WeightedRandom.Backend.WalkerAlias2.Types do
 
   For example, if a bucket has 25% outcome 1, and 75% outcome 5, then it looks like `{0.25, 1, 5}`
   """
-  @type bucket() :: {split_point(), lower_index :: index, higher_index :: index}
+  @type bucket() :: {split_point(), lower_index :: T.index(), higher_index :: T.index()}
+
 
 end

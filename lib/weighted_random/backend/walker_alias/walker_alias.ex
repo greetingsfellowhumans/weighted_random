@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Backend.WalkerAlias2 do
+  alias __MODULE__.{Preprocess, Buckets}
 
   use WeightedRandom.Backend
 
@@ -9,6 +10,16 @@ defmodule WeightedRandom.Backend.WalkerAlias2 do
 
   @impl true
   def preprocess(probabilities, opts) do
+    sum = Enum.sum(probabilities)
+    length = Enum.count(probabilities)
+    mean = sum / length
+
+    {lows, highs} = Enum.with_index(probabilities)
+                  |> Preprocess.split_probabilities(mean)
+
+    highs = Enum.reverse(highs)
+    Buckets.fill_buckets(lows, highs, mean)
+
     #probabilities
     #  |> Enum.with_index(fn element, index -> {index, element} end)
     #  |> WAM.new()
