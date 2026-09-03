@@ -1,0 +1,187 @@
+# 3. MultiTarget Weights
+
+```elixir
+Mix.install(
+  [
+    {:weighted_random, path: Path.join(__DIR__, "../../"), env: :dev},
+    {:tucan, "~> 0.6.0"},
+    {:vega_lite, "~> 0.1.0"},
+    {:kino_vega_lite, "~> 0.1.0"},
+  ],
+  config_path: :weighted_random,
+  lockfile: :weighted_random
+)
+```
+
+## Tutorial
+
+```elixir
+# Before getting into the nitty gritty, let's start with a visual demo.
+# Without any weights, every outcome has an equal chance of being drawn.
+# For example, when picking a random number between 0-3, each outcome has a 25% chance.
+
+# Notice how the lines are pretty even
+
+
+#### Controls ####
+outcomes = 0..3
+sample_size = 5000
+####
+
+
+weights = []
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+# This is equal to:
+# results = for 1..sample_size do
+#   Enum.random(outcomes)
+# end
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# By default, every number has a weight of 1.
+# Let's add a little weight to the index 2 for a total weight of 1.8
+
+#### Controls ####
+outcomes = 0..3
+sample_size = 5000
+weights = [
+  %{target: 2, amount: 0.8}
+]
+####
+
+opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+#opts = []
+table = WeightedRandom.preprocess(outcomes, weights, opts)
+dbg table
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# Another way to do that is to use a list of probabilities, 
+# instead of outcomes + weights
+
+
+#### Controls ####
+sample_size = 1000
+probabilities = [
+  0.2, 0.8
+]
+# [0.2, 0.8] => 
+#    %WAM{values: {0, 1}, probs: {0.6, 1.0}, aliases: {1, 1}, size: 2}
+#    %WeightedRandom.Backend.WalkerAlias2.Table{buckets: [{0.0, 1, 1}, {0.2, 0, 1}]}
+# [0.8, 0.2] => 
+#    %WAM{values: {0, 1}, probs: {1.0, 0.6}, aliases: {0, 0}, size: 2}
+#    %WeightedRandom.Backend.WalkerAlias2.Table{buckets: [{0.0, 0, 0}, {0.2, 1, 0}]}
+####
+opts = []
+opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+
+# Notice we use `preprocess_p/1` instead of `preprocess/1`
+# The `_p` is for probabilities.
+table = WeightedRandom.preprocess_p(probabilities, opts)
+dbg table
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# We can have more than one weight, too
+
+
+#### Controls ####
+sample_size = 1000
+outcomes = 0..20
+weights = [
+  %{target: 6, amount: 5},
+  %{target: 15, amount: 5}
+]
+####
+opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+
+table = WeightedRandom.preprocess(outcomes, weights, opts)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+#### Using the Curves library  ####
+
+# WeightedRandom weights can easily follow bezier curves.
+# let's set up a select list to be used in the next code block    
+# That way, we can pick different curves and watch how they affect the randomness.
+types = Curves.Bezier.Predefined.list()
+|> Enum.map(&{&1, &1})
+
+bezier_type = Kino.Input.select("Curve Type", types, default: :ease_in_out)
+
+```
+
+```elixir
+# By using different predefined curves, we clearly get very distinct shapes
+# (Of course, some curves work better than others when doing this)
+
+#### Controls ####
+length = 100
+outcomes = 0..length
+sample_size = 1_000_000
+curve = Kino.Input.read(bezier_type) # Use the select list above this code block
+####
+
+weights = [%{target: round(length / 2), amount: 100, radius: round(length / 4), curve: curve}]
+table = WeightedRandom.preprocess(outcomes, weights)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
+```
+
+```elixir
+# So you can also use your own custom bezier curve.
+
+# Unfortunately, due to some 'mathy' reasons about probabilities not being
+#   the same as coordinates on a graph, your results will often look 'flatter' or 
+#   more linear than the actual bezier curve.
+
+# So it is best to keep your curves simple and not rely too much on matching them
+
+
+#### Controls ####
+length = 100
+outcomes = 0..length
+sample_size = 1_000_000
+curve = [
+  {0, 0},
+  {0.33, -4},
+  {0.67, 4},
+  {1, 1}
+]
+opts = []
+opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+
+
+####
+weights = [%{target: round(length / 2), amount: 200, radius: round(length / 4), curve: curve}]
+table = WeightedRandom.preprocess(outcomes, weights, opts)
+results = WeightedRandom.take(table, sample_size)
+
+results
+|> WeightedRandom.Utils.Plotting.results_to_bars()
+|> Tucan.bar("outcome", "hits", height: 300, width: 300, fill_color: "#33245A", corner_radius: 5)
+```

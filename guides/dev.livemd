@@ -23,7 +23,7 @@ The most optimal workflow is to:
 
 ```elixir
 # Probabilities are floats representing percentages, that should add up to 1.0
-probabilities = [0.1, 0.6, 0.2, 0.1]
+probabilities = [0.1, 1.6, 0.2, 0.1]
 optimized_struct = WeightedRandom.preprocess_p(probabilities)
 n = 5
 

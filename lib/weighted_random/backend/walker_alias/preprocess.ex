@@ -1,5 +1,4 @@
 defmodule WeightedRandom.Backend.WalkerAlias2.Preprocess do
-  alias WeightedRandom.Backend.WalkerAlias2.Types, as: BackendT
   alias WeightedRandom.Utils.Types, as: T
 
   @doc ~s"""
@@ -12,5 +11,21 @@ defmodule WeightedRandom.Backend.WalkerAlias2.Preprocess do
     Enum.split(indexed_probabilities, split_index)
   end
 
+
+  @doc ~s"""
+  Given a list of probabilities, return a tuple with the underweight list, overweight list, and mean.
+  """
+  @spec prep_numbers(T.probabilities()) :: {T.indexed_probabilities(), T.indexed_probabilities(), float()}
+  def prep_numbers(probabilities) do
+    sum = Enum.sum(probabilities)
+    length = Enum.count(probabilities)
+    mean = sum / length
+
+    {lows, highs} = Enum.with_index(probabilities)
+                  |> split_probabilities(mean)
+
+    highs = Enum.reverse(highs)
+    {lows, highs, mean}
+  end
 
 end

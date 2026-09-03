@@ -51,7 +51,7 @@ defmodule WeightedRandom.Utils.Analysis do
     expected
       |> Enum.with_index()
       |> Enum.map(fn {p, idx} ->
-        actual = Map.get(actual_freq, idx)
+        actual = Map.get(actual_freq, idx) || 0.0
         abs(p - actual)
       end)
   end
