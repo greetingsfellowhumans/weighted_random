@@ -1,5 +1,5 @@
-defmodule WeightedRandom.Backend.WalkerAlias2.Table do
-  alias WeightedRandom.Backend.WalkerAlias2.Buckets.Sorter
+defmodule WeightedRandom.Backend.WalkerAlias.Table do
+  alias WeightedRandom.Backend.WalkerAlias.Buckets.Sorter
   defstruct [
     :buckets
   ]

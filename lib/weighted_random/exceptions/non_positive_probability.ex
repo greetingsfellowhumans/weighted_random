@@ -8,6 +8,13 @@ defmodule WeightedRandom.Exceptions.NonPositiveProbability do
 
   @impl true
   def exception(value) do
+    value = case value do
+      li when is_list(li) -> 
+        strings = Enum.map(li, &("#{&1}"))
+                  |> Enum.join(", ")
+        "[#{strings}]"
+      s when is_binary(s) -> s
+    end
     struct(__MODULE__, %{value: value})
   end
 end

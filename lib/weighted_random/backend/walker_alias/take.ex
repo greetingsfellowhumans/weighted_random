@@ -1,4 +1,4 @@
-defmodule WeightedRandom.Backend.WalkerAlias2.Take do
+defmodule WeightedRandom.Backend.WalkerAlias.Take do
   
 end
 

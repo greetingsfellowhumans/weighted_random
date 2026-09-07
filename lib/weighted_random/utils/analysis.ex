@@ -1,6 +1,7 @@
 defmodule WeightedRandom.Utils.Analysis do
   @moduledoc false
 
+  require Equalish
   alias WeightedRandom.Utils.Types, as: T
   @doc ~s"""
   Given a list of random values, determine the probability of each value.
@@ -81,10 +82,12 @@ defmodule WeightedRandom.Utils.Analysis do
       false
   """
   def equalish?(left, right), do: equalish?(left, right, @default_tolerance)
-  def equalish?(left, right, tolerance) when is_number(left) and is_number(right), do: abs(left - right) <= tolerance
+  def equalish?(left, right, tolerance) when is_number(left) and is_number(right) do
+    Equalish.is_eq_ish(left, right, tolerance)
+  end
   def equalish?(left, right, tolerance) when is_list(left) and is_list(right) do
     Enum.zip(left, right)
-      |> Enum.all?(fn {l, r} -> equalish?(l, r, tolerance) end)
+      |> Enum.all?(fn {l, r} -> Equalish.is_eq_ish(l, r, tolerance) end)
   end
 
 

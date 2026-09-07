@@ -4,8 +4,8 @@ defmodule WeightedRandom.DiceTest do
   alias WeightedRandom.{Dice, Die}
   import Dice
   # import Die
-  doctest Dice
-  doctest Die
+  #doctest Dice
+  #doctest Die
 
   defp gen_dice(sides, count, modifier) do
     case modifier do

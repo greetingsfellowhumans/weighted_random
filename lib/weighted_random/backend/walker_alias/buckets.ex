@@ -1,4 +1,4 @@
-defmodule WeightedRandom.Backend.WalkerAlias2.Buckets.Sorter do
+defmodule WeightedRandom.Backend.WalkerAlias.Buckets.Sorter do
   @moduledoc false
   defstruct [
     :bucket_size,
@@ -24,12 +24,12 @@ defmodule WeightedRandom.Backend.WalkerAlias2.Buckets.Sorter do
   def rm_lower(%{lowers: [_hd | lowers]} = sorter), do: %{sorter | lowers: lowers}
 end
 
-defmodule WeightedRandom.Backend.WalkerAlias2.Buckets do
+defmodule WeightedRandom.Backend.WalkerAlias.Buckets do
   @moduledoc false
-  #alias WeightedRandom.Backend.WalkerAlias2.Types, as: BackendT
+  #alias WeightedRandom.Backend.WalkerAlias.Types, as: BackendT
   #alias WeightedRandom.Utils.Types, as: T
   alias WeightedRandom.Utils.Analysis
-  alias WeightedRandom.Backend.WalkerAlias2.Buckets.Sorter
+  alias WeightedRandom.Backend.WalkerAlias.Buckets.Sorter
   import Sorter
 
   @default_tolerance 0.00001

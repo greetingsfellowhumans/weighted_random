@@ -1,4 +1,4 @@
-defmodule WeightedRandom.Backend.WalkerAlias2 do
+defmodule WeightedRandom.Backend.WalkerAlias do
   @moduledoc ~s"""
   This is my implementation of the Walker Alias Method.
 

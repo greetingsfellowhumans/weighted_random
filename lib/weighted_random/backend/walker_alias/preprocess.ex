@@ -1,5 +1,7 @@
-defmodule WeightedRandom.Backend.WalkerAlias2.Preprocess do
+defmodule WeightedRandom.Backend.WalkerAlias.Preprocess do
+  require Equalish
   alias WeightedRandom.Utils.Types, as: T
+
 
   @doc ~s"""
   Returns two lists, the underweight, and the overweight probabilities (preserving their original index)
@@ -7,7 +9,10 @@ defmodule WeightedRandom.Backend.WalkerAlias2.Preprocess do
   @spec split_probabilities(T.indexed_probabilities(), mean :: float()) :: {lower :: T.indexed_probabilities(), higher :: T.indexed_probabilities()}
   def split_probabilities(indexed_probabilities, mean) do
     indexed_probabilities = Enum.sort_by(indexed_probabilities, fn {p, _i} -> p end, :asc)
-    split_index = Enum.find_index(indexed_probabilities, fn {p, _i} -> p >= mean end)
+    split_index = Enum.find_index(indexed_probabilities, fn {p, _i} ->
+      Equalish.is_gte_ish(p, mean, 0.05)
+    end)
+
     Enum.split(indexed_probabilities, split_index)
   end
 

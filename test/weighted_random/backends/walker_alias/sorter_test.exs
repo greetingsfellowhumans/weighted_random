@@ -1,7 +1,7 @@
-defmodule WeightedRandom.Backends.Walker2.SorterTest do
+defmodule WeightedRandom.Backends.Walker.SorterTest do
   use ExUnit.Case
   use ExUnitProperties
-  alias WeightedRandom.Backend.WalkerAlias2, as: Mod
+  alias WeightedRandom.Backend.WalkerAlias, as: Mod
   alias Mod.Buckets.Sorter
   alias WeightedRandom.Utils.Analysis
 

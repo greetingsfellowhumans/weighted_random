@@ -22,6 +22,12 @@ The most optimal workflow is to:
 ### Randomness from probabilities
 
 ```elixir
+import WeightedRandom.Dice
+d = ~d"2d6"
+d
+```
+
+```elixir
 # Probabilities are floats representing percentages, that should add up to 1.0
 probabilities = [0.1, 1.6, 0.2, 0.1]
 optimized_struct = WeightedRandom.preprocess_p(probabilities)

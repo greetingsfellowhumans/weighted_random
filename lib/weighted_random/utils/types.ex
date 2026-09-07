@@ -41,7 +41,7 @@ defmodule WeightedRandom.Utils.Types do
   @type indexed_probability() :: {probability(), index()}
 
   @typedoc ~s"""
-  A list of probabilities and their indices
+  A list of probabilities
   """
   @type indexed_probabilities() :: list(indexed_probability())
 

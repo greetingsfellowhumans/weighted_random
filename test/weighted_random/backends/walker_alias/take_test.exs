@@ -1,12 +1,12 @@
-defmodule WeightedRandom.Backends.Walker2.TakeTest do
+defmodule WeightedRandom.Backends.Walker.TakeTest do
   use ExUnit.Case, async: true
   use ExUnitProperties
-  alias WeightedRandom.Backend.WalkerAlias2, as: Mod
+  alias WeightedRandom.Backend.WalkerAlias, as: Mod
   alias Mod.Buckets.Sorter
   alias WeightedRandom.Utils.Analysis
 
   #describe "Property tests for Take" do
-  #  property "take with the correct probabilities" do
+  #  property "Should take values with the correct probabilities" do
   #    check all floats <- StreamData.list_of(StreamData.float(min: 0.01, max: 0.9), min_length: 1) do
   #      probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats)
   #                      |> Enum.map(&(Float.round(&1, 4)))
@@ -14,17 +14,10 @@ defmodule WeightedRandom.Backends.Walker2.TakeTest do
   #      sample_size = 100_000
   #      tolerance = 0.15
   #      opts = [backend: WeightedRandom.Backend.WalkerAlias]
-  #      opts = [backend: Mod]
+  #      #opts = [backend: Mod]
   #      wr = WeightedRandom.preprocess_p(probabilities, opts)
   #      results = WeightedRandom.take(wr, sample_size)
-  #      if Analysis.match_probability?(probabilities, results, tolerance) do
-  #        assert true
-  #      else
-  #        frq = Analysis.get_frequency_of_results(results)
-  #        d = Analysis.get_delta(probabilities, results)
-  #        dbg {probabilities, frq, d}
-  #        refute true
-  #      end
+  #      assert Analysis.match_probability?(probabilities, results, tolerance)
 
   #    end
   #  end
