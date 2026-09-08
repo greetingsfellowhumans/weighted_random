@@ -56,7 +56,7 @@ weights = [
 ####
 
 opts = [backend: WeightedRandom.Backend.WalkerAlias]
-#opts = []
+opts = []
 table = WeightedRandom.preprocess(outcomes, weights, opts)
 dbg table
 #results = WeightedRandom.take(table, sample_size)

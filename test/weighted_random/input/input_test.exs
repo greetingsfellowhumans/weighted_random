@@ -14,7 +14,6 @@ defmodule WeightedRandom.InputTest do
 
 
       outcomes = 1..100
-      opts = []
       inputs = Input.from_outcomes(outcomes)
       inputs =
         inputs
