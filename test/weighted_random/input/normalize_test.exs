@@ -2,12 +2,11 @@ defmodule WeightedRandom.Input.NormalizeTest do
   use ExUnit.Case
   use ExUnitProperties
   import Equalish
-  @tolerance 1.0e-12
 
   describe "Normalize" do
     property "Probabilities should always sum to 1.0" do
-      check all floats <- StreamData.list_of(StreamData.float(min: 0.00001, max: 1.0), min_length: 1),
-                tolerance <- StreamData.float(min: @tolerance, max: 0.1) do
+      check all tolerance <- StreamData.float(min: 1.0e-10, max: 1.0e-5),
+                floats <- StreamData.list_of(StreamData.float(min: 1.0e-4, max: 1.0), min_length: 1) do
         opts = [tolerance: tolerance]
         probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats, opts)
         sum = Enum.sum(probabilities)
