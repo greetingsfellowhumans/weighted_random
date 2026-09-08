@@ -94,7 +94,7 @@ defmodule WeightedRandom.Utils.Analysis do
   def sum_equalish?(li, target), do: sum_equalish?(li, target, @default_tolerance)
   def sum_equalish?(li, target, tolerance) do
     sum_delta(li, target)
-      |> equalish?(0.0, tolerance)
+      |> Equalish.is_eq_ish(0.0, tolerance)
   end
 
 
