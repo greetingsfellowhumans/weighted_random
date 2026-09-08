@@ -1,0 +1,90 @@
+defmodule WeightedRandom.Backends.Walker.SorterTest do
+  use ExUnit.Case
+  use ExUnitProperties
+  alias WeightedRandom.Backend.WalkerAlias, as: Mod
+  alias Mod.Buckets.Sorter
+
+
+  def probs_to_sorter(probs) do
+    {l, h, m} = Mod.Preprocess.prep_numbers(probs, 1.0e-10)
+    Sorter.new(l, h, m)
+  end
+
+
+  describe "Sorter" do
+    test "ascending list" do
+      sorter = probs_to_sorter([0.1, 0.2, 0.2, 0.5])
+      assert sorter.bucket_size == 0.25
+
+      sorter0 = %Sorter{
+        bucket_size: 0.25,
+        lowers: [{0.1, 0}, {0.2, 1}, {0.2, 2}],
+        highers: [{0.5, 3}],
+        buckets: []
+      }
+      assert sorter == sorter0
+
+
+      # First :lowers probability is 0.1. Which is 40% of the bucket size
+      split_point = (hd(sorter0.lowers) |> elem(0)) / sorter.bucket_size
+      assert split_point == 0.4
+
+      sorter1 = %Sorter{
+        bucket_size: 0.25,
+        lowers: [{0.2, 1}, {0.2, 2}],
+        highers: [{0.35, 3}],
+        buckets: [{split_point, 0, 3}]
+      }
+
+      assert Mod.Buckets.fill_next(sorter0) == sorter1
+
+      # Now the next low probability is 0.2, which is 80% of the bucket size.
+      split_point = (hd(sorter1.lowers) |> elem(0)) / sorter.bucket_size
+      assert split_point == 0.8
+
+      sorter2 = %Sorter{
+        bucket_size: 0.25,
+        lowers: [{0.2, 2}],
+        highers: [{0.3, 3}],
+        buckets: [{split_point, 1, 3}, {0.4, 0, 3}]
+      }
+      assert Mod.Buckets.fill_next(sorter1) == sorter2
+
+      sorter3 = %Sorter{
+        bucket_size: 0.25,
+        lowers: [],
+        highers: [{0.25, 3}],
+        buckets: [{0.2 / 0.25, 2, 3}, {0.8, 1, 3}, {0.4, 0, 3}]
+      }
+      assert Mod.Buckets.fill_next(sorter2) == sorter3
+
+
+      sorter4 = %Sorter{
+        bucket_size: 0.25,
+        lowers: [],
+        highers: [],
+        buckets: [{0.0, 3, 3}, {0.2 / 0.25, 2, 3}, {0.8, 1, 3}, {0.4, 0, 3}]
+      }
+      assert Mod.Buckets.fill_next(sorter3) == sorter4
+    end
+
+  end
+
+  describe "Preprocess" do
+    property "Split the probabilities" do
+      check all tolerance <- StreamData.float(min: 1.0e-10, max: 1.0e-5),
+                floats <- StreamData.list_of(StreamData.float(min: 1.0e-4, max: 1.0), min_length: 1) do
+        opts = [tolerance: tolerance, backend: Mod]
+        probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats, opts)
+        %{table: table} = WeightedRandom.preprocess_p(probabilities, opts)
+        assert is_struct(table, Mod.Table)
+        assert Enum.count(probabilities) == Enum.count(table.buckets)
+
+      end
+    end
+  end
+
+
+
+end
+

@@ -1,5 +1,6 @@
 defmodule WeightedRandom.Utils.Types do
 
+  @type index() :: pos_integer()
 
   @typedoc ~s"""
   The values to be randomly picked from.
@@ -27,9 +28,22 @@ defmodule WeightedRandom.Utils.Types do
 
 
   @typedoc ~s"""
+  A float between 0.0, and 1.0
+  """
+  @type probability() :: float()
+
+
+  @typedoc ~s"""
   A list of floats, representing percentages, that should add up to 1.0
   """
-  @type probabilities :: list(float())
+  @type probabilities :: list(probability())
+
+  @type indexed_probability() :: {probability(), index()}
+
+  @typedoc ~s"""
+  A list of probabilities
+  """
+  @type indexed_probabilities() :: list(indexed_probability())
 
 
   @typedoc ~s"""
@@ -37,5 +51,10 @@ defmodule WeightedRandom.Utils.Types do
   """
   @type opts :: keyword()
 
+  @typedoc ~s"""
+  Due to floating point precision problems, we must allow a certain amount of incorrectness.
+  Usually this is a very small number like 1.0e-10 (i.e. 0.0000000001)
+  """
+  @type tolerance :: float()
 
 end

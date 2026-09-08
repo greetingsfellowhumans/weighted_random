@@ -1,7 +1,5 @@
 defmodule WeightedRandom.Utils.Plotting do
-  @moduledoc ~s"""
-  This is mostly for use in Livebooks.
-  """
+  @moduledoc false
 
   def results_to_bars(results) when is_list(results) do
     results

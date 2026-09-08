@@ -5,7 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased [1.0.0-alpha.2] - 2026-09-30
+## Unreleased [1.0.0-rc.1] - 2026-09-07
+
+In preparation for the upcoming v1, I did a lot more research into software licenses, and ended up staying with MIT, but made it more explicit with a standalone file.
+During that process I looked closer at the dependencies and realized the `wam` lib just had an update with breaking changes. So I decided to take the algorithm in-house, making it easier to keep `weighted_random` stable.
+
+There are many elixir libraries implementing the Walker-Alias method, and I believe my implementation is quite different. I put a strong focus on readability, making it well typespec'd, documented, and thoroughly tested so that future developers can hopefully reason about it easily. One of the challenges with the original algorithm is that it was created by a mathematician, and uses many idioms/jargon that are not immediately clear to some software developers (like myself) without a math background.
+
+### Added
+
+- Explicit LICENSE file
+- Upgrade guide
+- Ensure backward compatibility of CubicBezier module
+
+### Changed
+
+- Replaced the walker-alias backend. Previously it was the WAM library, but a custom implementation has now been created instead.
+
+### Removed
+
+- Dependency on `wam`.
+
+## [1.0.0-alpha.2] - 2026-09-30
 
 ### Changed
 

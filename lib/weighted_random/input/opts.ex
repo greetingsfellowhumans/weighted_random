@@ -54,7 +54,7 @@ defmodule WeightedRandom.Input.Opts do
       """,
       type: {:or, [:atom, {:list, {:tuple, [{:or, [:integer, :float]}, {:or, [:integer, :float]}]}}]},
       required: false
-    ]
+    ],
   ] 
   @weight_spec_schema @weight_spec |> NimbleOptions.new!()
   def weight_spec(), do: @weight_spec
@@ -88,6 +88,15 @@ defmodule WeightedRandom.Input.Opts do
     required: false,
     type: :pos_integer
   ]
+  @tolerance [
+    doc: ~s"""
+    When WeightedRandom automatically normalizes your probabilities to make sure they add up to 1.0, sometimes they are off slightly due to floating point precision issues.
+    How close does it need to be?
+    By default we use #{0.0000000001}, which means that: 0.99 is NOT close enough, but 0.9999999999 is close enough.
+    """,
+    default: 0.0000000001,
+    type: :float
+  ]
 
   @take [
     doc: "If used, then instead of returning one random value, will return a list (size == :take) of random values",
@@ -102,6 +111,7 @@ defmodule WeightedRandom.Input.Opts do
   @from_probabilities_schema NimbleOptions.new!([
     backend: BackendOpts.backend(),
     precision: @precision,
+    tolerance: @tolerance,
   ])
   def from_probabilities_schema(), do: @from_probabilities_schema
 
@@ -118,6 +128,7 @@ defmodule WeightedRandom.Input.Opts do
   @rand_p_schema NimbleOptions.new!([
     backend: BackendOpts.backend(),
     precision: @precision,
+    tolerance: @tolerance,
     take: @take,
   ])
   def rand_p_schema(), do: @rand_p_schema
@@ -125,6 +136,7 @@ defmodule WeightedRandom.Input.Opts do
   @rand_p_docs NimbleOptions.new!([
     backend: BackendOpts.backend(false),
     precision: @precision,
+    tolerance: @tolerance,
     take: @take,
   ])
   def rand_p_docs(), do: @rand_p_docs
@@ -133,6 +145,7 @@ defmodule WeightedRandom.Input.Opts do
   @from_weights_schema NimbleOptions.new!([
     backend: BackendOpts.backend(),
     precision: @precision,
+    tolerance: @tolerance,
     outcome_type: @outcome_type,
   ])
   def from_weights_schema(), do: @from_weights_schema

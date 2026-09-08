@@ -1,7 +1,7 @@
 defmodule WeightedRandom.InputTest do
   use ExUnit.Case
   alias WeightedRandom.Input
-  alias WeightedRandom.Utils.Analysis
+  import Equalish
   doctest Input
 
   describe "Probability" do
@@ -10,12 +10,10 @@ defmodule WeightedRandom.InputTest do
       probs = Enum.map(1..100, fn _ -> 1 / 100 end)
       psum = Enum.sum(probs)
       refute psum == 1.0
-      assert Analysis.equalish?(psum, 1.0)
+      assert is_eq_ish(psum, 1.0)
 
 
       outcomes = 1..100
-      weights = []
-      opts = []
       inputs = Input.from_outcomes(outcomes)
       inputs =
         inputs

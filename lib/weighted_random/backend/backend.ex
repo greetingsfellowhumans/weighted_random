@@ -5,6 +5,15 @@ defmodule WeightedRandom.Backend do
   1. The main WeightedRandom package presents a novel interface for generating a list of probabilities (floats that can be summed to equal exactly 1.0).
   2. The custom Backend module decides what to do with those probabilities once they are generated.
 
+  To create your own backend, copy the module `WeightedRandom.Backend.Linear` and make changes to the functions.
+
+  To use a different backend, you can either pass it in as an opt (see function docs), or you can put it in your config file:
+
+  ```elixir
+  config :weighted_random,
+    backend: Your.Backend.Module
+  ```
+
   """
 
   @enforce_keys [:outcomes, :backend, :table]

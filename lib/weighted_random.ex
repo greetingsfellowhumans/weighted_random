@@ -26,18 +26,24 @@ defmodule WeightedRandom do
   Supported options:\n#{NimbleOptions.docs(Input.Opts.from_probabilities_schema())}
   """
   @spec preprocess_p(T.probabilities(), T.opts()) :: WeightedRandom.Backend.t()
-  def preprocess_p([f | _] = probabilities, opts \\ []) when is_number(f) do
+  def preprocess_p(probabilities, opts \\ []) do
+    case probabilities do
+      [] -> raise WeightedRandom.Exceptions.EmptyProbabilities
+      [x | _] when not is_float(x) -> raise WeightedRandom.Exceptions.NonFloatProbabilities, probabilities
+      _ -> :ok
+    end
     opts = Input.Opts.from_probabilities_merge_opts(opts)
     inputs = Input.FromProbabilities.get_inputs(probabilities, opts)
     WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
   end
 
 
+
   @doc ~s"""
   Given a non-empty list (or range) of possible outcomes, and a list of weight maps, build a struct that can later be passed into `WeightedRandom.take/2` for very fast random sampling.
 
   ## Examples
-      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> r = WeightedRandom.preprocess(0..10, [%{target: 2, amount: 1000}])
       iex> li = WeightedRandom.take(r, 5)
       [2, 2, 2, 2, 2]
 
@@ -46,9 +52,13 @@ defmodule WeightedRandom do
   """
   @spec preprocess(T.outcomes(), list(T.weight_spec()), T.opts()) :: WeightedRandom.Backend.t()
   def preprocess(outcomes, weights, opts \\ []) when is_list(weights) do
-    opts = Input.Opts.from_weights_merge_opts(opts)
-    inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
-    WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
+    if Enum.empty?(outcomes) do
+      raise WeightedRandom.Exceptions.EmptyOutcomes
+    else
+      opts = Input.Opts.from_weights_merge_opts(opts)
+      inputs = Input.FromWeights.get_inputs(outcomes, weights, opts)
+      WeightedRandom.Backend.preprocess(opts[:backend], inputs, opts)
+    end
   end
 
 
@@ -57,7 +67,7 @@ defmodule WeightedRandom do
 
 
   ## Examples
-      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> r = WeightedRandom.preprocess(0..10, [%{target: 2, amount: 1000}])
       iex> li = WeightedRandom.take(r)
       2
 
@@ -76,7 +86,7 @@ defmodule WeightedRandom do
 
   ## Examples
       iex> # Make the item at index 2 1000x more likely than any other single index.
-      iex> r = WeightedRandom.preprocesses(0..10, [%{target: 2, amount: 1000}])
+      iex> r = WeightedRandom.preprocess(0..10, [%{target: 2, amount: 1000}])
       iex> li = WeightedRandom.take(r, 3)
       [2, 2, 2]
 

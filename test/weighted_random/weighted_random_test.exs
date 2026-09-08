@@ -6,7 +6,6 @@ defmodule WeightedRandom.WeightedRandomTest do
 
 
   describe "rand/3" do
-    @tag skip: "Come back after fixing the outcome_type: value bug for get_delta"
     test "No weights" do
       outcomes = 1..6
       weights = []
@@ -17,9 +16,12 @@ defmodule WeightedRandom.WeightedRandomTest do
       assert Enum.all?(li, &(&1 >= 1))
       assert Enum.all?(li, &(&1 <= 6))
 
-      dbg li
-      dbg probs
       Analysis.match_probability?(probs, li)
+    end
+    test "No outcomes" do
+      assert_raise WeightedRandom.Exceptions.EmptyOutcomes, fn ->
+        Mod.rand([], [%{target: 3, amount: 10}], [take: 100])
+      end
     end
     test "simple weight" do
       li = Mod.rand(1..6, [%{target: 3, amount: 10}], [take: 100])
@@ -49,6 +51,14 @@ defmodule WeightedRandom.WeightedRandomTest do
       probabilities = [0.1, 0.1, 0.1, 0.7]
       li = Mod.rand_p(probabilities, [take: 10000])
       assert Analysis.match_probability?(probabilities, li)
+    end
+    test "Invalid probabilities" do
+      assert_raise WeightedRandom.Exceptions.NonFloatProbabilities, fn ->
+        Mod.rand_p([1, 2, 3], [take: 100])
+      end
+      assert_raise WeightedRandom.Exceptions.NonPositiveProbability, fn ->
+        Mod.rand_p([0.0], [take: 100])
+      end
     end
 
     test "parse options" do

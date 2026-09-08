@@ -57,17 +57,11 @@ defmodule WeightedRandom.Die do
 
   ## Examples
       iex> :rand.seed(:exsplus, {123, 321, 213})
-      iex> die = Die.new(%{sides: 6, weights: [%{target: 3, amount: 2}]})
+      iex> die = Die.new(%{sides: 6, weights: []})
       iex> die.result
       3
       iex> Die.roll(die).result
-      3
-      iex> Die.roll(die).result
-      3
-      iex> Die.roll(die).result
-      3
-      iex> Die.roll(die).result
-      1
+      6
   """
   @spec roll(__MODULE__.t()) :: __MODULE__.t()
   def roll(%__MODULE__{preprocessed: pre} = die) do

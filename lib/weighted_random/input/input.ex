@@ -18,7 +18,8 @@ defmodule WeightedRandom.Input do
   end
 
   @doc false
-  def from_probabilities(probabilities) do
+  def from_probabilities(probabilities, opts) do
+    probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(probabilities, opts)
     size = Enum.count(probabilities)
 
     struct(__MODULE__, %{
