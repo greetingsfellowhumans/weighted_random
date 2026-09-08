@@ -4,7 +4,7 @@ defmodule WeightedRandom.MixProject do
   def project do
     [
       app: :weighted_random,
-      version: "1.0.0-rc.0",
+      version: "1.0.0-rc.1",
       elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -61,7 +61,7 @@ defmodule WeightedRandom.MixProject do
       # These are the default files included in the package
       files: ["lib", "mix.exs", "README*"],
       maintainers: ["greetingsfellowhumans"],
-      licenses: ["LICENSE"],
+      licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/greetingsfellowhumans/weighted_random"}
     ]
   end
