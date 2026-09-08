@@ -51,5 +51,10 @@ defmodule WeightedRandom.Utils.Types do
   """
   @type opts :: keyword()
 
+  @typedoc ~s"""
+  Due to floating point precision problems, we must allow a certain amount of incorrectness.
+  Usually this is a very small number like 1.0e-10 (i.e. 0.0000000001)
+  """
+  @type tolerance :: float()
 
 end

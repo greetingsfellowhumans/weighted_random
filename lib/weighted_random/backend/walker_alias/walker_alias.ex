@@ -15,9 +15,10 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   end
 
   @impl true
-  def preprocess(probabilities, _opts) do
+  def preprocess(probabilities, opts) do
     {lows, highs, mean} = Preprocess.prep_numbers(probabilities)
-    Buckets.fill_buckets(lows, highs, mean)
+    sorter = Buckets.Sorter.new(lows, highs, mean)
+    Buckets.fill_all(sorter, opts[:tolerance])
       |> Table.new()
   end
 

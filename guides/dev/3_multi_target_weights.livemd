@@ -55,15 +55,15 @@ weights = [
 ]
 ####
 
-opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+opts = [backend: WeightedRandom.Backend.WalkerAlias]
 #opts = []
 table = WeightedRandom.preprocess(outcomes, weights, opts)
 dbg table
-results = WeightedRandom.take(table, sample_size)
+#results = WeightedRandom.take(table, sample_size)
 
-results
-|> WeightedRandom.Utils.Plotting.results_to_bars()
-|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
+#results
+#|> WeightedRandom.Utils.Plotting.results_to_bars()
+#|> Tucan.bar("outcome", "hits", height: 200, width: 500, fill_color: "#33245A", corner_radius: 5)
 ```
 
 ```elixir
@@ -84,7 +84,7 @@ probabilities = [
 #    %WeightedRandom.Backend.WalkerAlias2.Table{buckets: [{0.0, 0, 0}, {0.2, 1, 0}]}
 ####
 opts = []
-opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+opts = [backend: WeightedRandom.Backend.WalkerAlias]
 
 # Notice we use `preprocess_p/1` instead of `preprocess/1`
 # The `_p` is for probabilities.
@@ -109,7 +109,7 @@ weights = [
   %{target: 15, amount: 5}
 ]
 ####
-opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+opts = [backend: WeightedRandom.Backend.WalkerAlias]
 
 table = WeightedRandom.preprocess(outcomes, weights, opts)
 results = WeightedRandom.take(table, sample_size)
@@ -173,7 +173,7 @@ curve = [
   {1, 1}
 ]
 opts = []
-opts = [backend: WeightedRandom.Backend.WalkerAlias2]
+opts = [backend: WeightedRandom.Backend.WalkerAlias]
 
 
 ####
