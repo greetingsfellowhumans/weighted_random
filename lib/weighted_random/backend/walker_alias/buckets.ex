@@ -124,10 +124,8 @@ defmodule WeightedRandom.Backend.WalkerAlias.Buckets do
   defp add_depleted_higher(sorter, bucket, tolerance) do
     temp_sorter = add_higher(sorter, bucket)
     if can_donate?(temp_sorter, tolerance) do
-      #deleteme {:can_donate, sorter, bucket}, tolerance
       temp_sorter
     else
-      #deleteme {:cannot_donate, sorter, bucket}, tolerance
       add_lower(sorter, bucket)
     end
   end
