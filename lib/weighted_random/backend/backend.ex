@@ -1,5 +1,4 @@
 defmodule WeightedRandom.Backend do
-  alias WeightedRandom.Input
   @moduledoc ~s"""
   WeightedRandom.Backend offers a contract to all who implement it:
   1. The main WeightedRandom package presents a novel interface for generating a list of probabilities or weights
@@ -63,8 +62,6 @@ defmodule WeightedRandom.Backend do
     table: struct()
   }
 
-  @type weight() :: Input.Weight.t()
-  @type weights() :: list(weight())
   @type percentage() :: float()
   @type probabilities() :: list(percentage())
   @type resolved_weights() :: list(float())
