@@ -28,6 +28,8 @@ defmodule WeightedRandom.Backend do
   @type weight() :: Input.Weight.t()
   @type weights() :: list(weight())
   @type percentage() :: float()
+  @type probabilities() :: list(percentage())
+  @type resolved_weights() :: list(float())
   @type index() :: integer()
   @type indices() :: list(index())
   @type opts() :: keyword()
@@ -46,7 +48,7 @@ defmodule WeightedRandom.Backend do
 
   This function must return some kind of struct that will later be passed into `take/2`.
   """
-  @callback preprocess(input :: Input.t(), opts :: opts()) :: table()
+  @callback preprocess(input :: probabilities() | resolved_weights(), opts :: opts()) :: table()
 
   @doc ~s"""
   Given the struct returned by `preprocess/2`, return a list of random indices equal to `count`.

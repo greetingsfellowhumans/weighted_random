@@ -1,6 +1,6 @@
 defmodule WeightedRandom.Backends.BenchmarkTest do
   use ExUnit.Case
-  alias WeightedRandom.Backend.{WalkerAlias, Linear, Wam}
+  alias WeightedRandom.Backend.{WalkerAlias, Linear}
 
   @opts []
 
