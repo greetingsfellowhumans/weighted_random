@@ -2,7 +2,7 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   @moduledoc ~s"""
   A more 'idiomatically elixir' implementation of The Walker Alias Method. Uses the `WeightedRandom.Backend` behaviour
 
-  The original algorithm is described in detail [on wikipedia]("https://en.wikipedia.org/wiki/Alias_method").
+  The original algorithm is described in detail [on wikipedia](https://en.wikipedia.org/wiki/Alias_method).
   """
   alias __MODULE__.{Preprocess, Buckets, Table}
   use WeightedRandom.Backend
