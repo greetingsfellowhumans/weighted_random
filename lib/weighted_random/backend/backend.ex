@@ -50,6 +50,27 @@ defmodule WeightedRandom.Backend do
   => 3
   ```
 
+  ## Testing a backend
+  Testing random numbers is really hard. Even when you use seeds, it can be very brittle.
+
+  The `WeightedRandom.Utils.Analysis` module will be very useful for ensuring that your results follow the expected probabilities.
+
+  ```elixir
+  defmodule My.BackendTest do
+    use ExUnit.Case
+    alias WeightedRandom.Utils.Analysis
+    alias My.Backend, as: Mod
+
+    test "should return accurate sample" do
+      probabilities = [0.25, 0.25, 0.5]
+      sample = WeightedRandom.rand_p(probabilities, backend: Mod, take: 1000)
+      tolerance = 0.05
+
+      assert Analysis.match_probability?(probabilities, sample, tolerance)
+    end
+  end
+  ```
+
 
   """
 

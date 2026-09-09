@@ -1,24 +1,16 @@
 # README
 
-## Current state of the project
+## Introduction
 
-Version 1.0.0: In alpha. Actively being developed.
+High performance platform for generating random values, with probabilities or weights.
 
-Version 0.4.x: Stable.
-
-Improvements in v1.0.0:
-
-- Significant performance Improvements
-- Support for probabilities, not just weights
-- Better user experience and quality of life improvements
-- Polished docs and a livebook tutorial
-- swappable backends, not locked into any particular algorithm.
+[Upgrading from before v1.0.0?](/guides/upgrading_guide.md)
 
 ## Docs
 
 See [Hex docs](https://weighted-random.hexdocs.pm/). Documentation will not be kept in the README.
 
-## Examples
+## Visual Examples
 
 Uniform random
 
