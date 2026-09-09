@@ -2,6 +2,16 @@
 
 If you are coming to v1.0.0 from v0.4.x, here are some things you should know.
 
+## Why upgrade
+
+- 🚀 Significant performance Improvements
+- Much easier to sample a list of results, rather than just one
+- Support for probabilities, not just weights
+- Better user experience and quality of life improvements
+- Polished docs and a livebook tutorial
+- swappable backends, not locked into any particular algorithm
+- Much more stable and thoroughly tested
+
 ## Backward compatibility
 
 In 99% of cases, you should be able to simply update the version without a hitch.
