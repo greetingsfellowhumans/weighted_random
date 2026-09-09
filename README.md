@@ -15,7 +15,7 @@ See [Hex docs](https://weighted-random.hexdocs.pm/). Documentation will not be k
 Uniform random
 
 ```elixir
-for 1..5000 do
+for _ <- 1..5000 do
   Enum.random(0..3)
 end
 ```
@@ -38,13 +38,10 @@ WeightedRandom.preprocess_p(probabilities)
 # By default, every number has a weight of 1.0
 # Let's add a little weight to the outcome of 2 for a total of 1.8
 
-#### Controls ####
 outcomes = 0..3
 weights = [
   %{target: 2, amount: 0.8}
 ]
-####
-
 
 WeightedRandom.preprocess(outcomes, weights)
 |> WeightedRandom.take(5000)
@@ -61,9 +58,12 @@ WeightedRandom integrates well with the [Curves](https://hex.pm/packages/curves)
 
 curve = :ease_in_out
 outcomes = 0..100
-weights = [%{target: 50, amount: 100, radius: 25, curve: curve}]
-####
+weights = [%{curve: curve, radius: 25, target: 50, amount: 100}]
 
+# see that `radius` field? 
+# It basically means we are now targeting all numbers from 25-75,
+# or rather (target - radius) to (target + radius)
+# But instead of applying the weight amount of 100 evenly, it spreads it out as an ease_in_out bezier curve.
 
 WeightedRandom.preprocess(outcomes, weights)
 |> WeightedRandom.take(1_000_000)
