@@ -44,6 +44,17 @@ defmodule WeightedRandom.WeightedRandomTest do
       assert opts[:outcome_type] == :value
       assert opts[:index] == nil
     end
+    test "backward compatibility of opts" do
+      range = 1..10
+      weight = %{target: 2, weight: 10}
+      expected = Analysis.get_probabilities_from_weights(Enum.to_list(range), [weight], outcome_type: :value)
+      assert expected == [0.05, 0.55, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+
+      li = Stream.repeatedly(fn -> Mod.rand(range, weight, index: false) end) |> Enum.take(1000)
+      offset_li = Enum.map(li, &(&1 - 1))
+
+      assert Analysis.match_probability?(expected, offset_li)
+    end
   end
 
   describe "rand_p/2" do

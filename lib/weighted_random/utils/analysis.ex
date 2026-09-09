@@ -1,8 +1,13 @@
 defmodule WeightedRandom.Utils.Analysis do
-  @moduledoc false
+  @moduledoc ~s"""
+  Utilities for backend developers to test the accuracy of their results.
+  """
+  @default_tolerance 0.05
 
   require Equalish
   alias WeightedRandom.Utils.Types, as: T
+
+
   @doc ~s"""
   Given a list of random values, determine the probability of each value.
   This is basically the inverse of `WeightedRandom.rand_p/2`
@@ -30,7 +35,8 @@ defmodule WeightedRandom.Utils.Analysis do
   @doc ~s"""
   Given a list of probabilities, and a list of results, determine whether the results were roughly correct.
 
-  By default we use a tolerance of `0.2` (i.e. 20%). If the results have a very large sample size, then you should be able lower the tolerance.
+  By default we use a tolerance of `#{@default_tolerance}` (i.e. #{round(@default_tolerance * 100)}%). 
+  If the results have a very large sample size, then you should be able lower the tolerance.
 
   This returns the absolute values, so they will never be negative.
 
@@ -71,7 +77,6 @@ defmodule WeightedRandom.Utils.Analysis do
   end
 
 
-  @default_tolerance 0.05
   @doc ~s"""
   Determine whether two numbers are equal; within a very small rounding error.
 
@@ -99,11 +104,14 @@ defmodule WeightedRandom.Utils.Analysis do
 
 
   @doc ~s"""
-  Given a list of deltas, determine whether they are all within the tolerance level.
+  Given a list of expected probabilities, and a list of actual results (as indices), determine whether they are all within the tolerance level.
 
-  By default we use a tolerance of `0.05` (i.e. 5%). If the results have a very large sample size, then you should be able lower the tolerance.
+  By default we use a tolerance of `#{@default_tolerance}` (i.e. #{round(@default_tolerance * 100)}%). 
+  If the results have a very large sample size, then you should be able lower the tolerance.
+
+  This function will be more accurate with a higher sample size
   """
-  @spec match_probability?(expected :: list(float()), results :: list(), tolerance :: float()) :: boolean()
+  @spec match_probability?(expected :: list(T.index()), results :: list(), tolerance :: float()) :: boolean()
   def match_probability?(expected, results, tolerance \\ @default_tolerance) do
     delta = get_delta(expected, results)
     Enum.all?(delta, &(&1 <= tolerance))
