@@ -15,9 +15,8 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
         opts = [backend: Mod]
         wr = WeightedRandom.preprocess_p(probabilities, opts)
         results = WeightedRandom.take(wr, sample_size)
-        #outcomes = Enum.with_index(probabilities)
-        #          |> Enum.map(fn {_, i} -> i end)
-        assert Analysis.match_probability?(probabilities, results, 0.1)
+
+        assert Analysis.match_probability?(probabilities, results)
 
       end
     end
