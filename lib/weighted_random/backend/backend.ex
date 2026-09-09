@@ -51,6 +51,8 @@ defmodule WeightedRandom.Backend do
   ```
 
   ## Testing a backend
+  Testing random numbers is really hard. Even when you use seeds, it can be very brittle.
+
   The `WeightedRandom.Utils.Analysis` module will be very useful for ensuring that your results follow the expected probabilities.
 
   ```elixir
