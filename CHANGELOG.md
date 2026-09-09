@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Unreleased
-
-## 1.0.0 -2026-xx-xx
+## [1.0.0] - 2026-09-09
 
 The library is considered stable and complete. It is high performance, well documented, and extensible.
+
+There are no more bugs that I am aware of.
+There is thorough testing (unit, integration, and property) throughout.
+Backward compatibility is ensured (within reason)
+
+See the [upgrade guide](/guides/upgrading_guide.md).
 
 ## [1.0.0-rc.2] - 2026-09-08
 
