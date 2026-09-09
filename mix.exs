@@ -29,12 +29,11 @@ defmodule WeightedRandom.MixProject do
       main: "1_quickstart-1",
       groups_for_modules: [
         "Backend": ~r"WeightedRandom.Backend",
-        "Dice": ~r"WeightedRandom.(Dice|Die)",# [WeightedRandom.Dice, WeightedRandom.Die],
+        "Dice": ~r"WeightedRandom.(Dice|Die)",
         "Utils": [WeightedRandom.Utils],
       ],
       nest_modules_by_prefix: [
         WeightedRandom.Backend,
-        #  WeightedRandom.Dice,
         WeightedRandom.Utils,
       ],
       groups_for_extras: [
@@ -58,7 +57,6 @@ defmodule WeightedRandom.MixProject do
 
   defp package() do
     [
-      # These are the default files included in the package
       files: ["lib", "mix.exs", "README*"],
       maintainers: ["greetingsfellowhumans"],
       licenses: ["MIT"],
@@ -66,19 +64,15 @@ defmodule WeightedRandom.MixProject do
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger]
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      #{:wam, "~> 0.1.0"},
       {:equalish, "~> 1.0.1"},
-      #{:equalish, path: "../equalish/"},
       {:curves, "~> 0.2.4"},
       {:nimble_options, "~> 1.0"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
