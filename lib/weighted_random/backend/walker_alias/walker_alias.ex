@@ -1,10 +1,8 @@
 defmodule WeightedRandom.Backend.WalkerAlias do
   @moduledoc ~s"""
-  This is my implementation of the Walker Alias Method.
+  A more 'idiomatically elixir' implementation of The Walker Alias Method. Uses the `WeightedRandom.Backend` behaviour
 
-  I have changed several aspects of the original algorithm in order to make it more idiomatically elixir, and more readable for programmers.
-
-  I suspect it also has performance improvements over similar elixir libraries because of those choices, although I have not yet benchmarked to test it.
+  The original algorithm is described in detail [on wikipedia](https://en.wikipedia.org/wiki/Alias_method).
   """
   alias __MODULE__.{Preprocess, Buckets, Table}
   use WeightedRandom.Backend

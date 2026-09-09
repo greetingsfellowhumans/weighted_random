@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Backend.WalkerAlias.Types do
+  @moduledoc false
   alias WeightedRandom.Utils.Types, as: T
 
 

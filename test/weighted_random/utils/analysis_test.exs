@@ -20,7 +20,6 @@ defmodule WeightedRandom.Utils.AnalysisTest do
       assert Mod.get_probabilities_from_results(li, [0, 1]) == [0.75, 0.25]
     end
 
-    @tag skip: "Come back once you clean up options"
     test "get delta" do
       # With index
       li = List.duplicate(1, 25) ++ List.duplicate(0, 75)
@@ -33,15 +32,8 @@ defmodule WeightedRandom.Utils.AnalysisTest do
       expected = [0.25, 0.25, 0.25, 0.25]
       results = [100, 120, 110, 130]
       actual_freq = get_probabilities_from_results(results, outcomes)
-      dbg actual_freq
-      # @TODO
-      # build an actual analysis domain
-      # with a module to get the %{value => index} and %{value => probability} maps
-      # And normalize just using those two, eliminating the need to constantly check :index
-      #
-      # Also rename :index to result_type: :index | :value
-      #
-      Mod.get_delta(expected, results)
+      assert actual_freq == expected
+      assert expected == get_delta(expected, results)
     end
 
     test "match probabilities" do

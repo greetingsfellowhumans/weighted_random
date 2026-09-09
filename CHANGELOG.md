@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### Unreleased
+
+## 1.0.0 -2026-xx-xx
+
+The library is considered stable and complete. It is high performance, well documented, and extensible.
+
+## [1.0.0-rc.2] - 2026-09-08
+
+### Changed
+
+- (WalkerAlias Backend) A bugfix for very small probabilities that ride the edge of the tolerance level.
+
 ## [1.0.0-rc.1] - 2026-09-07
 
 In preparation for the upcoming v1, I did a lot more research into software licenses, and ended up staying with MIT, but made it more explicit with a standalone file.

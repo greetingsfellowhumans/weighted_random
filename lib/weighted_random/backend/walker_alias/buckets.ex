@@ -58,25 +58,23 @@ defmodule WeightedRandom.Backend.WalkerAlias.Buckets.Sorter do
   def is_final_low?(_), do: false
 
   def can_donate?(%{bucket_size: size, lowers: [{lp, _} | _], highers: [{hp, _} | _]}, tolerance) do
-    missing = size - lp
-    remainder = hp - missing
-    is_gte_ish(remainder, 0.0, tolerance)
+    is_gte_ish(lp + hp, size, tolerance)
   end
-  def can_donate?(_), do: false
+  def can_donate?(%{bucket_size: size, highers: [{hp, _} | _]}, tolerance) do
+    is_gte_ish(hp, size, tolerance)
+  end
+  def can_donate?(_, _), do: false
 end
 
 defmodule WeightedRandom.Backend.WalkerAlias.Buckets do
   @moduledoc false
-  #alias WeightedRandom.Backend.WalkerAlias.Types, as: BackendT
-  #alias WeightedRandom.Utils.Types, as: T
   alias __MODULE__.Sorter
   import Sorter
-  import Equalish
 
   @default_tolerance 1.0e-10
 
   def fill_all(sorter, tolerance \\ @default_tolerance) do
-    if Sorter.is_full?(sorter) do
+    if is_full?(sorter) do
       sorter
     else
       fill_next(sorter, tolerance)
@@ -85,22 +83,19 @@ defmodule WeightedRandom.Backend.WalkerAlias.Buckets do
   end
 
   def fill_next(sorter, tolerance \\ @default_tolerance) do
-    with {:full, false} <- {:full, Sorter.is_full?(sorter)},
-         {:high_singlet, false} <- {:high_singlet, Sorter.is_high_singlet?(sorter, tolerance)},
-         {:low_singlet, false} <- {:low_singlet, Sorter.is_low_singlet?(sorter, tolerance)},
-         {:final_high, false} <- {:final_high, Sorter.is_final_high?(sorter)},
-         {:final_low, false} <- {:final_low, Sorter.is_final_low?(sorter)},
-         {:can_donate, false} <- {:can_donate, Sorter.can_donate?(sorter, tolerance)}
+    with {:full, false} <- {:full, is_full?(sorter)},
+         {:high_singlet, false} <- {:high_singlet, is_high_singlet?(sorter, tolerance)},
+         {:low_singlet, false} <- {:low_singlet, is_low_singlet?(sorter, tolerance)},
+         {:final_high, false} <- {:final_high, is_final_high?(sorter)},
+         {:final_low, false} <- {:final_low, is_final_low?(sorter)}
     do
-      dbg sorter
-      raise "Unknown state filling next bucket"
+      donate(sorter, tolerance)
     else
       {:full, true} -> sorter
       {:high_singlet, true} -> add_higher_singlet(sorter)
       {:low_singlet, true} -> add_lower_singlet(sorter)
       {:final_high, true} -> add_higher_singlet(sorter)
       {:final_low, true} -> add_lower_singlet(sorter)
-      {:can_donate, true} -> donate(sorter, tolerance)
     end
   end
 
@@ -126,77 +121,12 @@ defmodule WeightedRandom.Backend.WalkerAlias.Buckets do
       |> rm_lower()
   end
 
-
-#@doc ~s"""
-#Create buckets in a list.
-#Every 'bucket' is a tuple of `{split_point, lower_index, higher_index}`
-  #"""
-  #@spec fill_buckets(lower :: T.indexed_probabilities(), upper :: T.indexed_probabilities(), bucket_size :: float()) :: list(BackendT.bucket())
-  #def fill_buckets(lower, higher, bucket_size, opts \\ []) do
-  #  Sorter.new(lower, higher, bucket_size)
-  #    |> fill_while(opts)
-  #end
-
-  # This acts like a while loop, breaking up the recursion slightly for easier debugging of one step at a time.
-  #def fill_while(sorter), do: fill_while(sorter, [])
-  #def fill_while(%{lowers: [], highers: []} = sorter, _opts), do: sorter
-  #def fill_while(sorter, opts) do
-  #  sorter
-  #    |> handle_singlets(opts)
-  #    |> fill()
-  #    |> fill_while(opts)
-  #end
-
-
-
-  #def fill(%{lowers: [], highers: []} = sorter), do: sorter
-
-  #def fill(%{lowers: [{lp, li} | _], highers: [{hp, hi} | _], bucket_size: bucket_size} = sorter) when lp + hp >= bucket_size do
-  #  new_bucket = {lp / bucket_size, li, hi}
-
-  #  remainder = bucket_size - lp
-  #  new_higher = {hp - remainder, hi}
-
-  #  sorter
-  #    |> add_bucket(new_bucket)
-  #    |> rm_lower()
-  #    |> rm_higher()
-  #    |> sort_depleted_higher(new_higher)
-  #end
-
-  ## End of the line, only one remaining. It must be a singlet, but it might have been missed due to floating point errors
-  #def fill(%{lowers: [{_p, i}], highers: []} = sorter) do
-  #  add_singlet(sorter, i)
-  #end
-  #def fill(%{lowers: [], highers: [{_p, i}]} = sorter) do
-  #  add_singlet(sorter, i)
-  #end
-  #def fill(%{bucket_size: bucket_size, lowers: [], highers: [{p, i} | _highers]} = sorter) when p > bucket_size do
-  #  sorter
-  #    |> add_singlet(i)
-  #    |> rm_higher()
-  #    |> add_higher({p - bucket_size, i})
-  #end
-  #def fill(%{bucket_size: bucket_size, lowers: [], highers: [{p, i} | _highers]} = sorter) when p < bucket_size do
-  #  sorter
-  #    |> add_lower({p, i})
-  #    |> rm_higher()
-  #end
-
-
-  #defp sort_depleted_higher(%{bucket_size: bucket_size} = sorter, {hp, hi}, tolerance) when is_gte_ish(hp, bucket_size, tolerance), do: add_higher(sorter, {hp, hi})
-  #defp sort_depleted_higher(%{bucket_size: bucket_size, lowers: [{lp, _li} | _]} = sorter, {hp, hi}, tolerance) when is_gte_ish(hp + lp, bucket_size, tolerance), do: add_higher(sorter, {hp, hi})
-  #defp sort_depleted_higher(sorter, {hp, hi}, _tolerance), do: add_lower(sorter, {hp, hi})
-
-
-  defp add_depleted_higher(%{bucket_size: size} = sorter, {hp, _hi} = bucket, tolerance) do
-    case sorter do
-      %{lowers: [{lp, _} | _]} when is_gte_ish(lp + hp, size, tolerance) ->
-        add_higher(sorter, bucket)
-      _ when is_gte_ish(hp, size, tolerance) ->
-        add_higher(sorter, bucket)
-      _ ->
-        add_lower(sorter, bucket)
+  defp add_depleted_higher(sorter, bucket, tolerance) do
+    temp_sorter = add_higher(sorter, bucket)
+    if can_donate?(temp_sorter, tolerance) do
+      temp_sorter
+    else
+      add_lower(sorter, bucket)
     end
   end
 
