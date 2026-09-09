@@ -29,8 +29,7 @@ defmodule WeightedRandom.Backends.BenchmarkTest do
     test "Sample size 1_000_000" do
       bench = Benchee.run(
         %{
-          #"walker_alias_1M" => fn -> WeightedRandom.rand(1..100, [%{target: 50, weight: 50, radius: 15, curve: :ease_in_out}], [backend: WalkerAlias, take: 1_000_000]) end,
-          "wam_1M" => fn -> WeightedRandom.rand(1..100, [%{target: 50, weight: 50, radius: 15, curve: :ease_in_out}], [backend: Wam, take: 1_000_000]) end,
+          "wam_1M" => fn -> WeightedRandom.rand(1..100, [%{target: 50, weight: 50, radius: 15, curve: :ease_in_out}], [backend: WalkerAlias, take: 1_000_000]) end,
         }, @opts)
       dbg bench
     end

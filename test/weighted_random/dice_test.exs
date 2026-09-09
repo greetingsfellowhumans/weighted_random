@@ -3,9 +3,6 @@ defmodule WeightedRandom.DiceTest do
   use ExUnitProperties
   alias WeightedRandom.{Dice}
   import Dice
-  # import Die
-  #doctest Dice
-  #doctest Die
 
   defp gen_dice(sides, count, modifier) do
     case modifier do

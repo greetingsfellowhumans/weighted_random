@@ -2,7 +2,6 @@ defmodule WeightedRandom.Utils.OptsTest do
   use ExUnit.Case
   alias WeightedRandom.Utils.Opts, as: Mod
 
-  
 
   describe "Opts Utils" do
     test "Sanitize" do
