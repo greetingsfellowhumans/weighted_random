@@ -2,15 +2,24 @@ defmodule WeightedRandom.Input.Weight do
   @moduledoc false
   @default_curve :ease_in_out
 
-  @enforce_keys [:target, :amount, :left_dist, :right_dist, :expanded?]
+  @enforce_keys [:target, :amount, :left_dist, :right_dist]#, :expanded?]
   defstruct [
     :target,
     :amount,
     :curve,
     left_dist: 0,
     right_dist: 0,
-    expanded?: false
+    #expanded?: false
   ]
+  @type t :: %__MODULE__{
+    target: pos_integer(),
+    amount: number(),
+    curve: atom() | list({number(), number()}),
+    left_dist: pos_integer(),
+    right_dist: pos_integer()
+    #optional(:expanded?) => boolean()
+
+  }
 
   def new(body) do
     body = 

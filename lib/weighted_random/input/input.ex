@@ -6,6 +6,12 @@ defmodule WeightedRandom.Input do
     :outcomes,
     size: 0,
   ]
+  @type t :: %__MODULE__{
+    weights: list(number()),
+    outcomes: list(any()),
+    probabilities: list(number()),
+    size: pos_integer()
+  }
 
 
   @doc false

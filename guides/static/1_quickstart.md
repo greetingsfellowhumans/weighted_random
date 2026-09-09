@@ -4,7 +4,8 @@ The most optimal workflow is to:
 
 1. Define your requirements (outcomes, weights, probabilities, other options)
 2. Preprocess it to create a struct that is optimized for making future sampling faster
-3. Take n random values
+3. Take n random values from the struct
+4. Repeat step 3 as needed
 
 ### Randomness from probabilities
 
