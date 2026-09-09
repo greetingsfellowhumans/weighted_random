@@ -14,14 +14,16 @@ If you are coming to v1.0.0 from v0.4.x, here are some things you should know.
 
 ## Backward compatibility
 
-In 99% of cases, you should be able to simply update the version without a hitch.
+In most cases, you should be able to simply update the version without a hitch.
 
 - 🥳 All function contracts from 0.4 have been preserved.
 - 🥳 There are many new options, but all old options will still work (except where noted below)
 
 ## Breaking changes
 
-- Using seeds to always get the same result. That result will be different now.
+- Dropped support for older elixir versions.
+
+- When using seeds to always get the same result; That result will be different now.
 
 ```elixir
 # If you used seeds to always get the same specific results:
