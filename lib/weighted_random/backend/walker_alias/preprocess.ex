@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Backend.WalkerAlias.Preprocess do
+  @moduledoc false
   require Equalish
   alias WeightedRandom.Utils.Types, as: T
 

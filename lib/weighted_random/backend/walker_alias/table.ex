@@ -1,4 +1,5 @@
 defmodule WeightedRandom.Backend.WalkerAlias.Table do
+  @moduledoc false
   alias WeightedRandom.Backend.WalkerAlias.Buckets.Sorter
   defstruct [
     :buckets
