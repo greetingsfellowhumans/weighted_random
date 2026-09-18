@@ -28,6 +28,7 @@ defmodule WeightedRandom.Backends.BenchmarkTest do
           "10k random probabilities" => fn -> WeightedRandom.take(table, 100) end
         }
       )
+      dbg bench
     end
 
     @tag :skip
