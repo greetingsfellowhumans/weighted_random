@@ -49,7 +49,7 @@ WeightedRandom.preprocess(outcomes, weights)
 
 ![Small Weight](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/small_weight.png)
 
-WeightedRandom integrates well with the [Curves](https://hex.pm/packages/curves) library.
+WeightedRandom integrates well with the [Curves](https://hex.pm/packages/curves) library, which I also wrote.
 
 ```elixir
 ####
@@ -89,3 +89,9 @@ WeightedRandom.preprocess(outcomes, weights)
 ```
 
 ![Custom Curve](https://github.com/greetingsfellowhumans/weighted_random/raw/master/assets/examples/custom_curve.png)
+
+## Hire me
+
+No AI was used in the creation of this project. Just good old fashioned software engineering.
+
+Full stack developer seeking new challenges. You can reach me at [hireme@aaronjprice.com](mailto:hireme@aaronjprice.com)
