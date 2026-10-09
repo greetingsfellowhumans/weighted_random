@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/2.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- (Linear Backend) No longer crashes when used through `WeightedRandom.rand/3`, `preprocess/3`, or `preprocess_p/2`.
+- (Linear Backend) Samples now match fractional weights exactly, instead of rounding each weight to a whole number.
+- Corrected the `:outcome_type` docs: it controls how `:target` is matched, and results are always outcomes.
+
+### Deprecated
+
+- (Linear Backend) The `:li` struct field is no longer used for sampling and will be removed in 2.0. It now always holds indices, even with `outcome_type: :value`.
+
 ## [1.0.0] - 2026-09-09
 
 The library is considered stable and complete. It is high performance, well documented, and extensible.

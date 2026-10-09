@@ -72,10 +72,11 @@ defmodule WeightedRandom.Input.Opts do
 
   @outcome_type [
     doc: ~s"""
-    When you take a random sample, will it return the index of an outcome, or the value?
+    How the `:target` of each weight is matched against the list of outcomes.
+    Either way, `take/2` and `rand/3` return the outcomes themselves.
 
-    - `index:` pick random indices from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `0` and `5`.
-    - `value:` pick random values from the list of outcomes. For example if your outcomes are `125..130` then the results will be between `125` and `130`.
+    - `:index` - `:target` is the position of an outcome. For example if your outcomes are `125..130`, then `target: 2` means `127`.
+    - `:value` - `:target` is the outcome itself. For example if your outcomes are `125..130`, then `target: 127` means `127`.
     """,
     default: :index,
     type: {:in, [:index, :value]},
