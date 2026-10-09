@@ -22,16 +22,12 @@ defmodule WeightedRandom.Backend.Linear do
   end
 
   @impl true
-  def preprocess(input, opts) do
-    weights = Enum.with_index(input.weights)
-    li = Enum.map(weights, fn {weight, idx} ->
-      item = case opts[:outcome_type] do
-        :value -> Enum.at(input.outcomes, idx)
-        :index -> idx
-      end
-      List.duplicate(item, round(weight))
-    end)
-      |> List.flatten()
+  def preprocess(weights, _opts) do
+    li =
+      weights
+      |> Enum.with_index()
+      |> Enum.flat_map(fn {weight, idx} -> List.duplicate(idx, round(weight)) end)
+
     struct(__MODULE__, %{li: li})
   end
 

@@ -2,46 +2,28 @@ defmodule WeightedRandom.Backends.LinearTest do
   use ExUnit.Case
   alias WeightedRandom.Backend.Linear, as: Mod
 
-  test "Index true" do
-    opts = WeightedRandom.Input.Opts.from_weights_merge_opts([backend: Mod])
+  test "preprocess stores indices, take returns outcomes" do
+    r = WeightedRandom.preprocess(200..300, [%{target: 5, amount: 25}], backend: Mod)
+    assert is_struct(r.table, Mod)
+    assert Enum.count(r.table.li) == Enum.count(200..300) + 25
+    assert Enum.all?(r.table.li, &(&1 in 0..100))
 
-    input = WeightedRandom.Input.FromWeights.get_inputs(200..300, [%{target: 5, weight: 25}], opts)
-    assert is_struct(input, WeightedRandom.Input)
-
-    table = Mod.preprocess(input, opts)
-    assert is_struct(table, Mod)
-    assert Enum.count(table.li) == Enum.count(200..300) + 25
-
-    li = Mod.take(table, 4)
+    li = WeightedRandom.take(r, 4)
     assert Enum.count(li) == 4
-    assert Enum.all?(li, &(&1 <= 100))
+    assert Enum.all?(li, &(&1 in 200..300))
   end
 
-  test "index false" do
-    outcomes = 200..300
-    target = 205
-    outcome_type = :value
-    weight = 25
+  test "outcome_type: :value favours the target value" do
+    li = WeightedRandom.rand(200..300, [%{target: 205, amount: 25}],
+           backend: Mod, outcome_type: :value, take: 400)
 
-    opts = [backend: Mod, outcome_type: outcome_type]
-           |> WeightedRandom.Input.Opts.from_weights_merge_opts()
+    assert Enum.all?(li, &(&1 in 200..300))
+    {most_frequent, _} = li |> Enum.frequencies() |> Enum.max_by(&elem(&1, 1))
+    assert most_frequent == 205
+  end
 
-    input = WeightedRandom.Input.FromWeights.get_inputs(outcomes, [%{target: target, weight: weight}], opts)
-    assert is_struct(input, WeightedRandom.Input)
-
-    table = Mod.preprocess(input, opts)
-    assert is_struct(table, Mod)
-    assert Enum.count(table.li) == Enum.count(outcomes) + weight
-
-    li = Mod.take(table, 400)
-    assert Enum.all?(li, &(&1 >= 200))
-    most_frequent = 
-      Enum.frequencies(li)
-      |> Enum.reduce(%{outcome: nil, frequency: 0}, fn 
-        {outcome, freq}, %{outcome: _aout, frequency: afreq} when freq > afreq -> %{outcome: outcome, frequency: freq}
-        _, acc -> acc
-      end)
-    assert most_frequent.outcome == target
-
+  test "works with rand_p" do
+    li = WeightedRandom.rand_p([0.25, 0.25, 0.5], backend: Mod, take: 10)
+    assert Enum.all?(li, &(&1 in 0..2))
   end
 end
