@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## 1.0.1 - 2026-10-09
+
 ### Fixed
 
 - (Linear Backend) No longer crashes when used through `WeightedRandom.rand/3`, `preprocess/3`, or `preprocess_p/2`.
