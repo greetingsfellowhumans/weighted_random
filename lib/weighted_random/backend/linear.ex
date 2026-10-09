@@ -15,7 +15,11 @@ defmodule WeightedRandom.Backend.Linear do
 
   # `:li` is kept for backward compatibility with code that reads the struct directly.
   # It is no longer used by `take/2`. Deprecated; remove in 2.0.
-  defstruct li: [], cumulative: [], total: 0.0
+  defstruct [
+    li: [],
+    cumulative: [],
+    total: 0.0
+  ]
 
   @impl true
   def options() do
