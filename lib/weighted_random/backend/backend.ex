@@ -75,12 +75,13 @@ defmodule WeightedRandom.Backend do
   """
 
   @enforce_keys [:outcomes, :backend, :table]
-  defstruct [:outcomes, :backend, :table]
+  defstruct [:outcomes, :backend, :table, :outcome_tuple]
 
   @type t :: %__MODULE__{
     outcomes: list(),
     backend: atom(),
-    table: struct()
+    table: struct(),
+    outcome_tuple: tuple() | nil
   }
 
   @type percentage() :: float()
@@ -131,6 +132,7 @@ defmodule WeightedRandom.Backend do
       table: table,
       backend: backend,
       outcomes: input.outcomes,
+      outcome_tuple: if(is_list(input.outcomes), do: List.to_tuple(input.outcomes)),
     })
   end
   @doc false

@@ -108,6 +108,8 @@ defmodule WeightedRandom.Backends.Walker.SorterTest do
         %{table: table} = WeightedRandom.preprocess_p(probabilities, opts)
         assert is_struct(table, Mod.Table)
         assert Enum.count(probabilities) == Enum.count(table.buckets)
+        assert Enum.count(probabilities) == tuple_size(table.bucket_tuple)
+        assert table.size == tuple_size(table.bucket_tuple)
 
       end
     end

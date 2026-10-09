@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- (WalkerAlias Backend) `take/2` now picks each bucket in constant time instead of time proportional to the number of outcomes. About 55x faster with 10,000 outcomes.
+- `take/2` now looks up outcomes given as a list in constant time.
+
 ## 1.0.1 - 2026-10-09
 
 ### Fixed

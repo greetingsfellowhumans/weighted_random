@@ -21,15 +21,14 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   end
 
   @impl true
-  def take(table, count) do
+  def take(%Table{bucket_tuple: nil, buckets: buckets} = table, count) do
+    # Tables built before `:bucket_tuple` existed (e.g. stored in ETS or persistent_term)
+    take(%{table | bucket_tuple: List.to_tuple(buckets), size: length(buckets)}, count)
+  end
+  def take(%Table{bucket_tuple: buckets, size: size}, count) do
     for _ <- 1..count do
-      coin_flip = :rand.uniform()
-
-      case Enum.random(table.buckets) do
-        {split_point, _lower, higher} when split_point < coin_flip -> higher
-        {split_point, lower, _higher} when split_point >= coin_flip -> lower
-      end
-
+      {split_point, lower, higher} = elem(buckets, :rand.uniform(size) - 1)
+      if :rand.uniform() <= split_point, do: lower, else: higher
     end
   end
 

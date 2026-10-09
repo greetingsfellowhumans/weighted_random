@@ -18,6 +18,21 @@ defmodule WeightedRandom.WeightedRandomTest do
 
       Analysis.match_probability?(probs, li)
     end
+    test "List outcomes are returned by value" do
+      outcomes = ["a", "b", :c]
+      r = Mod.preprocess(outcomes, [%{target: :c, amount: 10}], outcome_type: :value)
+      assert r.outcome_tuple == List.to_tuple(outcomes)
+
+      li = Mod.take(r, 100)
+      assert Enum.all?(li, &(&1 in outcomes))
+      assert Mod.take(r) in outcomes
+
+      # structs built before :outcome_tuple existed fall back to Enum.at
+      assert Enum.all?(Mod.take(%{r | outcome_tuple: nil}, 100), &(&1 in outcomes))
+    end
+    test "Range outcomes skip the tuple" do
+      assert Mod.preprocess(1..6, []).outcome_tuple == nil
+    end
     test "No outcomes" do
       assert_raise WeightedRandom.Exceptions.EmptyOutcomes, fn ->
         Mod.rand([], [%{target: 3, amount: 10}], [take: 100])
