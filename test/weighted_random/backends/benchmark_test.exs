@@ -1,6 +1,6 @@
 defmodule WeightedRandom.Backends.BenchmarkTest do
   use ExUnit.Case
-  alias WeightedRandom.Backend.{WalkerAlias}
+  alias WeightedRandom.Backend.{WalkerAlias, Linear}
 
   @opts []
   @backends [walker_alias: WalkerAlias]
@@ -44,8 +44,8 @@ defmodule WeightedRandom.Backends.BenchmarkTest do
     test "Sample size 10" do
       bench = Benchee.run(
         %{
-          "runtime_list_10" => fn -> WeightedRandom.rand(1..100, @weights, [backend: WalkerAlias, take: 10]) end,
-          "walker_alias_10" => fn -> WeightedRandom.rand(1..100, @weights, [backend: Linear, take: 10]) end,
+          "walker_alias_10" => fn -> WeightedRandom.rand(1..100, @weights, [backend: WalkerAlias, take: 10]) end,
+          "linear_10" => fn -> WeightedRandom.rand(1..100, @weights, [backend: Linear, take: 10]) end,
         }, @opts)
       dbg bench
     end
