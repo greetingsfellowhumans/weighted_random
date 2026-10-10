@@ -36,6 +36,12 @@ defmodule WeightedRandom.Backend.WalkerAlias do
     take_tuple(buckets, size, count, Mwc59.seed(), [])
   end
 
+  # A single sample from a table too large for a tuple, in the same order as 1.0.x.
+  def take(%Table{bucket_tuple: nil, buckets: buckets, size: size}, 1) when is_integer(size) and size > @max_tuple_size do
+    coin = :rand.uniform()
+    [buckets |> Enum.at(:rand.uniform(size) - 1) |> flip_coin(coin)]
+  end
+
   # When the list of possible outcomes is bigger than erlangs tuple size limit
   def take(%Table{bucket_tuple: nil, buckets: buckets, size: size}, count) when is_integer(size) and size > @max_tuple_size do
     take_list(buckets, size, count, Mwc59.seed(), [])

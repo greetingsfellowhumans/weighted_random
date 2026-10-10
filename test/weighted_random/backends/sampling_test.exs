@@ -73,4 +73,27 @@ defmodule WeightedRandom.Backends.SamplingTest do
       assert results |> Enum.uniq() |> Enum.sort() == Enum.to_list(0..9)
     end
   end
+
+  # Builds more buckets than fit in a tuple, using about 1GB of memory.
+  @tag :large_memory
+  test "Seeded single values from a table too large for a tuple match 1.0.1" do
+    n = WeightedRandom.Backend.max_tuple_size() + 1
+    buckets = for i <- 0..(n - 1), do: {0.5, i, rem(i + 1, n)}
+    table = WalkerAlias.Table.from_buckets(buckets)
+    assert table.bucket_tuple == nil
+
+    # 1.0.1's WalkerAlias `take/2`, for one value.
+    take_1_0_1 = fn ->
+      coin_flip = :rand.uniform()
+      case Enum.random(buckets) do
+        {split_point, _lower, higher} when split_point < coin_flip -> higher
+        {split_point, lower, _higher} when split_point >= coin_flip -> lower
+      end
+    end
+
+    :rand.seed(:exsss, {1, 2, 3})
+    expected = for _ <- 1..5, do: [take_1_0_1.()]
+    :rand.seed(:exsss, {1, 2, 3})
+    assert (for _ <- 1..5, do: WalkerAlias.take(table, 1)) == expected
+  end
 end

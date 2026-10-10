@@ -2,7 +2,7 @@ defmodule WeightedRandom.Backends.BenchmarkTest do
   @moduledoc """
   Compares the backends with Benchee. Excluded by default; run with:
 
-      mix test --only benchmark
+      mix test.benchmark
 
   To include a new backend, add it to `@backends`. Every benchmark runs once per backend and per size in `@sizes`.
   """
