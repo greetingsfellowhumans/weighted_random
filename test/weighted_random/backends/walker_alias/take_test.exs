@@ -46,8 +46,9 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
     end
   end
 
-  # Uses about 1GB of memory. Run with `mix test --include skip`.
-  @tag skip: "Builds more buckets than fit in a tuple."
+  # Builds more buckets than fit in a tuple, using about 1GB of memory.
+  # Excluded by default in test_helper.exs. Run with `mix test --include large_memory`.
+  @tag :large_memory
   test "Tables too large for a tuple still work" do
     n = WeightedRandom.Backend.max_tuple_size() + 1
     table = %WeightedRandom.Backend.WalkerAlias.Table{buckets: for(i <- 0..(n - 1), do: {1.0, i, i})}
