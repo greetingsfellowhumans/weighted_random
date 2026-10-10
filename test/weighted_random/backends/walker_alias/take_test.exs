@@ -11,7 +11,7 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
         opts = [tolerance: tolerance]
         probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats, opts)
 
-        sample_size = 1000
+        sample_size = 10_000
         opts = [backend: Mod]
         wr = WeightedRandom.preprocess_p(probabilities, opts)
         results = WeightedRandom.take(wr, sample_size)
@@ -36,7 +36,7 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
       opts = [tolerance: tolerance]
       probabilities = WeightedRandom.Input.Normalize.normalize_probabilities(floats, opts)
 
-      sample_size = 1000
+      sample_size = 10_000
       %{table: table} = WeightedRandom.preprocess_p(probabilities, backend: Mod)
       results = Mod.take(strip.(table), sample_size)
 
