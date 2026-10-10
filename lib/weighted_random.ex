@@ -75,14 +75,15 @@ defmodule WeightedRandom do
   @spec take(WeightedRandom.Backend.t()) :: any()
   def take(processed_struct) do
     WeightedRandom.Backend.take(processed_struct, 1)
-      |> convert_index_to_outcome(processed_struct.outcomes)
+      |> convert_index_to_outcome(processed_struct)
       |> List.first()
   end
 
 
   @doc ~s"""
-  Given a WeightedRandom struct, return a list of random values
+  Given a WeightedRandom struct, return a list of `count` random values.
 
+  Returns `[]` when `count` is `0`, and raises `ArgumentError` when it is negative.
 
   ## Examples
       iex> # Make the item at index 2 1000x more likely than any other single index.
@@ -91,10 +92,10 @@ defmodule WeightedRandom do
       [2, 2, 2]
 
   """
-  @spec take(WeightedRandom.Backend.t(), count :: integer()) :: list()
+  @spec take(WeightedRandom.Backend.t(), count :: non_neg_integer()) :: list()
   def take(processed_struct, count) do
     WeightedRandom.Backend.take(processed_struct, count)
-    |> convert_index_to_outcome(processed_struct.outcomes)
+    |> convert_index_to_outcome(processed_struct)
   end
 
 
@@ -130,11 +131,11 @@ defmodule WeightedRandom do
     end
   end
 
-  defp convert_index_to_outcome(indices, outcomes) when is_list(indices)  do
-    Enum.map(indices, &convert_index_to_outcome(&1, outcomes))
+  defp convert_index_to_outcome(indices, %{outcome_tuple: tuple}) when is_tuple(tuple) do
+    Enum.map(indices, &elem(tuple, &1))
   end
-  defp convert_index_to_outcome(index, outcomes) when is_integer(index) do
-    Enum.at(outcomes, index)
+  defp convert_index_to_outcome(indices, %{outcomes: outcomes}) do
+    Enum.map(indices, &Enum.at(outcomes, &1))
   end
 
 

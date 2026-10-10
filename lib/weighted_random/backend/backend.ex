@@ -13,6 +13,13 @@ defmodule WeightedRandom.Backend do
     backend: Your.Backend.Module
   ```
 
+  ## The preprocessed struct
+
+  Treat the struct returned by `WeightedRandom.preprocess/3` and `WeightedRandom.preprocess_p/2` as opaque.
+  Its fields are internal and may change between versions, and editing them directly is not supported. To change the outcomes or weights, preprocess again.
+
+  If you write a backend, the same applies to the struct your `preprocess/2` returns: it is private to your `take/2`.
+
   ## Developing a new backend
 
   To create your own backend, copy and change an existing one (like `WeightedRandom.Backend.WalkerAlias` or `WeightedRandom.Backend.Linear`).
@@ -34,7 +41,7 @@ defmodule WeightedRandom.Backend do
 
     @impl true
     def take(%__MODULE__{list: li}, count) do
-      for _ <- 1..count do
+      for _ <- 1..count//1 do
         Enum.random(li)
       end
     end 
@@ -75,12 +82,17 @@ defmodule WeightedRandom.Backend do
   """
 
   @enforce_keys [:outcomes, :backend, :table]
-  defstruct [:outcomes, :backend, :table]
+  defstruct [:outcomes, :backend, :table, :outcome_tuple]
 
+  @typedoc ~s"""
+  Returned by `WeightedRandom.preprocess/3` and `WeightedRandom.preprocess_p/2`. Treat it as opaque.
+  Its fields are internal, may change between versions, and editing them is not supported. To change outcomes or weights, preprocess again.
+  """
   @type t :: %__MODULE__{
     outcomes: list(),
     backend: atom(),
-    table: struct()
+    table: struct(),
+    outcome_tuple: tuple() | nil
   }
 
   @type percentage() :: float()
@@ -97,6 +109,10 @@ defmodule WeightedRandom.Backend do
 
   @doc false
   def list_probability_types(), do: [:probabilities, :weights]
+
+  # The largest tuple the BEAM allows. Anything bigger has to stay a list.
+  @doc false
+  def max_tuple_size(), do: 16_777_215
 
   @doc ~s"""
   `input` is a list of floats.
@@ -131,11 +147,24 @@ defmodule WeightedRandom.Backend do
       table: table,
       backend: backend,
       outcomes: input.outcomes,
+      # When set, `take/2` reads this instead of `:outcomes`, so editing `:outcomes` has no effect.
+      # Left nil for ranges and for lists too large to fit in a tuple.
+      outcome_tuple: to_tuple_if_fits(input.outcomes),
     })
   end
+  defp to_tuple_if_fits(outcomes) when is_list(outcomes) do
+    if length(outcomes) <= max_tuple_size(), do: List.to_tuple(outcomes)
+  end
+  defp to_tuple_if_fits(_outcomes), do: nil
+
   @doc false
-  def take(%{backend: backend, table: table}, count) do
+  # Handled here so backends only ever see a positive count, as the `take/2` callback promises.
+  def take(_struct, 0), do: []
+  def take(%{backend: backend, table: table}, count) when is_integer(count) and count > 0 do
     backend.take(table, count)
+  end
+  def take(_struct, count) do
+    raise ArgumentError, "count must be a non-negative integer, got: #{inspect(count)}"
   end
 
 

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0 - 2026-10-09]
+
+### Changed
+
+- (WalkerAlias Backend) `take/2` now picks each bucket in constant time instead of time proportional to the number of outcomes. About 55x faster with 10,000 outcomes.
+- `take/2` now looks up outcomes given as a list in constant time.
+- The structs returned by `preprocess/3` and `preprocess_p/2` are now documented as opaque. Editing their fields (e.g. `:outcomes`, or a backend table's `:buckets`) was never supported and may now have no effect. Preprocess again instead.
+- (WalkerAlias and Linear Backends) When taking more than one value, `take/2` now samples with OTP's faster `:rand.mwc59/1` generator, seeded once per call from `:rand`. With WalkerAlias, `WeightedRandom.take/2` is about 1.4–1.6x faster. `:rand.seed/1` still makes the results reproducible, but with the same seed a multi-value `take/2` returns a different sequence than in 1.0.x. Single values (`take/1`, `rand/3` without `:take`, `Die.roll/1`) still use `:rand` and are unchanged. The probabilities are unchanged either way.
+- (Custom backends) If a backend's `take/2` returns an index outside the outcomes, `WeightedRandom.take/2` now raises `ArgumentError` for list outcomes instead of returning `nil` (or, for negative indices, counting from the end).
+
+### Fixed
+
+- `take/2` with a count of `0` now returns `[]`. It used to return 2 values, because `1..0` counts down. A negative count now raises `ArgumentError` instead of returning extra values.
+- `rand/3` and `rand_p/2` now accept `take: 0` and return `[]`. Before, `rand/3` raised `NimbleOptions.ValidationError`, and `rand_p/2` returned 2 values.
+
 ## 1.0.1 - 2026-10-09
 
 ### Fixed

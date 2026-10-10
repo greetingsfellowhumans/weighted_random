@@ -18,6 +18,40 @@ defmodule WeightedRandom.WeightedRandomTest do
 
       Analysis.match_probability?(probs, li)
     end
+    test "List outcomes are returned by value" do
+      outcomes = ["a", "b", :c]
+      r = Mod.preprocess(outcomes, [%{target: :c, amount: 10}], outcome_type: :value)
+      assert r.outcome_tuple == List.to_tuple(outcomes)
+
+      li = Mod.take(r, 100)
+      assert Enum.all?(li, &(&1 in outcomes))
+      assert Mod.take(r) in outcomes
+
+      # structs built before :outcome_tuple existed fall back to Enum.at
+      assert Enum.all?(Mod.take(%{r | outcome_tuple: nil}, 100), &(&1 in outcomes))
+    end
+    test "take/2 with a count of 0 returns an empty list" do
+      for backend <- [WalkerAlias, WeightedRandom.Backend.Linear] do
+        assert Mod.take(Mod.preprocess(1..6, [], backend: backend), 0) == []
+      end
+    end
+    test "Backends called directly with a count of 0 return an empty list" do
+      for backend <- [WalkerAlias, WeightedRandom.Backend.Linear] do
+        %{table: table} = Mod.preprocess(1..6, [], backend: backend)
+        assert backend.take(table, 0) == []
+      end
+    end
+    test "rand/3 and rand_p/2 with take: 0 return an empty list" do
+      assert Mod.rand(1..6, [], take: 0) == []
+      assert Mod.rand_p([0.5, 0.5], take: 0) == []
+    end
+    test "take/2 with a negative count raises" do
+      r = Mod.preprocess(1..6, [])
+      assert_raise ArgumentError, ~r/non-negative integer/, fn -> Mod.take(r, -2) end
+    end
+    test "Range outcomes skip the tuple" do
+      assert Mod.preprocess(1..6, []).outcome_tuple == nil
+    end
     test "No outcomes" do
       assert_raise WeightedRandom.Exceptions.EmptyOutcomes, fn ->
         Mod.rand([], [%{target: 3, amount: 10}], [take: 100])
