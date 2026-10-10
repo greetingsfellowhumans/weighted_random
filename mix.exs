@@ -10,15 +10,22 @@ defmodule WeightedRandom.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       description: description(),
       package: package(),
-      cli: cli(),
+      aliases: aliases(),
       deps: deps(),
       docs: docs(),
       source_url: "https://github.com/greetingsfellowhumans/weighted_random"
     ]
   end
 
-  defp cli() do
-    [preferred_cli_env: ["test.watch": :test]]
+  # Mix only reads this as a public function, not as a key in `project/0`.
+  def cli() do
+    [preferred_envs: ["test.benchmark": :test]]
+  end
+
+  # Aliases only apply when this is the root project, so they never reach projects that depend on this library.
+  # `test.benchmark` is namespaced under `test` to avoid shadowing any common task name, like `bench`.
+  defp aliases() do
+    ["test.benchmark": ["test --only benchmark"]]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]

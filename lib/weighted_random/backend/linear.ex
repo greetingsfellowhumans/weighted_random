@@ -9,9 +9,9 @@ defmodule WeightedRandom.Backend.Linear do
   2. During `take`, pick a random point between `0` and the total weight.
   3. Walk the list and return the index of the first running total greater than that point.
      Higher weights cover a wider span, so they are picked more often.
-
   """
   use WeightedRandom.Backend
+  alias WeightedRandom.Backend.Mwc59
 
   # `:li` is kept for backward compatibility with code that reads the struct directly.
   # It is no longer used by `take/2`. Deprecated; remove in 2.0.
@@ -39,11 +39,22 @@ defmodule WeightedRandom.Backend.Linear do
   end
 
   @impl true
-  def take(%__MODULE__{cumulative: cumulative, total: total}, count) do
-    for _ <- 1..count//1 do
-      point = :rand.uniform() * total
-      Enum.find_index(cumulative, &(point < &1))
-    end
+  # A single sample. Seeding `:rand.mwc59/1` costs more than it saves here, so use `:rand` directly.
+  def take(%__MODULE__{cumulative: cumulative, total: total}, 1) do
+    [find_index(cumulative, :rand.uniform() * total)]
   end
+
+  def take(%__MODULE__{cumulative: cumulative, total: total}, count) do
+    take_loop(cumulative, total, count, Mwc59.seed(), [])
+  end
+
+
+  defp take_loop(_cumulative, _total, count, _cx, acc) when count <= 0, do: Enum.reverse(acc)
+  defp take_loop(cumulative, total, count, cx0, acc) do
+    cx1 = :rand.mwc59(cx0)
+    take_loop(cumulative, total, count - 1, cx1, [find_index(cumulative, :rand.mwc59_float(cx1) * total) | acc])
+  end
+
+  defp find_index(cumulative, point), do: Enum.find_index(cumulative, &(point < &1))
 
 end
