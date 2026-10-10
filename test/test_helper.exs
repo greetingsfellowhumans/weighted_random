@@ -1,1 +1,1 @@
-ExUnit.start(exclude: [:large_memory])
+ExUnit.start(exclude: [:large_memory, :benchmark])
