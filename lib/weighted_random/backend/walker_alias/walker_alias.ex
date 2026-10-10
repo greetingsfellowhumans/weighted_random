@@ -25,14 +25,14 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   @impl true
   # The usual 'Happy Path'
   def take(%Table{bucket_tuple: buckets, size: size}, count) when is_tuple(buckets) do
-    for _ <- 1..count do
+    for _ <- 1..count//1 do
       buckets |> elem(:rand.uniform(size) - 1) |> flip_coin()
     end
   end
 
   # When the list of possible outcomes is bigger than erlangs tuple size limit
   def take(%Table{bucket_tuple: nil, buckets: buckets, size: size}, count) when is_integer(size) and size > @max_tuple_size do
-    for _ <- 1..count do
+    for _ <- 1..count//1 do
       buckets |> Enum.at(:rand.uniform(size) - 1) |> flip_coin()
     end
   end

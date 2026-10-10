@@ -40,7 +40,7 @@ defmodule WeightedRandom.Backend.Linear do
 
   @impl true
   def take(%__MODULE__{cumulative: cumulative, total: total}, count) do
-    for _ <- 1..count do
+    for _ <- 1..count//1 do
       point = :rand.uniform() * total
       Enum.find_index(cumulative, &(point < &1))
     end

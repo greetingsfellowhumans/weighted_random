@@ -41,7 +41,7 @@ defmodule WeightedRandom.Backend do
 
     @impl true
     def take(%__MODULE__{list: li}, count) do
-      for _ <- 1..count do
+      for _ <- 1..count//1 do
         Enum.random(li)
       end
     end 

@@ -35,6 +35,12 @@ defmodule WeightedRandom.WeightedRandomTest do
         assert Mod.take(Mod.preprocess(1..6, [], backend: backend), 0) == []
       end
     end
+    test "Backends called directly with a count of 0 return an empty list" do
+      for backend <- [WalkerAlias, WeightedRandom.Backend.Linear] do
+        %{table: table} = Mod.preprocess(1..6, [], backend: backend)
+        assert backend.take(table, 0) == []
+      end
+    end
     test "rand/3 and rand_p/2 with take: 0 return an empty list" do
       assert Mod.rand(1..6, [], take: 0) == []
       assert Mod.rand_p([0.5, 0.5], take: 0) == []
