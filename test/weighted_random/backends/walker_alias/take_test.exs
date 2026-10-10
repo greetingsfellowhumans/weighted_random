@@ -25,11 +25,15 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
   test "Tables without :bucket_tuple (built before it existed) still work" do
     probabilities = [0.1, 0.2, 0.3, 0.4]
     %{table: table} = WeightedRandom.preprocess_p(probabilities, backend: Mod)
-    old_table = %{table | bucket_tuple: nil, size: nil}
+    # A struct from 1.0.1 lacks the keys entirely; a partially rebuilt one may have them as nil.
+    missing_keys = Map.drop(table, [:bucket_tuple, :size])
+    nil_keys = %{table | bucket_tuple: nil, size: nil}
 
-    results = Mod.take(old_table, 10_000)
-    assert Enum.all?(results, &(&1 in 0..3))
-    assert Analysis.match_probability?(probabilities, results)
+    for old_table <- [missing_keys, nil_keys] do
+      results = Mod.take(old_table, 10_000)
+      assert Enum.all?(results, &(&1 in 0..3))
+      assert Analysis.match_probability?(probabilities, results)
+    end
   end
 
 

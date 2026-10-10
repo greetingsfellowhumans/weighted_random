@@ -21,15 +21,17 @@ defmodule WeightedRandom.Backend.WalkerAlias do
   end
 
   @impl true
-  def take(%Table{bucket_tuple: nil, buckets: buckets} = table, count) do
-    # Tables built before `:bucket_tuple` existed (e.g. stored in ETS or persistent_term)
-    take(%{table | bucket_tuple: List.to_tuple(buckets), size: length(buckets)}, count)
-  end
-  def take(%Table{bucket_tuple: buckets, size: size}, count) do
+  def take(%Table{bucket_tuple: buckets, size: size}, count) when is_tuple(buckets) do
     for _ <- 1..count do
       {split_point, lower, higher} = elem(buckets, :rand.uniform(size) - 1)
       if :rand.uniform() <= split_point, do: lower, else: higher
     end
+  end
+  def take(%{buckets: buckets}, count) do
+    # This clause only exists in case someone deserialized the struct into a plain map
+    # that has `:buckets` but no usable `:bucket_tuple`.
+    bucket_tuple = List.to_tuple(buckets)
+    take(%Table{buckets: buckets, bucket_tuple: bucket_tuple, size: tuple_size(bucket_tuple)}, count)
   end
 
 
