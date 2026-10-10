@@ -110,6 +110,10 @@ defmodule WeightedRandom.Backend do
   @doc false
   def list_probability_types(), do: [:probabilities, :weights]
 
+  # The largest tuple the BEAM allows. Anything bigger has to stay a list.
+  @doc false
+  def max_tuple_size(), do: 16_777_215
+
   @doc ~s"""
   `input` is a list of floats.
 
@@ -143,10 +147,16 @@ defmodule WeightedRandom.Backend do
       table: table,
       backend: backend,
       outcomes: input.outcomes,
-      # `take/2` reads this, not `:outcomes`, so editing `:outcomes` has no effect.
-      outcome_tuple: if(is_list(input.outcomes), do: List.to_tuple(input.outcomes)),
+      # When set, `take/2` reads this instead of `:outcomes`, so editing `:outcomes` has no effect.
+      # Left nil for ranges and for lists too large to fit in a tuple.
+      outcome_tuple: to_tuple_if_fits(input.outcomes),
     })
   end
+  defp to_tuple_if_fits(outcomes) when is_list(outcomes) do
+    if length(outcomes) <= max_tuple_size(), do: List.to_tuple(outcomes)
+  end
+  defp to_tuple_if_fits(_outcomes), do: nil
+
   @doc false
   def take(%{backend: backend, table: table}, count) do
     backend.take(table, count)

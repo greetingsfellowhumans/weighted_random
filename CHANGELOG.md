@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `take/2` now looks up outcomes given as a list in constant time.
 - The structs returned by `preprocess/3` and `preprocess_p/2` are now documented as opaque. Editing their fields (e.g. `:outcomes`, or a backend table's `:buckets`) was never supported and may now have no effect. Preprocess again instead.
 - (WalkerAlias Backend) With the same `:rand.seed`, `take/2` returns a different sequence than in 1.0.x. The probabilities are unchanged.
+- (Custom backends) If a backend's `take/2` returns an index outside the outcomes, `WeightedRandom.take/2` now raises `ArgumentError` for list outcomes instead of returning `nil` (or, for negative indices, counting from the end).
 
 ## 1.0.1 - 2026-10-09
 

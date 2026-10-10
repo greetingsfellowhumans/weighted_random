@@ -24,7 +24,8 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
 
   property "Tables without :bucket_tuple (built before it existed) still work" do
     # A struct from 1.0.1 lacks the keys entirely; a partially rebuilt one may have them as nil.
-    # This is pretty much only a bug for people who used Map.from_struct/1 on a WalkerAlias.Table struct.
+    # This mostly affects 1.0.1 tables restored with :erlang.binary_to_term/1 (e.g. from ETS, persistent_term,
+    # or disk) or kept by a long-running process across an upgrade, and anyone who used Map.from_struct/1 on one.
     strip_tuple = StreamData.member_of([
       &Map.drop(&1, [:bucket_tuple, :size]),
       &%{&1 | bucket_tuple: nil, size: nil}
@@ -43,6 +44,15 @@ defmodule WeightedRandom.Backends.Walker.TakeTest do
       assert Enum.all?(results, &(&1 in 0..(length(probabilities) - 1)))
       assert Analysis.match_probability?(probabilities, results)
     end
+  end
+
+  # Uses about 1GB of memory. Run with `mix test --include skip`.
+  @tag skip: "Builds more buckets than fit in a tuple."
+  test "Tables too large for a tuple still work" do
+    n = WeightedRandom.Backend.max_tuple_size() + 1
+    table = %WeightedRandom.Backend.WalkerAlias.Table{buckets: for(i <- 0..(n - 1), do: {1.0, i, i})}
+
+    assert Enum.all?(Mod.take(table, 10), &(&1 in 0..(n - 1)))
   end
 
 

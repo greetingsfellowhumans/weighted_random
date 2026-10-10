@@ -20,18 +20,32 @@ defmodule WeightedRandom.Backend.WalkerAlias do
       |> Table.new()
   end
 
+  @max_tuple_size WeightedRandom.Backend.max_tuple_size()
+
   @impl true
+  # The usual 'Happy Path'
   def take(%Table{bucket_tuple: buckets, size: size}, count) when is_tuple(buckets) do
     for _ <- 1..count do
-      {split_point, lower, higher} = elem(buckets, :rand.uniform(size) - 1)
-      if :rand.uniform() <= split_point, do: lower, else: higher
+      buckets |> elem(:rand.uniform(size) - 1) |> flip_coin()
     end
   end
+
+  # When the list of possible outcomes is bigger than erlangs tuple size limit
+  def take(%Table{bucket_tuple: nil, buckets: buckets, size: size}, count) when is_integer(size) and size > @max_tuple_size do
+    for _ <- 1..count do
+      buckets |> Enum.at(:rand.uniform(size) - 1) |> flip_coin()
+    end
+  end
+
+  # This clause only exists in case someone deserialized the struct into a plain map
+  # that has `:buckets` but no usable `:bucket_tuple`.
   def take(%{buckets: buckets}, count) do
-    # This clause only exists in case someone deserialized the struct into a plain map
-    # that has `:buckets` but no usable `:bucket_tuple`.
-    bucket_tuple = List.to_tuple(buckets)
-    take(%Table{buckets: buckets, bucket_tuple: bucket_tuple, size: tuple_size(bucket_tuple)}, count)
+    take(Table.from_buckets(buckets), count)
+  end
+
+
+  defp flip_coin({split_point, lower, higher}) do
+    if :rand.uniform() <= split_point, do: lower, else: higher
   end
 
 
