@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - (WalkerAlias Backend) With the same `:rand.seed`, `take/2` returns a different sequence than in 1.0.x. The probabilities are unchanged.
 - (Custom backends) If a backend's `take/2` returns an index outside the outcomes, `WeightedRandom.take/2` now raises `ArgumentError` for list outcomes instead of returning `nil` (or, for negative indices, counting from the end).
 
+### Fixed
+
+- `take/2` with a count of `0` now returns `[]`. It used to return 2 values, because `1..0` counts down. A negative count now raises `ArgumentError` instead of returning extra values.
+- `rand/3` and `rand_p/2` now accept `take: 0` and return `[]`. Before, `rand/3` raised `NimbleOptions.ValidationError`, and `rand_p/2` returned 2 values.
+
 ## 1.0.1 - 2026-10-09
 
 ### Fixed

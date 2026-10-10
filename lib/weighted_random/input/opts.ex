@@ -102,7 +102,7 @@ defmodule WeightedRandom.Input.Opts do
   @take [
     doc: "If used, then instead of returning one random value, will return a list (size == :take) of random values",
     required: false,
-    type: :pos_integer
+    type: :non_neg_integer
   ]
 
 

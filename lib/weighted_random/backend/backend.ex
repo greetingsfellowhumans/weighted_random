@@ -158,8 +158,13 @@ defmodule WeightedRandom.Backend do
   defp to_tuple_if_fits(_outcomes), do: nil
 
   @doc false
-  def take(%{backend: backend, table: table}, count) do
+  # Handled here so backends only ever see a positive count, as the `take/2` callback promises.
+  def take(_struct, 0), do: []
+  def take(%{backend: backend, table: table}, count) when is_integer(count) and count > 0 do
     backend.take(table, count)
+  end
+  def take(_struct, count) do
+    raise ArgumentError, "count must be a non-negative integer, got: #{inspect(count)}"
   end
 
 

@@ -30,6 +30,19 @@ defmodule WeightedRandom.WeightedRandomTest do
       # structs built before :outcome_tuple existed fall back to Enum.at
       assert Enum.all?(Mod.take(%{r | outcome_tuple: nil}, 100), &(&1 in outcomes))
     end
+    test "take/2 with a count of 0 returns an empty list" do
+      for backend <- [WalkerAlias, WeightedRandom.Backend.Linear] do
+        assert Mod.take(Mod.preprocess(1..6, [], backend: backend), 0) == []
+      end
+    end
+    test "rand/3 and rand_p/2 with take: 0 return an empty list" do
+      assert Mod.rand(1..6, [], take: 0) == []
+      assert Mod.rand_p([0.5, 0.5], take: 0) == []
+    end
+    test "take/2 with a negative count raises" do
+      r = Mod.preprocess(1..6, [])
+      assert_raise ArgumentError, ~r/non-negative integer/, fn -> Mod.take(r, -2) end
+    end
     test "Range outcomes skip the tuple" do
       assert Mod.preprocess(1..6, []).outcome_tuple == nil
     end
