@@ -13,6 +13,13 @@ defmodule WeightedRandom.Backend do
     backend: Your.Backend.Module
   ```
 
+  ## The preprocessed struct
+
+  Treat the struct returned by `WeightedRandom.preprocess/3` and `WeightedRandom.preprocess_p/2` as opaque.
+  Its fields are internal and may change between versions, and editing them directly is not supported. To change the outcomes or weights, preprocess again.
+
+  If you write a backend, the same applies to the struct your `preprocess/2` returns: it is private to your `take/2`.
+
   ## Developing a new backend
 
   To create your own backend, copy and change an existing one (like `WeightedRandom.Backend.WalkerAlias` or `WeightedRandom.Backend.Linear`).
@@ -77,6 +84,10 @@ defmodule WeightedRandom.Backend do
   @enforce_keys [:outcomes, :backend, :table]
   defstruct [:outcomes, :backend, :table, :outcome_tuple]
 
+  @typedoc ~s"""
+  Returned by `WeightedRandom.preprocess/3` and `WeightedRandom.preprocess_p/2`. Treat it as opaque.
+  Its fields are internal, may change between versions, and editing them is not supported. To change outcomes or weights, preprocess again.
+  """
   @type t :: %__MODULE__{
     outcomes: list(),
     backend: atom(),
@@ -132,6 +143,7 @@ defmodule WeightedRandom.Backend do
       table: table,
       backend: backend,
       outcomes: input.outcomes,
+      # `take/2` reads this, not `:outcomes`, so editing `:outcomes` has no effect.
       outcome_tuple: if(is_list(input.outcomes), do: List.to_tuple(input.outcomes)),
     })
   end

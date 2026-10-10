@@ -2,8 +2,8 @@ defmodule WeightedRandom.Backend.WalkerAlias.Table do
   @moduledoc false
   alias WeightedRandom.Backend.WalkerAlias.Buckets.Sorter
 
-  # `:buckets` is kept for code that reads the struct directly.
-  # `take/2` uses `:bucket_tuple` for constant-time random access.
+  # `take/2` reads only `:bucket_tuple` and `:size`.
+  # `:buckets` is a read-only copy kept for backward compatibility; editing it has no effect.
   defstruct [
     :buckets,
     :bucket_tuple,
