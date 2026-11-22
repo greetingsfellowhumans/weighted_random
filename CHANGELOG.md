@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.1.0 - 2026-10-09]
+## [1.1.0 - 2026-11-21]
 
 ### Changed
 
+- Lower minimum required elixir version to elixir 1.14/OTP 25. The 25 is actually the floor.
+- Updated the version of `curves` which comes with a variety of bug fixes, perf improvements, and new features with nearly 100% backward compatibility.
 - (WalkerAlias Backend) `take/2` now picks each bucket in constant time instead of time proportional to the number of outcomes. About 55x faster with 10,000 outcomes.
 - `take/2` now looks up outcomes given as a list in constant time.
 - The structs returned by `preprocess/3` and `preprocess_p/2` are now documented as opaque. Editing their fields (e.g. `:outcomes`, or a backend table's `:buckets`) was never supported and may now have no effect. Preprocess again instead.

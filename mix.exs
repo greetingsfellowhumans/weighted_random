@@ -5,7 +5,7 @@ defmodule WeightedRandom.MixProject do
     [
       app: :weighted_random,
       version: "1.1.0",
-      elixir: "~> 1.17",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       description: description(),
@@ -13,12 +13,13 @@ defmodule WeightedRandom.MixProject do
       aliases: aliases(),
       deps: deps(),
       docs: docs(),
-      source_url: "https://github.com/greetingsfellowhumans/weighted_random"
+      source_url: "https://github.com/greetingsfellowhumans/weighted_random",
+      preferred_cli_env: ["test.benchmark": :test]
     ]
   end
 
   # Mix only reads this as a public function, not as a key in `project/0`.
-  def cli() do
+  defp cli() do
     [preferred_envs: ["test.benchmark": :test]]
   end
 
@@ -35,28 +36,29 @@ defmodule WeightedRandom.MixProject do
     [
       main: "1_quickstart-1",
       groups_for_modules: [
-        "Backend": ~r"WeightedRandom.Backend",
-        "Dice": ~r"WeightedRandom.(Dice|Die)",
-        "Utils": [WeightedRandom.Utils],
+        Backend: ~r"WeightedRandom.Backend",
+        Dice: ~r"WeightedRandom.(Dice|Die)",
+        Utils: [WeightedRandom.Utils]
       ],
       nest_modules_by_prefix: [
         WeightedRandom.Backend,
-        WeightedRandom.Utils,
+        WeightedRandom.Utils
       ],
       groups_for_extras: [
         "Static Tutorial": Path.wildcard("guides/static/*.md"),
-        "Livebook Tutorial": Path.wildcard("guides/live/*.livemd"),
+        "Livebook Tutorial": Path.wildcard("guides/live/*.livemd")
       ],
-      extras: [
-        "CHANGELOG.md",
-        "README.md",
-        "guides/upgrading_guide.md",
-      ] ++ Path.wildcard("guides/static/*.md")
-        ++ Path.wildcard("guides/live/*.livemd"),
+      extras:
+        [
+          "CHANGELOG.md",
+          "README.md",
+          "guides/upgrading_guide.md"
+        ] ++
+          Path.wildcard("guides/static/*.md") ++
+          Path.wildcard("guides/live/*.livemd"),
       skip_undefined_reference_warnings_on: ["CHANGELOG.md", "README.md"]
     ]
   end
-
 
   defp description() do
     "Fast and flexible framework for simulating weighted randomness with custom probabilities and bias."
@@ -73,14 +75,14 @@ defmodule WeightedRandom.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :crypto]
     ]
   end
 
   defp deps do
     [
       {:equalish, "~> 1.0.1"},
-      {:curves, "~> 0.2.4"},
+      {:curves, "~> 1.0"},
       {:nimble_options, "~> 1.0"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},
