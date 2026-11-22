@@ -19,7 +19,7 @@ defmodule WeightedRandom.MixProject do
   end
 
   # Mix only reads this as a public function, not as a key in `project/0`.
-  defp cli() do
+  def cli() do
     [preferred_envs: ["test.benchmark": :test]]
   end
 
