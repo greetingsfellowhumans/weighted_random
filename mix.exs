@@ -5,7 +5,7 @@ defmodule WeightedRandom.MixProject do
     [
       app: :weighted_random,
       version: "1.1.0",
-      elixir: "~> 1.17",
+      elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
       elixirc_paths: elixirc_paths(Mix.env()),
       description: description(),
@@ -13,7 +13,9 @@ defmodule WeightedRandom.MixProject do
       aliases: aliases(),
       deps: deps(),
       docs: docs(),
-      source_url: "https://github.com/greetingsfellowhumans/weighted_random"
+      source_url: "https://github.com/greetingsfellowhumans/weighted_random",
+      # Elixir 1.14 reads this; 1.15+ reads cli/0 below.
+      preferred_cli_env: ["test.benchmark": :test]
     ]
   end
 
@@ -73,7 +75,7 @@ defmodule WeightedRandom.MixProject do
 
   def application do
     [
-      extra_applications: [:logger]
+      extra_applications: [:logger, :crypto]
     ]
   end
 

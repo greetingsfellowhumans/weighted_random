@@ -24,7 +24,7 @@ defmodule WeightedRandom.DiceTest do
         assert dice.modifier == modifier
         assert Enum.all?(dice.dice, &(&1.sides == sides))
 
-        assert dice.total == modifier + Enum.sum_by(dice.dice, &(&1.result))
+        assert dice.total == modifier + (dice.dice |> Enum.map(&(&1.result)) |> Enum.sum())
       end
     end
   end
@@ -62,7 +62,7 @@ defmodule WeightedRandom.DiceTest do
         assert dice.modifier == modifier_a + modifier_b
         assert Enum.all?(dice.dice, &(&1.sides == sides_a or &1.sides == sides_b))
 
-        assert dice.total == modifier_a + modifier_b + Enum.sum_by(dice.dice, &(&1.result))
+        assert dice.total == modifier_a + modifier_b + (dice.dice |> Enum.map(&(&1.result)) |> Enum.sum())
       end
     end
   end
