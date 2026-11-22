@@ -80,7 +80,7 @@ defmodule WeightedRandom.MixProject do
   defp deps do
     [
       {:equalish, "~> 1.0.1"},
-      {:curves, "~> 0.2.4"},
+      {:curves, "~> 1.0"},
       {:nimble_options, "~> 1.0"},
       {:benchee, "~> 1.5", only: [:dev, :test]},
       {:ex_doc, "~> 0.40", only: :dev, runtime: false},

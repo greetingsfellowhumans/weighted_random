@@ -61,6 +61,17 @@ defmodule WeightedRandom.InputTest do
       assert Input.at(prob, 50) < Input.at(prob, 51)
       assert Input.at(prob, 48) < Input.at(prob, 49)
     end
+
+    test "curves that dip below their start never add negative weight" do
+      for curve <- [:ease_in_back, :ease_in_out_back] do
+        prob = Input.from_outcomes(1..100)
+        weight = Input.Weight.new(%{target: 50, amount: 25, curve: curve, radius: 10})
+        prob = Input.add_weight(prob, weight)
+
+        assert Enum.all?(prob.weights, &(&1 >= 0)), "#{curve} added a negative weight"
+        assert is_eq_ish(Enum.sum(prob.weights), 100 + 25)
+      end
+    end
   end
 
   describe "Input conversion" do

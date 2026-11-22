@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Now depends on `curves ~> 1.0` (tested with 1.0.1) instead of `~> 0.2.4`. Curves 1.0 has no dependencies, so Nx is no longer pulled in, and it needs OTP 26 or later.
+- A weight's `:curve` is now measured as a percentage of its own height, as `force_percent: true` always asked for (Curves 0.2.x ignored that option when it was given to `define_bezier`). Predefined curves that run from 0 to 1 spread weight exactly as before. Curves that go outside that range, like `:ease_in_back` and `:ease_in_out_back`, and custom curves that don't start at 0 or end at 1, spread it differently.
+- A custom `:curve` given as a list of points must have 2 to 4 points, as Curves 1.0 requires.
+
+### Fixed
+
+- `:ease_in_back`, `:ease_in_out_back` and other curves that dip below their start no longer add negative weight to the outcomes near the target.
+
 ## [1.1.0 - 2026-10-09]
 
 ### Changed
