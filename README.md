@@ -4,7 +4,7 @@
 
 High performance platform for generating random values, with probabilities or weights.
 
-[Upgrading from before v1.0.0?](/guides/upgrading_guide.md)
+[Upgrading from before v1.0.0?](https://weighted-random.hexdocs.pm/upgrading_guide.html)
 
 ## Docs
 

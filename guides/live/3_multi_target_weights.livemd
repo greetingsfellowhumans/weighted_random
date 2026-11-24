@@ -3,7 +3,7 @@
 ```elixir
 Mix.install(
   [
-    {:weighted_random, "~> 1.0.0-alpha.1"},
+    {:weighted_random, "~> 1.1"},
     {:tucan, "~> 0.6.0"},
     {:vega_lite, "~> 0.1.0"},
     {:kino_vega_lite, "~> 0.1.0"},
